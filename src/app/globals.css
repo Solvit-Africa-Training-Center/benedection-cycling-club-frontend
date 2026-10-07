@@ -10,6 +10,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand-lime: #c6f10e;
+  --color-brand-navy: #0d111b;
+  --color-brand-teal: #14b8a6;
+  --font-display: var(--font-barlow);
+
 }
 
 @media (prefers-color-scheme: dark) {
