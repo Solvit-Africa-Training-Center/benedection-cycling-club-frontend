@@ -29,21 +29,22 @@ const products: Product[] = [
     name: "Pro Race Aero Jersey 2026",
     price: 140,
     category: "Jerseys",
-    image: "/Rectangle%2047.png",
+    image: "/jersy.jpg",
     sizes: ["XS", "S", "M", "L", "XL"],
+
   },
   {
     name: "Elite Endurance Bib Shorts",
     price: 135,
     category: "Shorts",
-    image: "/Article%20-%20Product%206_%20Windstopper%20Gilet.png",
+    image: "/short.jpg",
     sizes: ["XS", "S", "M", "L", "XL"],
   },
   {
     name: "Aero Polarized Sunglasses",
     price: 32,
     category: "Glasses",
-    image: "/Rectangle%2049.png",
+    image: "/glasses.jpg",
     sizes: ["One size"],
     filter: "CAT 3 Mirrored Blue",
   },
@@ -51,21 +52,21 @@ const products: Product[] = [
     name: "Pro Team Aero Fingerless Gloves",
     price: 35,
     category: "Gloves",
-    image: "/Article%20-%20Product%204_%20Gloves.png",
+    image: "/gloves.jpg",
     sizes: ["S", "M", "L", "XL"],
   },
   {
     name: "High-Cuff Imongo Racing Socks",
     price: 18,
     category: "Socks",
-    image: "/Article%20-%20Product%205_%20Socks.png",
+    image: "/socks.jpg",
     sizes: ["S/M (37-41)", "L/XL (42-46)"],
   },
   {
     name: "Elite Cycling Helmet",
     price: 95,
     category: "Helmet",
-    image: "/Rectangle%2051.png",
+    image: "/helmets.jpg",
     sizes: ["S", "M", "L", "XL"],
   },
 ];
@@ -89,7 +90,7 @@ function ProductArtwork({ product }: { product: Product }) {
           src={product.image}
           alt=""
           fill
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain mix-blend-multiply"
           onError={() => setImageFailed(true)}
         />
       )}
