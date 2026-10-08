@@ -2,10 +2,13 @@ import Link from "next/link";
 
 const navigation = [
   { label: "Home", href: "/" },
-  { label: "Club Heritage", href: "/about" },
-  { label: "Tour & Races", href: "/race" },
-  { label: "Rosters & Staff", href: "/team" },
-  { label: "Race Reports", href: "/news" },
+  { label: "About us", href: "/about" },
+  { label: "News", href: "/news" },
+  { label: "Team", href: "/team" },
+  { label: "Race Reports", href: "/race" },
+  { label: "Partners", href: "/partners" },
+  { label: "Shop", href: "/shop" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const clubHub = [
