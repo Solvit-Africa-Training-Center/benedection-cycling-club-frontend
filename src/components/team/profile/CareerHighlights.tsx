@@ -1,6 +1,5 @@
 import Image from "next/image";
 import type { Cyclist } from "@/data/cyclists";
-import { defaultGallery } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { StarIcon, TrophyIcon } from "./icons";
 
@@ -68,7 +67,7 @@ export function RiderGallery({
   images?: (string | undefined)[];
   rider?: Cyclist;
 }) {
-  const source = images ?? rider?.gallery ?? defaultGallery;
+  const source = rider?.gallery ?? images ?? [];
   const tiles = [source[0], source[1], source[2], source[3]];
   return (
     <section aria-label={`${name} gallery`} className="mt-14">
@@ -84,7 +83,7 @@ export function RiderGallery({
             >
               <Image
                 src={src}
-                alt={`Benediction Cycling Club gallery photo ${index + 1}`}
+                alt={`${name} gallery photo ${index + 1}`}
                 fill
                 sizes="(max-width: 768px) 50vw, 25vw"
                 className="object-cover"

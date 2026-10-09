@@ -53,8 +53,6 @@ function buildQa(answers: [string, string, string, string, string]): RiderQA[] {
   }));
 }
 
-export const defaultGallery: string[] = [];
-
 export const cyclists: Cyclist[] = [
   // SAMPLE: replace with club-verified information
   {
@@ -76,6 +74,11 @@ export const cyclists: Cyclist[] = [
     badge: "Green Jersey Contender",
     category: "men",
     image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
+    gallery: [
+      "/images/team/gallery/nzafashwanayo-jean-claude-1.jpg",
+      "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg",
+      "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg",
+    ],
     quote: "Attack when it hurts, because that is when the race is decided.",
     qa: buildQa([
       "Sweet potatoes",
@@ -109,6 +112,11 @@ export const cyclists: Cyclist[] = [
     badge: "Green Jersey Contender",
     category: "men",
     image: "/images/team/riders/uwiduhaye-mike.jpg",
+    gallery: [
+      "/images/team/gallery/uwiduhaye-mike-1.jpg",
+      "/images/team/gallery/uwiduhaye-mike-2.jpg",
+      "/images/team/gallery/uwiduhaye-mike-3.jpg",
+    ],
     quote:
       "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
     qa: buildQa([
@@ -143,6 +151,12 @@ export const cyclists: Cyclist[] = [
     badge: "Green Jersey Contender",
     category: "men",
     image: "/images/team/riders/masengesho-vainqueur.jpg",
+    gallery: [
+      "/images/team/gallery/masengesho-vainqueur-1.jpg",
+      "/images/team/gallery/masengesho-vainqueur-2.jpg",
+      "/images/team/gallery/masengesho-vainqueur-3.jpg",
+      "/images/team/gallery/masengesho-vainqueur-4.jpg",
+    ],
     quote: "Pace yourself, then ride the last kilometer like it is the first.",
     qa: buildQa([
       "Peanuts",
@@ -184,6 +198,12 @@ export const cyclists: Cyclist[] = [
     badge: "Green Jersey Contender",
     category: "men",
     image: "/images/team/riders/manizabayo-eric.jpg",
+    gallery: [
+      "/images/team/gallery/manizabayo-eric-1.jpg",
+      "/images/team/gallery/manizabayo-eric-2.jpg",
+      "/images/team/gallery/manizabayo-eric-3.jpg",
+      "/images/team/gallery/manizabayo-eric-4.jpg",
+    ],
     quote:
       "A strong team wins races, and I am happy to do the work that makes it possible.",
     qa: buildQa([
@@ -225,6 +245,12 @@ export const cyclists: Cyclist[] = [
     badge: "Green Jersey Contender",
     category: "men",
     image: "/images/team/riders/mugisha-moise.jpg",
+    gallery: [
+      "/images/team/gallery/mugisha-moise-1.jpg",
+      "/images/team/gallery/mugisha-moise-2.jpg",
+      "/images/team/gallery/mugisha-moise-3.jpg",
+      "/images/team/gallery/mugisha-moise-4.jpg",
+    ],
     quote: "Ride with purpose, push through every climb and never stop moving forward.",
     qa: buildQa([
       "Cookies",
@@ -265,6 +291,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 54,
     badge: "National ITT Champion",
     category: "women",
+    image: "/images/team/riders/jessica-umulisa.jpg",
     quote: "Dream big, train hard and let the road show what you are made of.",
     qa: buildQa([
       "Fresh fruit",
@@ -308,6 +335,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 50,
     badge: "Rising Grassroots Talent",
     category: "junior",
+    image: "/images/team/riders/chrispin-ntambara.jpg",
     quote: "Every big journey starts with a small pedal stroke.",
     qa: buildQa([
       "Bananas",
@@ -351,6 +379,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 55,
     badge: "U17 National Champion",
     category: "junior",
+    image: "/images/team/riders/ryan-muhizi.jpg",
     quote:
       "The trials showed me what I can do, and training will show me how far I can go.",
     qa: buildQa([
