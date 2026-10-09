@@ -1,9 +1,15 @@
+import Hero from "@/components/home/Hero";
+import News from "@/components/home/News";
+import Nurturing from "@/components/home/Nurturing";
+import Team from "@/components/home/Team";
+
 export default function Home() {
   return (
-    <section className="flex min-h-[60vh] items-center justify-center bg-brand-navy text-white">
-      <p className="font-display text-2xl uppercase tracking-wide text-gray-400">
-        Hero section coming next
-      </p>
-    </section>
+    <>
+      <Hero />
+      <Nurturing />
+      <News />
+      <Team />
+    </>
   );
 }
