@@ -35,6 +35,7 @@ export type Cyclist = {
   quote?: string;
   qa?: RiderQA[];
   highlights?: RiderHighlight[];
+  gallery?: string[];
 };
 
 const QA_QUESTIONS = [
@@ -51,6 +52,8 @@ function buildQa(answers: [string, string, string, string, string]): RiderQA[] {
     answer: answers[index],
   }));
 }
+
+export const defaultGallery: string[] = [];
 
 export const cyclists: Cyclist[] = [
   // SAMPLE: replace with club-verified information
@@ -72,6 +75,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 64,
     badge: "Green Jersey Contender",
     category: "men",
+    image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
     quote: "Attack when it hurts, because that is when the race is decided.",
     qa: buildQa([
       "Sweet potatoes",
@@ -104,6 +108,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 68,
     badge: "Green Jersey Contender",
     category: "men",
+    image: "/images/team/riders/uwiduhaye-mike.jpg",
     quote:
       "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
     qa: buildQa([
@@ -137,6 +142,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 65,
     badge: "Green Jersey Contender",
     category: "men",
+    image: "/images/team/riders/masengesho-vainqueur.jpg",
     quote: "Pace yourself, then ride the last kilometer like it is the first.",
     qa: buildQa([
       "Peanuts",
@@ -177,6 +183,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 63,
     badge: "Green Jersey Contender",
     category: "men",
+    image: "/images/team/riders/manizabayo-eric.jpg",
     quote:
       "A strong team wins races, and I am happy to do the work that makes it possible.",
     qa: buildQa([
@@ -217,6 +224,7 @@ export const cyclists: Cyclist[] = [
     weightKg: 71,
     badge: "Green Jersey Contender",
     category: "men",
+    image: "/images/team/riders/mugisha-moise.jpg",
     quote: "Ride with purpose, push through every climb and never stop moving forward.",
     qa: buildQa([
       "Cookies",
