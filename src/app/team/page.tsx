@@ -5,29 +5,33 @@ import TrialsBanner from "@/components/team/TrialsBanner";
 
 export const metadata: Metadata = {
   title: "Team | Benediction Cycling Club",
-  description: "Meet the riders and staff of Benediction Cycling Club Rubavu.",
+  description:
+    "Engineered on the volcanic grades of Rwanda and honed along the mist of Lake Kivu.",
 };
 
 export default function TeamPage() {
   return (
-    <main className="bg-club-bg text-white">
-      <section className="border-b border-white/10">
-        <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-6 md:py-16">
-          <p className="text-xs font-bold uppercase tracking-widest text-club-lime">Benediction CC · Rubavu</p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-tight md:text-5xl">
-            Rising above the crags &amp; volcanoes
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-club-muted md:text-base">
-            Elite Rwandan riders forged on high-altitude roads along Lake Kivu — racing with grit, precision, and discipline on the global stage.
-          </p>
-        </div>
+    <main className="min-h-screen bg-brand-navy font-sans text-white">
+      <section className="mx-auto w-full max-w-7xl px-4 pb-10 pt-12 md:px-6 md:pt-16">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-none text-white md:text-7xl">
+          Rosters &amp; Athletes
+        </h1>
+        <p className="mt-5 max-w-3xl text-sm leading-relaxed text-gray-300 md:text-base">
+          Engineered on the volcanic grades of Rwanda and honed along the mist of Lake
+          Kivu. Meet the grimpeurs, puncheurs, sprinters, and technical minds powering
+          Benediction CC.
+        </p>
       </section>
+
       <RosterSection />
-      <StaffSection />
-      <div className="pt-12">
+
+      <div className="mt-16">
+        <StaffSection />
+      </div>
+
+      <div className="mt-16 pb-16">
         <TrialsBanner />
       </div>
     </main>
   );
 }
-

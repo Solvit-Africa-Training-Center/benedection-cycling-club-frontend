@@ -1,4 +1,5 @@
-import type { StaffMember } from "@/data/cyclists";
+import Image from "next/image";
+import type { StaffMember } from "@/data/staff";
 import PhotoPlaceholder from "./PhotoPlaceholder";
 
 type StaffCardProps = {
@@ -7,14 +8,30 @@ type StaffCardProps = {
 
 export default function StaffCard({ member }: StaffCardProps) {
   return (
-    <article className="overflow-hidden rounded-xl bg-club-panel ring-1 ring-white/10">
-      <PhotoPlaceholder name={member.name} className="aspect-[16/9] w-full" />
-      <div className="p-5">
-        <h3 className="text-lg font-bold text-white">{member.name}</h3>
-        <p className="text-sm font-semibold uppercase tracking-wide text-club-lime">{member.role}</p>
-        {member.bio && (
-          <p className="mt-3 text-sm leading-relaxed text-gray-300">{member.bio}</p>
+    <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+      <div className="relative aspect-[4/5] overflow-hidden">
+        {member.image ? (
+          <Image
+            src={member.image}
+            alt={member.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-cover object-top"
+          />
+        ) : (
+          <PhotoPlaceholder
+            name={member.name}
+            className="absolute inset-0 h-full w-full"
+          />
         )}
+      </div>
+      <div className="p-5 font-sans">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-brand-lime">
+          {member.role}
+        </p>
+        <h3 className="mt-2 font-display text-xl font-bold uppercase leading-tight text-white">
+          {member.name}
+        </h3>
       </div>
     </article>
   );

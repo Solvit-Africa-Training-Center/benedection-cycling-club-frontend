@@ -3,26 +3,30 @@ type PhotoPlaceholderProps = {
   className?: string;
 };
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 export default function PhotoPlaceholder({ name, className = "" }: PhotoPlaceholderProps) {
   return (
     <div
       role="img"
-      aria-label={`Photo placeholder for ${name}`}
-      className={`flex items-center justify-center bg-club-panel-light ${className}`}
+      aria-label={`Photo coming soon for ${name}`}
+      className={`flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-700 to-slate-900 ${className}`}
     >
-      <span aria-hidden="true" className="flex h-16 w-16 items-center justify-center rounded-full bg-club-bg text-xl font-bold text-club-lime">
-        {getInitials(name)}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        className="h-12 w-12 text-white/40"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+        />
+      </svg>
+      <span className="font-sans text-xs font-semibold uppercase tracking-widest text-white/50">
+        Photo coming soon
       </span>
     </div>
   );
 }
-
