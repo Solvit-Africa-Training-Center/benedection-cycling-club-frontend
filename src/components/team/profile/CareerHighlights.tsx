@@ -58,17 +58,9 @@ export default function CareerHighlights({ rider }: { rider: Cyclist }) {
   );
 }
 
-export function RiderGallery({
-  name,
-  images,
-  rider,
-}: {
-  name: string;
-  images?: (string | undefined)[];
-  rider?: Cyclist;
-}) {
-  const source = rider?.gallery ?? images ?? [];
-  const tiles = [source[0], source[1], source[2], source[3]];
+export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) {
+  const gallery = Array.from(new Set(rider.gallery ?? []));
+  const tiles = [gallery[0], gallery[1], gallery[2], gallery[3]];
   return (
     <section aria-label={`${name} gallery`} className="mt-14">
       <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white">

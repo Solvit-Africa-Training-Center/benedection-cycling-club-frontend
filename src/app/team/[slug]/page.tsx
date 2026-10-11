@@ -28,12 +28,6 @@ export default async function RiderPage({ params }: RiderPageProps) {
   }
 
   const displayName = rider.displayName ?? rider.name;
-  const gallery: (string | undefined)[] = [
-    rider.image,
-    undefined,
-    undefined,
-    undefined,
-  ];
 
   return (
     <main className="min-h-screen bg-brand-navy font-sans text-white">
@@ -56,7 +50,7 @@ export default async function RiderPage({ params }: RiderPageProps) {
 
         <CareerHighlights rider={rider} />
 
-        <RiderGallery name={displayName} images={gallery} />
+        <RiderGallery name={displayName} rider={rider} />
 
         <FollowJourneyBanner />
       </div>
