@@ -1,8 +1,8 @@
 import type { Cyclist } from "@/data/cyclists";
+import { ageFromDateOfBirth, type RiderCategory } from "@/data/cyclists";
 import {
   BikeIcon,
   CalendarIcon,
-  FlagIcon,
   GlobeIcon,
   LocationIcon,
   QuoteIcon,
@@ -24,12 +24,12 @@ function rowsFor(rider: Cyclist): ProfileRow[] {
   const rows: ProfileRow[] = [];
   if (rider.dateOfBirth) {
     rows.push({
-      key: "dob",
-      label: "Date of birth",
-      value: rider.dateOfBirth,
+      key: "age",
+      label: "Age",
+      value: String(ageFromDateOfBirth(rider.dateOfBirth)),
       Icon: CalendarIcon,
     });
-  } else {
+  } else if (rider.age !== undefined) {
     rows.push({
       key: "age",
       label: "Age",
@@ -37,41 +37,23 @@ function rowsFor(rider: Cyclist): ProfileRow[] {
       Icon: CalendarIcon,
     });
   }
+  if (rider.birthplace) {
+    rows.push({ key: "birthplace", label: "Place of birth", value: rider.birthplace, Icon: LocationIcon });
+  }
   if (rider.country) {
     rows.push({ key: "nationality", label: "Nationality", value: rider.country, Icon: GlobeIcon });
   }
-  if (rider.hometown) {
-    rows.push({ key: "hometown", label: "Hometown", value: rider.hometown, Icon: LocationIcon });
+  if (rider.height) {
+    rows.push({ key: "height", label: "Height", value: rider.height, Icon: RulerIcon });
   }
-  if (rider.heightCm !== undefined && rider.heightCm !== null) {
-    rows.push({
-      key: "height",
-      label: "Height",
-      value: `${rider.heightCm}cm`,
-      Icon: RulerIcon,
-    });
-  }
-  if (rider.weightKg !== undefined && rider.weightKg !== null) {
-    rows.push({
-      key: "weight",
-      label: "Weight",
-      value: `${rider.weightKg}kg`,
-      Icon: ScaleIcon,
-    });
+  if (rider.weight) {
+    rows.push({ key: "weight", label: "Weight", value: rider.weight, Icon: ScaleIcon });
   }
   if (rider.discipline) {
     rows.push({ key: "discipline", label: "Discipline", value: rider.discipline, Icon: BikeIcon });
   }
   if (rider.team) {
     rows.push({ key: "team", label: "Team", value: rider.team, Icon: TeamIcon });
-  }
-  if (rider.racingSince !== undefined) {
-    rows.push({
-      key: "racing-since",
-      label: "Racing since",
-      value: String(rider.racingSince),
-      Icon: FlagIcon,
-    });
   }
   return rows;
 }

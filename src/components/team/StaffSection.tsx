@@ -16,7 +16,7 @@ export default function StaffSection() {
       </p>
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {staff.map((member) => (
-          <StaffCard key={member.id} member={member} />
+          <StaffCard key={member.name} member={member} />
         ))}
       </div>
     </section>

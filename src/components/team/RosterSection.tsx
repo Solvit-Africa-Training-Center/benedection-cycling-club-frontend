@@ -69,7 +69,7 @@ export default function RosterSection() {
 
       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 pt-6 sm:grid-cols-2 lg:grid-cols-4">
         {riders.map((rider) => (
-          <CyclistCard key={rider.id} cyclist={rider} />
+          <CyclistCard key={rider.slug} cyclist={rider} />
         ))}
       </div>
     </section>

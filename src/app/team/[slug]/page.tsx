@@ -27,7 +27,7 @@ export default async function RiderPage({ params }: RiderPageProps) {
     notFound();
   }
 
-  const displayName = rider.displayName ?? rider.name;
+  const displayName = rider.name;
 
   return (
     <main className="min-h-screen bg-brand-navy font-sans text-white">

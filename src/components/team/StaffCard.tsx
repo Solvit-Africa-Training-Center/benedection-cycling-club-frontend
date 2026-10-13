@@ -32,6 +32,11 @@ export default function StaffCard({ member }: StaffCardProps) {
         <h3 className="mt-2 font-display text-xl font-bold uppercase leading-tight text-white">
           {member.name}
         </h3>
+        {member.description ? (
+          <p className="mt-3 font-sans text-sm leading-relaxed text-gray-400">
+            {member.description}
+          </p>
+        ) : null}
       </div>
     </article>
   );
