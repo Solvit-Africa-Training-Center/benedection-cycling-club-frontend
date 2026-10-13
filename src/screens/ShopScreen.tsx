@@ -29,7 +29,7 @@ const products: Product[] = [
     name: "Pro Race Aero Jersey 2026",
     price: 140,
     category: "Jerseys",
-    image: "/jersy.jpg",
+    image: "/jersey.jpeg",
     sizes: ["XS", "S", "M", "L", "XL"],
 
   },
