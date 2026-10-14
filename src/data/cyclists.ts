@@ -6,6 +6,7 @@ export type RiderQA = {
 };
 
 export type Cyclist = {
+  id?: string;
   slug: string;
   name: string;
   role: string;
@@ -364,15 +365,16 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-5.jpg",
   },
   {
-    slug: "sybren-nicolaides",
-    name: "SYBREN NICOLAIDES",
-    role: "DEVELOPMENT • AGE 21",
-    category: "women",
-    country: "Rwanda",
-    title: "DEVELOPMENT • AGE 21",
-    description: "Track cyclist. Sprint focus. Olympic pathway candidate.",
-    team: "Benediction Cycling Club",
-    image: "/images/team/cyclist-6.jpg",
+    id: '14',
+    slug: 'jackson-nkurikiyinka',
+    name: 'JACKSON NKURIKIYINKA',
+    category: 'junior',
+    country: 'Rwanda',
+    role: 'JUNIOR • AGE 18',
+    title: 'JUNIOR • AGE 18',
+    description: 'Junior squad member. High-altitude training specialist. Development pathway.',
+    team: 'Benediction Cycling Club',
+    image: '/images/team/cyclist-6.jpg',
   },
   {
     slug: "noah-brits",

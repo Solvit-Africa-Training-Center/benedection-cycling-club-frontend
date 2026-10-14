@@ -24,7 +24,7 @@ export default function RosterSection() {
     { key: "all", label: `All Personnel (${allCount})` },
     { key: "men", label: `UCI Continental Men (${menCount})` },
     { key: "women", label: `Women's Development Team (${womenCount})` },
-    { key: "junior", label: `Junior Squad [Kids] (${juniorCount})` },
+    { key: "junior", label: `Junior Squad [U-19] (${juniorCount})` },
   ];
 
   const riders = useMemo(
