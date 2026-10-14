@@ -1,4 +1,4 @@
-export type RiderCategory = "men" | "women" | "junior";
+export type RiderCategory = "men" | "women" | "junior" | "ALL PERSONNEL";
 
 export type RiderQA = {
   question: string;
@@ -7,11 +7,11 @@ export type RiderQA = {
 
 export type Cyclist = {
   id?: string;
-  slug: string;
+  slug?: string;
   name: string;
   role: string;
   category: RiderCategory;
-  country: string;
+  country?: string;
   dateOfBirth?: string;
   age?: number;
   birthplace?: string;
@@ -19,7 +19,7 @@ export type Cyclist = {
   weight?: string;
   discipline?: string;
   team?: string;
-  title: string;
+  title?: string;
   bio?: string;
   description?: string;
   topResults?: string[];
@@ -310,15 +310,12 @@ export const cyclists: Cyclist[] = [
   },
 
   {
-    slug: "espoir-uhiriwe",
-    name: "ESPOIR UHIRIWE",
-    role: "FIRST TEAM • AGE 31",
-    category: "men",
-    country: "Rwanda",
-    title: "FIRST TEAM • AGE 31",
-    description: "Endurance specialist. Mountain stage expert. Tour de Rwanda champion.",
-    team: "Benediction Cycling Club",
-    image: "/images/team/cyclist-1.jpg",
+    id: '9',
+    name: 'ESPOIR UHIRIWE',
+    category: 'ALL PERSONNEL',
+    role: 'FIRST TEAM • AGE 31',
+    description: 'Endurance specialist. Mountain stage expert. Tour de Rwanda champion.',
+    image: '/images/team/cyclist-1.jpg',
   },
   {
     slug: "glen-van-nuuffelen",
