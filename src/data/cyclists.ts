@@ -308,10 +308,9 @@ export const cyclists: Cyclist[] = [
     qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
   },
 
-  // 8 new cyclists added (roster now 16 total)
   {
-    slug: "kwizera-paul",
-    name: "KWIZERA PAUL",
+    slug: "espoir-uhiriwe",
+    name: "ESPOIR UHIRIWE",
     role: "FIRST TEAM • AGE 31",
     category: "men",
     country: "Rwanda",
@@ -321,8 +320,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-1.jpg",
   },
   {
-    slug: "habimana-denis",
-    name: "HABIMANA DENIS",
+    slug: "glen-van-nuuffelen",
+    name: "GLEN VAN NUFFELEN",
     role: "ACADEMY • AGE 25",
     category: "men",
     country: "Rwanda",
@@ -332,8 +331,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-2.jpg",
   },
   {
-    slug: "uwimana-grace",
-    name: "UWIMANA GRACE",
+    slug: "diane-ingabire",
+    name: "DIANE INGABIRE",
     role: "DEVELOPMENT • AGE 22",
     category: "women",
     country: "Rwanda",
@@ -343,8 +342,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-3.jpg",
   },
   {
-    slug: "ndayisaba-jean",
-    name: "NDAYISABA JEAN",
+    slug: "valentine-nzayisengwa",
+    name: "VALENTINE NZAYISENGA",
     role: "JUNIOR • AGE 17",
     category: "junior",
     country: "Rwanda",
@@ -354,8 +353,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-4.jpg",
   },
   {
-    slug: "mugisha-robert",
-    name: "MUGISHA ROBERT",
+    slug: "jelle-roelandt",
+    name: "JELLE ROELANDT",
     role: "FIRST TEAM • AGE 30",
     category: "men",
     country: "Rwanda",
@@ -365,8 +364,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-5.jpg",
   },
   {
-    slug: "nyirahabimana-emma",
-    name: "NYIRAHABIMANA EMMA",
+    slug: "sybren-nicolaides",
+    name: "SYBREN NICOLAIDES",
     role: "DEVELOPMENT • AGE 21",
     category: "women",
     country: "Rwanda",
@@ -376,8 +375,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-6.jpg",
   },
   {
-    slug: "habiyaremye-claude",
-    name: "HABIYAREMYE CLAUDE",
+    slug: "noah-brits",
+    name: "NOAH BRITS",
     role: "ACADEMY • AGE 23",
     category: "men",
     country: "Rwanda",
@@ -387,8 +386,8 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-7.jpg",
   },
   {
-    slug: "bizimana-olivier",
-    name: "BIZIMANA OLIVIER",
+    slug: "foeke-du-bois",
+    name: "FOEKE DUBOIS",
     role: "JUNIOR • AGE 16",
     category: "junior",
     country: "Rwanda",
