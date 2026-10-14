@@ -29,7 +29,7 @@ const products: Product[] = [
     name: "Pro Race Aero Jersey 2026",
     price: 140,
     category: "Jerseys",
-    image: "/jersey.jpeg",
+    image: "/jersey.png",
     sizes: ["XS", "S", "M", "L", "XL"],
 
   },
@@ -37,7 +37,7 @@ const products: Product[] = [
     name: "Elite Endurance Bib Shorts",
     price: 135,
     category: "Shorts",
-    image: "/short.jpg",
+    image: "/short.png",
     sizes: ["XS", "S", "M", "L", "XL"],
   },
   {
@@ -106,7 +106,7 @@ function ProductArtwork({ product }: { product: Product }) {
 export default function ShopScreen() {
   const [activeCategory, setActiveCategory] = useState<Category>("All items");
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
-  const [bagCount, setBagCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   const visibleProducts = useMemo(
     () =>
@@ -131,9 +131,32 @@ export default function ShopScreen() {
             <h1 className="font-display text-5xl font-bold uppercase leading-none tracking-tight text-slate-200 sm:text-7xl">
               Featured products
             </h1>
-            <div className="border border-white/10 bg-black/20 px-4 py-3 text-right">
-              <span className="block text-[10px] uppercase tracking-widest text-gray-500">Bag</span>
-              <span className="font-display text-xl font-bold text-brand-lime">{bagCount} items</span>
+            <div className="flex items-center gap-3 border border-white/10 bg-black/20 px-4 py-3">
+              <div className="relative" aria-label={`${cartCount} ${cartCount === 1 ? "item" : "items"} in cart`}>
+                <svg
+                  aria-hidden="true"
+                  className="h-7 w-7 text-brand-lime"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+                  <circle cx="10" cy="20" r="1" />
+                  <circle cx="18" cy="20" r="1" />
+                </svg>
+                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-lime px-1 text-[10px] font-bold text-brand-navy">
+                  {cartCount}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[10px] uppercase tracking-widest text-gray-500">Cart</span>
+                <span className="font-display text-xl font-bold text-brand-lime">
+                  {cartCount} {cartCount === 1 ? "item" : "items"}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -198,11 +221,24 @@ export default function ShopScreen() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setBagCount((count) => count + 1)}
+                    onClick={() => setCartCount((count) => count + 1)}
                     className="mt-4 flex w-full items-center justify-center gap-2 bg-brand-lime px-3 py-3 text-[11px] font-bold uppercase tracking-wide text-brand-navy transition-colors hover:bg-white"
                   >
-                    <span aria-hidden="true">🛒</span>
-                    Add to bag
+                    <svg
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+                      <circle cx="10" cy="20" r="1" />
+                      <circle cx="18" cy="20" r="1" />
+                    </svg>
+                    Add to cart
                   </button>
                 </div>
               </article>

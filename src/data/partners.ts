@@ -29,7 +29,7 @@ export const partners: Partner[] = [
     website: "https://www.doltcini.be/",
     websiteLabel: "Visit DOLTCINI",
     mark: "D",
-    logo: "/images/partners/doltcini.png",
+    logo: "/images/patners/Doltcini.jpg",
     featured: true,
   },
   {
@@ -38,6 +38,7 @@ export const partners: Partner[] = [
     description:
       "A brand featured on the Benediction Banafrica cycling jersey and shorts. Its specific products and business activities require confirmation.",
     mark: "IPXI",
+    logo: "/images/patners/IPXI.jpg",
   },
   {
     name: "Betonwerken Lombaert",
@@ -47,7 +48,7 @@ export const partners: Partner[] = [
     website: "https://betonwerken-lombaert.be/",
     websiteLabel: "Visit website",
     mark: "BL",
-    logo: "/images/partners/betonwerken-lombaert.png",
+    logo: "/images/patners/BL.png",
     featured: true,
   },
   {
@@ -58,7 +59,7 @@ export const partners: Partner[] = [
     website: "https://www.inyangeindustries.com/",
     websiteLabel: "Visit Inyange",
     mark: "INYANGE",
-    logo: "/images/patners/Inyange%20logo%20(1)_page-0001.jpg",
+    logo: "/images/patners/Inyange logo (1)_page-0001.jpg",
     featured: true,
   },
   {
@@ -67,6 +68,7 @@ export const partners: Partner[] = [
     description:
       "A Musanze-based partner specializing in stone cutting and paving materials, including amakoro, for construction and landscaping projects.",
     mark: "TTS",
+    logo: "/images/patners/Terra.jpg",
   },
   {
     name: "Magasin Sportclass",
@@ -74,6 +76,7 @@ export const partners: Partner[] = [
     description:
       "A sports retailer providing equipment and clothing for athletes, sports teams and individuals.",
     mark: "SC",
+    logo: "/images/patners/magazineSportClass.jpg",
   },
   {
     name: "Van der Valk Hotel Beveren",
@@ -83,7 +86,7 @@ export const partners: Partner[] = [
     website: "https://www.hotelbeveren.be/en",
     websiteLabel: "Visit Hotel Beveren",
     mark: "VDV",
-    logo: "/images/partners/van-der-valk-hotel-beveren.png",
+    logo: "/images/patners/vanhotel.png",
     featured: true,
   },
 ];
