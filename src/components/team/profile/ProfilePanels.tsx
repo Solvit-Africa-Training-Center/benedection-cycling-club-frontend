@@ -22,39 +22,54 @@ type ProfileRow = {
 
 function rowsFor(rider: Cyclist): ProfileRow[] {
   const rows: ProfileRow[] = [];
-  if (rider.dateOfBirth) {
-    rows.push({
-      key: "age",
-      label: "Age",
-      value: String(ageFromDateOfBirth(rider.dateOfBirth)),
-      Icon: CalendarIcon,
-    });
-  } else if (rider.age !== undefined) {
-    rows.push({
-      key: "age",
-      label: "Age",
-      value: String(rider.age),
-      Icon: CalendarIcon,
-    });
-  }
-  if (rider.birthplace) {
-    rows.push({ key: "birthplace", label: "Place of birth", value: rider.birthplace, Icon: LocationIcon });
-  }
-  if (rider.country) {
-    rows.push({ key: "nationality", label: "Nationality", value: rider.country, Icon: GlobeIcon });
-  }
-  if (rider.height) {
-    rows.push({ key: "height", label: "Height", value: rider.height, Icon: RulerIcon });
-  }
-  if (rider.weight) {
-    rows.push({ key: "weight", label: "Weight", value: rider.weight, Icon: ScaleIcon });
-  }
-  if (rider.discipline) {
-    rows.push({ key: "discipline", label: "Discipline", value: rider.discipline, Icon: BikeIcon });
-  }
-  if (rider.team) {
-    rows.push({ key: "team", label: "Team", value: rider.team, Icon: TeamIcon });
-  }
+  const ageValue =
+    rider.dateOfBirth !== undefined
+      ? String(ageFromDateOfBirth(rider.dateOfBirth))
+      : rider.age !== undefined
+        ? String(rider.age)
+        : "Not listed";
+  rows.push({
+    key: "age",
+    label: "Age",
+    value: ageValue,
+    Icon: CalendarIcon,
+  });
+  rows.push({
+    key: "birthplace",
+    label: "Place of birth",
+    value: rider.birthplace ?? "Not listed",
+    Icon: LocationIcon,
+  });
+  rows.push({
+    key: "nationality",
+    label: "Nationality",
+    value: rider.country ?? "Not listed",
+    Icon: GlobeIcon,
+  });
+  rows.push({
+    key: "height",
+    label: "Height",
+    value: rider.height ?? "Not listed",
+    Icon: RulerIcon,
+  });
+  rows.push({
+    key: "weight",
+    label: "Weight",
+    value: rider.weight ?? "Not listed",
+    Icon: ScaleIcon,
+  });
+  rows.push({
+    key: "discipline",
+    label: "Discipline",
+    value: rider.discipline ?? "Not listed",
+    Icon: BikeIcon,
+  });
+  rows.push({
+    key: "team",
+    label: "Team",
+    value: rider.team ?? "Not listed",
+    Icon: TeamIcon,
+  });
   return rows;
 }
 
@@ -81,7 +96,9 @@ export function PersonalProfilePanel({ rider }: { rider: Cyclist }) {
             <dt className="w-28 shrink-0 font-sans text-xs font-semibold uppercase tracking-wide text-blue-400">
               {row.label}
             </dt>
-            <dd className="font-sans text-sm text-white">{row.value}</dd>
+            <dd className={`font-sans text-sm ${row.value === "Not listed" ? "text-gray-500" : "text-white"}`}>
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>
