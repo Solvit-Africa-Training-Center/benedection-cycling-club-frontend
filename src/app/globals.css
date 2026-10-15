@@ -37,7 +37,12 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: #77787a;
+  background: #ffffff;
+}
+
+.shop-art-bag {
+  height: 11rem;
+  min-height: 0;
 }
 
 .shop-art img {
@@ -46,7 +51,7 @@ body {
 
 .shop-art-jerseys,
 .shop-art-shorts {
-  background: #77787a;
+  background: #ffffff;
   padding: 0.75rem;
 }
 
