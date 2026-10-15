@@ -3,7 +3,7 @@ import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 
 export default function ProfileHero({ rider }: { rider: Cyclist }) {
-  const displayName = rider.displayName ?? rider.name;
+  const displayName = rider.name;
   const image = rider.image;
   const bio = rider.bio ?? rider.description;
 

@@ -1,47 +1,55 @@
 export type StaffMember = {
-  id: string;
-  slug: string;
   name: string;
   role: string;
-  description: string;
+  country: string;
   image?: string;
+  description?: string;
 };
 
 export const staff: StaffMember[] = [
   {
-    id: "james-sempeta",
-    slug: "james-sempeta",
-    name: "Dr. James Sempeta",
-    role: "Directeur Sportif",
-    description:
-      "Tactical mastermind orchestrating high-altitude pace pacelines, convoy communication, and stage break management.",
-    image: "/images/team/staff/direcor sportif.jfif",
+    name: "Benoit Munyakindi",
+    role: "Representative",
+    country: "Rwanda",
   },
   {
-    id: "bright-kamuzinzi",
-    slug: "bright-kamuzinzi",
-    name: "Dr. Bright Kamuzinzi",
-    role: "Lead Physio & Nutritionist",
-    description:
-      "Specializes in glycogen replenishment strategies, myofascial recovery, and hydration optimization for tropical racing heat.",
-    image: "/images/team/staff/physio.jfif",
+    name: "Dady Bagabo",
+    role: "Team Manager",
+    country: "Rwanda",
   },
   {
-    id: "yvan-matsiko",
-    slug: "yvan-matsiko",
-    name: "Yvan Matsiko",
-    role: "Logistics & Caravan Director",
-    description:
-      "Coordinates team bus transit, follow cars, feed stations along remote escarpments, and cross-border customs logistics.",
-    image: "/images/team/staff/logistics.jfif",
+    name: "Germaine Mukamana",
+    role: "Logistics",
+    country: "Rwanda",
+    image: "/images/team/staff/germaine-mukamana.jpg",
   },
   {
-    id: "innocent-kambanda",
-    slug: "innocent-kambanda",
-    name: "Innocent Kambanda",
-    role: "Master Race Mechanic",
-    description:
-      "Maintains 32 race bikes to surgical millimeter standards. Specialist in electronic shifting adjustments during muddy volcanic rain.",
-    image: "/images/team/staff/master_mechanic.jfif",
+    name: "Luc Van Nuffelen",
+    role: "Sports Director",
+    country: "Belgium",
+    image: "/images/team/staff/luc-van-neffelen.jpg",
+  },
+  {
+    name: "Mpatswenimana Fabrice",
+    role: "Assistant Sports Director",
+    country: "Rwanda",
+    image: "/images/team/staff/mpatswenimana-fabrice.jpg",
+  },
+  {
+    name: "Mario Pauwels",
+    role: "Mechanic",
+    country: "Belgium",
+    image: "/images/team/staff/mario-pauwels.jpg",
+  },
+  {
+    name: "Fabrice Ndagijimana",
+    role: "Mechanic",
+    country: "Rwanda",
+    image: "/images/team/staff/fabrice-ndagijimana.jpg",
+  },
+  {
+    name: "Innocent Uwamungu",
+    role: "Soigneur",
+    country: "Rwanda",
   },
 ];

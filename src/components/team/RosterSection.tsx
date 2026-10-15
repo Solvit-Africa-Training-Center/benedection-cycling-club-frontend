@@ -24,7 +24,7 @@ export default function RosterSection() {
     { key: "all", label: `All Personnel (${allCount})` },
     { key: "men", label: `UCI Continental Men (${menCount})` },
     { key: "women", label: `Women's Development Team (${womenCount})` },
-    { key: "junior", label: `Junior Squad [Kids] (${juniorCount})` },
+    { key: "junior", label: `Junior Squad [U-19] (${juniorCount})` },
   ];
 
   const riders = useMemo(
@@ -69,7 +69,7 @@ export default function RosterSection() {
 
       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 pt-6 sm:grid-cols-2 lg:grid-cols-4">
         {riders.map((rider) => (
-          <CyclistCard key={rider.id} cyclist={rider} />
+          <CyclistCard key={rider.slug} cyclist={rider} />
         ))}
       </div>
     </section>

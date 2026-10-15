@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "./PhotoPlaceholder";
@@ -41,20 +40,12 @@ export default function CyclistCard({ cyclist }: CyclistCardProps) {
       </div>
 
       <div className="relative z-10 aspect-[3/4] overflow-hidden rounded-2xl">
-        {hasImage && cyclist.image ? (
-          <Image
-            src={cyclist.image}
-            alt={cyclist.name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover object-top"
-          />
-        ) : (
-          <PhotoPlaceholder
-            name={cyclist.name}
-            className="absolute inset-0 h-full w-full"
-          />
-        )}
+        <PhotoPlaceholder
+          name={cyclist.name}
+          src={cyclist.image}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="absolute inset-0 h-full w-full"
+        />
         <div className="absolute top-4 left-4 z-10 flex flex-row items-start gap-2">
           <h3
             className={`font-display text-sm font-bold uppercase tracking-wide [writing-mode:vertical-rl] rotate-180 ${textColor}`}

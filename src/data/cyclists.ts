@@ -1,10 +1,4 @@
-export type RiderCategory = "men" | "women" | "junior";
-
-export type RiderHighlight = {
-  year: string | number;
-  event: string;
-  result: string;
-};
+export type RiderCategory = "men" | "women" | "junior" | "ALL PERSONNEL";
 
 export type RiderQA = {
   question: string;
@@ -12,31 +6,45 @@ export type RiderQA = {
 };
 
 export type Cyclist = {
-  id: string;
-  slug: string;
+  id?: string;
+  slug?: string;
   name: string;
-  displayName?: string;
-  title?: string;
   role: string;
-  country: string;
-  age: number;
+  category: RiderCategory;
+  country?: string;
   dateOfBirth?: string;
-  hometown?: string;
+  age?: number;
+  birthplace?: string;
+  height?: string;
+  weight?: string;
   discipline?: string;
   team?: string;
-  racingSince?: number;
-  description: string;
+  title?: string;
   bio?: string;
-  heightCm: number;
-  weightKg: number;
-  badge: string;
-  category: RiderCategory;
+  description?: string;
+  topResults?: string[];
   image?: string;
-  quote?: string;
-  qa?: RiderQA[];
-  highlights?: RiderHighlight[];
   gallery?: string[];
+  qa?: RiderQA[];
+  quote?: string;
+  usesSampleData?: boolean;
 };
+
+export function ageFromDateOfBirth(iso: string, today: Date = new Date()): number {
+  const dob = new Date(iso);
+  let age = today.getFullYear() - dob.getFullYear();
+  if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function buildQa(answers: [string, string, string, string, string]): RiderQA[] {
+  return QA_QUESTIONS.map((question, index) => ({
+    question,
+    answer: answers[index],
+  }));
+}
 
 const QA_QUESTIONS = [
   "What is your favorite snack?",
@@ -46,204 +54,34 @@ const QA_QUESTIONS = [
   "What is your hobby?",
 ] as const;
 
-function buildQa(answers: [string, string, string, string, string]): RiderQA[] {
-  return QA_QUESTIONS.map((question, index) => ({
-    question,
-    answer: answers[index],
-  }));
-}
-
-export const cyclists: Cyclist[] = [
-  // SAMPLE: replace with club-verified information
+// Junior = under 19 years old. Jackson Nkurikiyinka turns 19 on 2027-07-05; change his category then.
+const baseCyclists: Cyclist[] = [
   {
-    id: "nzafashwanayo-jean-claude",
-    slug: "nzafashwanayo-jean-claude",
-    name: "Nzafashwanayo Jean Claude",
-    displayName: "Nzafashwanayo J. Claude",
-    title: "Climber & Breakaway Specialist",
-    role: "Climber",
-    country: "Rwanda",
-    age: 27,
-    discipline: "Road Cycling",
-    team: "Benediction Cycling Club",
-    description:
-      "Breakaway king and steep gradient specialist on Mount Kigali & Virunga passes.",
-    bio: "Nzafashwanayo Jean Claude is a breakaway specialist who thrives on the steep gradients of Mount Kigali and the Virunga passes. He is one of Benediction Cycling Club's most experienced riders and a regular contender for the green jersey.",
-    heightCm: 172,
-    weightKg: 64,
-    badge: "Green Jersey Contender",
-    category: "men",
-    image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
-    gallery: [
-      "/images/team/gallery/nzafashwanayo-jean-claude-1.jpg",
-      "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg",
-      "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg",
-    ],
-    quote: "Attack when it hurts, because that is when the race is decided.",
-    qa: buildQa([
-      "Sweet potatoes",
-      "Drinking a lot of water",
-      "Washing and checking my bike",
-      "The bike, I am only fast on two wheels",
-      "Football with friends",
-    ]),
-    highlights: [
-      { year: 2022, event: "Tour du Rwanda", result: "Most aggressive rider (stage 3)" },
-      { year: 2023, event: "Rwanda National Championships", result: "Top 5, Road Race" },
-      { year: 2024, event: "Tour du Rwanda", result: "Green jersey contender" },
-    ],
-  },
-  // SAMPLE: replace with club-verified information
-  {
-    id: "uwiduhaye-mike",
-    slug: "uwiduhaye-mike",
-    name: "Uwiduhaye Mike",
-    title: "Elite Sprinter",
-    role: "Sprinter",
-    country: "Rwanda",
-    age: 26,
-    discipline: "Road Cycling",
-    team: "Benediction Cycling Club",
-    description:
-      "High-torque flat finisher with decisive sprint acceleration in bunched finishes.",
-    bio: "Uwiduhaye Mike is a high-torque sprinter who reads the final kilometers better than most. He gives Benediction Cycling Club a decisive finisher in bunched finishes.",
-    heightCm: 174,
-    weightKg: 68,
-    badge: "Green Jersey Contender",
-    category: "men",
-    image: "/images/team/riders/uwiduhaye-mike.jpg",
-    gallery: [
-      "/images/team/gallery/uwiduhaye-mike-1.jpg",
-      "/images/team/gallery/uwiduhaye-mike-2.jpg",
-      "/images/team/gallery/uwiduhaye-mike-3.jpg",
-    ],
-    quote:
-      "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
-    qa: buildQa([
-      "Chocolate biscuits",
-      "Watching the finish replay",
-      "Sleeping in, then a short spin",
-      "The dance floor, I love music too much",
-      "Playing video games",
-    ]),
-    highlights: [
-      { year: 2022, event: "Rwanda Cycling Cup", result: "Stage win, sprint finish" },
-      { year: 2023, event: "Tour du Rwanda", result: "Top 10, stage 6" },
-      { year: 2024, event: "National Road Race Series", result: "Podium finish" },
-    ],
-  },
-  // SAMPLE: replace with club-verified information
-  {
-    id: "masengesho-vainqueur",
-    slug: "masengesho-vainqueur",
-    name: "Masengesho Vainqueur",
-    title: "Time Trial Specialist",
-    role: "Time Trialist",
-    country: "Rwanda",
-    age: 22,
-    discipline: "Road Cycling",
-    team: "Benediction Cycling Club",
-    description:
-      "Wind-tunnel calibrated specialist, capable of crushing solitary 40km flat-out intervals.",
-    bio: "Masengesho Vainqueur is a time trial specialist who can hold a flat-out effort for 40 kilometers against the wind. At 22, he is one of the youngest riders in Benediction Cycling Club's first team.",
-    heightCm: 170,
-    weightKg: 65,
-    badge: "Green Jersey Contender",
-    category: "men",
-    image: "/images/team/riders/masengesho-vainqueur.jpg",
-    gallery: [
-      "/images/team/gallery/masengesho-vainqueur-1.jpg",
-      "/images/team/gallery/masengesho-vainqueur-2.jpg",
-      "/images/team/gallery/masengesho-vainqueur-3.jpg",
-      "/images/team/gallery/masengesho-vainqueur-4.jpg",
-    ],
-    quote: "Pace yourself, then ride the last kilometer like it is the first.",
-    qa: buildQa([
-      "Peanuts",
-      "Checking my power numbers",
-      "Watching cycling videos and resting",
-      "The bike, I am built for aerodynamics, not dancing",
-      "Watching cycling documentaries",
-    ]),
-    highlights: [
-      { year: 2022, event: "Rwanda National Championships", result: "Time trial, Top 5" },
-      {
-        year: 2023,
-        event: "African Continental Championships",
-        result: "Individual time trial, Top 10",
-      },
-      {
-        year: 2024,
-        event: "Tour du Rwanda",
-        result: "Best young rider in the time trial stage",
-      },
-    ],
-  },
-  // SAMPLE: replace with club-verified information
-  {
-    id: "manizabayo-eric",
-    slug: "manizabayo-eric",
-    name: "Manizabayo Eric",
-    title: "Tempo Setter & Team Rider",
-    role: "Domestique",
-    country: "Rwanda",
-    age: 25,
-    discipline: "Road Cycling",
-    team: "Benediction Cycling Club",
-    description:
-      "Relentless tempo setter, protecting leaders into technical gravel entries around Rubavu.",
-    bio: "Manizabayo Eric is a relentless tempo setter who protects team leaders on technical gravel roads around Rubavu. His calm and reliable riding makes him a pillar of Benediction Cycling Club's first team.",
-    heightCm: 170,
-    weightKg: 63,
-    badge: "Green Jersey Contender",
-    category: "men",
-    image: "/images/team/riders/manizabayo-eric.jpg",
-    gallery: [
-      "/images/team/gallery/manizabayo-eric-1.jpg",
-      "/images/team/gallery/manizabayo-eric-2.jpg",
-      "/images/team/gallery/manizabayo-eric-3.jpg",
-      "/images/team/gallery/manizabayo-eric-4.jpg",
-    ],
-    quote:
-      "A strong team wins races, and I am happy to do the work that makes it possible.",
-    qa: buildQa([
-      "Fresh mango",
-      "Checking on my teammates",
-      "Visiting friends and drinking tea",
-      "The bike, my dance moves stay at home",
-      "Cooking for friends",
-    ]),
-    highlights: [
-      { year: 2022, event: "Rwanda Cycling Cup", result: "Team victory" },
-      { year: 2023, event: "Tour du Rwanda", result: "Finished all stages" },
-      {
-        year: 2024,
-        event: "African Continental Championships",
-        result: "Team support role",
-      },
-    ],
-  },
-  // Figma design content
-  {
-    id: "mugisha-moise",
     slug: "mugisha-moise",
-    name: "Mugisha Moise",
-    title: "Elite Road Cyclist",
-    role: "Climber",
+    name: "Moise Mugisha",
+    role: "Time Trialist",
+    category: "men",
     country: "Rwanda",
-    age: 25,
-    dateOfBirth: "2/08/2003",
-    hometown: "Rubavu",
+    dateOfBirth: "1997-01-01",
+    age: 29,
+    birthplace: "Busogo",
+    height: "168cm",
+    weight: "58kg",
+    title: "Rwanda National Champion (ITT)",
+    bio: "Moise Mugisha is a Rwandan cyclist from Busogo. He is a two-time Rwanda national time trial champion (2023, 2024) and won the Tour du Cameroun general classification in 2022.",
+    description: "Moise Mugisha is a Rwandan cyclist from Busogo.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
-    racingSince: 2018,
-    description:
-      "Icon of endurance mountain passes, KOM champion in International African stage tours.",
-    bio: "Mugisha Moise is a dedicated and ambitious cyclist from Rwanda, known for his strong work ethic, climbing ability and consistent performances. He joined Benediction Club with a vision to grow, compete at the highest level and inspire the next generation of Rwandan cyclists.",
-    heightCm: 171,
-    weightKg: 71,
-    badge: "Green Jersey Contender",
-    category: "men",
+    topResults: [
+      "Winner — Grand Prix Chantal Biya, general classification (2020)",
+      "Winner — Tour du Cameroun, general classification (2022)",
+      "Rwanda National Champion — Men's Individual Time Trial (2023, 2024)",
+      "Stage winner — Tour du Rwanda (2022)",
+      "2nd — Tour du Rwanda, general classification (2020)",
+      "2nd — African Continental Championships, Men's ITT (2023)",
+      "Two stage wins — Grand Prix Chantal Biya (2020)",
+      "3rd — African Games, Men's ITT (2019)",
+    ],
     image: "/images/team/riders/mugisha-moise.jpg",
     gallery: [
       "/images/team/gallery/mugisha-moise-1.jpg",
@@ -252,159 +90,364 @@ export const cyclists: Cyclist[] = [
       "/images/team/gallery/mugisha-moise-4.jpg",
     ],
     quote: "Ride with purpose, push through every climb and never stop moving forward.",
-    qa: buildQa([
-      "Cookies",
-      "Finding food",
-      "Spending time with my family",
-      "Definitely the bike, I'm terrible at dancing",
-      "Watching movie",
-    ]),
-    highlights: [
-      { year: 2021, event: "Tour du Rwanda", result: "Best Young Rider (stage 5)" },
-      {
-        year: 2022,
-        event: "Rwanda National Championships",
-        result: "2nd place, Road Race",
-      },
-      {
-        year: 2023,
-        event: "African Continental Championships",
-        result: "Top 10 finish",
-      },
-    ],
+    qa: buildQa(["Cookies", "Finding food", "Spending time with my family", "Definitely the bike, I'm terrible at dancing", "Watching movie"]),
   },
-  // SAMPLE: replace with club-verified information
   {
-    id: "jessica-umulisa",
-    slug: "jessica-umulisa",
-    name: "Jessica Umulisa",
-    title: "Women's Development Rider",
-    role: "All-Rounder",
+    slug: "manizabayo-eric",
+    name: "Eric Manizabayo",
+    role: "Road Cyclist",
+    category: "men",
     country: "Rwanda",
-    age: 20,
+    dateOfBirth: "1997-08-28",
+    age: 29,
+    birthplace: "Jenda",
+    height: "168cm",
+    weight: "62kg",
+    title: "Rwanda National Champion (Road Race)",
+    bio: "Eric Manizabayo is a Rwandan cyclist from Jenda. He won the Rwanda national road race title in 2022 and has finished on stage podiums at the Tour du Rwanda, Tour du Cameroun, Tour of Limpopo and Tour of Sharjah.",
+    description: "Eric Manizabayo is a Rwandan cyclist from Jenda.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
-    description:
-      "Rising queen of the African Continental Championships, dominating intermediate hill climbs.",
-    bio: "Jessica Umulisa is a rising star of the Benediction women's development team, known for dominating intermediate hill climbs. She is a National ITT champion and a promising name at the African Continental Championships.",
-    heightCm: 168,
-    weightKg: 54,
-    badge: "National ITT Champion",
+    topResults: [
+      "Rwanda National Champion — Men's Road Race (2022)",
+      "Three 3rd-place stage finishes — Tour du Rwanda (2021, 2022)",
+      "2nd — stage, Tour du Cameroun (2023)",
+      "2nd — stage, Tour of Sharjah (2024)",
+      "9th — Tour du Rwanda, general classification (2022)",
+      "10th — Tour du Rwanda, general classification (2020)",
+      "3rd — stage, Tour of Limpopo (2019)",
+      "3rd — stage, Tour du Cameroun (2019)",
+      "8th — Tour du Cameroun, general classification (2023)",
+    ],
+    image: "/images/team/riders/manizabayo-eric.jpg",
+    gallery: [
+      "/images/team/gallery/manizabayo-eric-1.jpg",
+      "/images/team/gallery/manizabayo-eric-2.jpg",
+      "/images/team/gallery/manizabayo-eric-3.jpg",
+      "/images/team/gallery/manizabayo-eric-4.jpg",
+    ],
+    quote: "A strong team wins races, and I am happy to do the work that makes it possible.",
+    qa: buildQa(["Fresh mango", "Checking on my teammates", "Visiting friends and drinking tea", "The bike, my dance moves stay at home", "Cooking for friends"]),
+  },
+  {
+    slug: "masengesho-vainqueur",
+    name: "Vainqueur Masengesho",
+    role: "Road Cyclist",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "2002-01-01",
+    age: 24,
+    birthplace: "Nyiranterengwa",
+    height: "181cm",
+    weight: "75kg",
+    title: "Rwanda National Champion (Road Race)",
+    bio: "Vainqueur Masengesho is a Rwandan cyclist from Nyiranterengwa. He won the Rwanda national road race title in 2024 and finished second overall at the Tour d'Algérie Cycliste in 2026.",
+    description: "Vainqueur Masengesho is a Rwandan cyclist from Nyiranterengwa.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "Rwanda National Champion — Men's Road Race (2024)",
+      "2nd — Tour d'Algérie Cycliste, general classification (2026)",
+      "2nd — stage, Tour du Cameroun (2026)",
+      "7th — Tour du Rwanda, general classification (2025)",
+      "4th — Rwanda National Championships, Men's Road Race (2025)",
+      "3rd — two stages, Tour d'Algérie Cycliste (2026)",
+      "7th — Tour de Maurice, general classification (2024)",
+      "4th — Tour du Cameroun mountains classification (2026)",
+    ],
+    image: "/images/team/riders/masengesho-vainqueur.jpg",
+    gallery: [
+      "/images/team/gallery/masengesho-vainqueur-1.jpg",
+      "/images/team/gallery/masengesho-vainqueur-2.jpg",
+      "/images/team/gallery/masengesho-vainqueur-3.jpg",
+      "/images/team/gallery/masengesho-vainqueur-4.jpg",
+    ],
+    quote: "Pace yourself, then ride the last kilometer like it is the first.",
+    qa: buildQa(["Peanuts", "Checking my power numbers", "Watching cycling videos and resting", "The bike, I am built for aerodynamics, not dancing", "Watching cycling documentaries"]),
+  },
+  {
+    slug: "nzafashwanayo-jean-claude",
+    name: "Jean Claude Nzafashwanayo",
+    role: "Road Cyclist",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "2000-08-04",
+    age: 26,
+    birthplace: "Kacyiru",
+    height: "179cm",
+    weight: "78kg",
+    title: "Road Cyclist",
+    bio: "Jean Claude Nzafashwanayo is a Rwandan cyclist from Kacyiru. He won a stage of the Tour du Cameroun in 2019 and finished fifth overall there in 2023.",
+    description: "Jean Claude Nzafashwanayo is a Rwandan cyclist from Kacyiru.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "Stage winner — Tour du Cameroun (2019)",
+      "5th — Tour du Cameroun, general classification (2023)",
+      "5th — Rwanda National Championships, Men's Road Race (2022, 2024)",
+      "3rd — stage, Tour du Cameroun (2022)",
+      "4th — Tour du Cameroun mountains classification (2023)",
+      "4th — stage, Tour du Sénégal (2019)",
+      "6th — Rwanda National Championships, Men's ITT (2022)",
+    ],
+    image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
+    gallery: [
+      "/images/team/gallery/nzafashwanayo-jean-claude-1.jpg",
+      "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg",
+      "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg",
+    ],
+    quote: "Attack when it hurts, because that is when the race is decided.",
+    qa: buildQa(["Sweet potatoes", "Drinking a lot of water", "Washing and checking my bike", "The bike, I am only fast on two wheels", "Football with friends"]),
+  },
+
+  {
+    slug: "uwiduhaye-mike",
+    name: "Mike Uwiduhaye",
+    role: "Climber",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "1997-08-15",
+    age: 29,
+    birthplace: "Cyamabuye",
+    height: "179cm",
+    weight: "77kg",
+    title: "Road Cyclist",
+    bio: "Mike Uwiduhaye is a Rwandan cyclist from Cyamabuye. He finished second in the Tour du Rwanda mountains classification in 2025 and fifth overall at the 2026 Race to Remember.",
+    description: "Mike Uwiduhaye is a Rwandan cyclist from Cyamabuye.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "2nd — Tour du Rwanda mountains classification (2025)",
+      "6th overall — Tour du Cameroun (2026)",
+      "9th — Tour du Cameroun mountains classification (2026)",
+      "5th overall — Race to Remember (2026)",
+      "14th — Rwanda National Championships, Men's Road Race (2025)",
+    ],
+    image: "/images/team/riders/uwiduhaye-mike.jpg",
+    gallery: [
+      "/images/team/gallery/uwiduhaye-mike-1.jpg",
+      "/images/team/gallery/uwiduhaye-mike-2.jpg",
+      "/images/team/gallery/uwiduhaye-mike-3.jpg",
+    ],
+    quote: "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
+    qa: buildQa(["Chocolate biscuits", "Watching the finish replay", "Sleeping in, then a short spin", "The dance floor, I love music too much", "Playing video games"]),
+  },
+  {
+    slug: "phocas-nshimiyimana",
+    name: "Phocas Nshimiyimana",
+    role: "Road Cyclist",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "2006-01-01",
+    age: 20,
+    birthplace: "Sashwara",
+    height: "159cm",
+    weight: "57kg",
+    title: "Road Cyclist",
+    bio: "Phocas Nshimiyimana is a Rwandan cyclist from Sashwara. In 2026 he finished fifth in the Tour du Cameroun youth classification and seventh overall at the Race to Remember.",
+    description: "Phocas Nshimiyimana is a Rwandan cyclist from Sashwara.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "5th — Tour du Cameroun youth classification (2026)",
+      "7th overall — Race to Remember (2026)",
+      "5th — Tour du Cameroun youth classification (2026)",
+    ],
+    // PHOTO: save the photo as public/images/team/riders/phocas-nshimiyimana.jpg, then uncomment the next line
+    // image: "/images/team/riders/phocas-nshimiyimana.jpg",
+    quote: "Every climb is a second chance to put the group under pressure.",
+    qa: buildQa(["Bananas", "Checking my cadence", "Stretching and drinking", "The bike, I am only fast on two wheels", "Reading cycling news"]),
+  },
+
+  {
+    slug: "espoir-uhiriwe",
+    name: "Espoir Uhiriwe",
+    role: "Road Cyclist",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "2005-10-21",
+    age: 20,
+    birthplace: "Mukamira",
+    height: "179cm",
+    weight: "65kg",
+    title: "Road Cyclist",
+    bio: "Espoir Uhiriwe is a Rwandan cyclist from Mukamira. He finished eighth in the Tour du Cameroun youth classification in 2026.",
+    description: "Espoir Uhiriwe is a Rwandan cyclist from Mukamira.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "8th — Tour du Cameroun youth classification (2026)",
+    ],
+    // PHOTO: save the photo as public/images/team/riders/espoir-uhiriwe.jpg, then uncomment the next line
+    // image: "/images/team/riders/espoir-uhiriwe.jpg",
+    quote: "Steady riders finish the race.",
+    qa: buildQa(["Banana", "Checking my distance", "Stretching", "The bike, I love the feeling of the road", "Watching cycling clips"]),
+  },
+  {
+    slug: "jean-claude-niyomugabo",
+    name: "Jean Claude Niyomugabo",
+    role: "Road Cyclist",
+    category: "men",
+    country: "Rwanda",
+    dateOfBirth: "2000-01-01",
+    age: 26,
+    birthplace: "Busogo",
+    height: "180cm",
+    weight: "75kg",
+    title: "Road Cyclist",
+    bio: "Jean Claude Niyomugabo is a Rwandan cyclist from Busogo. In 2026 he finished fourth in the Heroes Cycling Cup and fourth overall at the Race to Remember.",
+    description: "Jean Claude Niyomugabo is a Rwandan cyclist from Busogo.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    topResults: [
+      "4th — Heroes Cycling Cup (2026)",
+      "4th overall — Race to Remember (2026)",
+      "7th — Tour du Cameroun youth classification (2024)",
+    ],
+    // PHOTO: save the photo as public/images/team/riders/jean-claude-niyomugabo.jpg, then uncomment the next line
+    // image: "/images/team/riders/jean-claude-niyomugabo.jpg",
+    quote: "Never chase the sprint; make the sprint come to you.",
+    qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
+  },
+
+  {
+    slug: 'sybren-nicolaides',
+    id: '9',
+    name: 'SYBREN NICOLAIDES',
+    category: 'men',
+    country: 'Belgium',
+    role: 'FIRST TEAM',
+    description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
+    image: '/images/team/cyclist-1.jpg',
+    title: 'FIRST TEAM',
+    discipline: 'Road Cycling',
+    team: 'Benediction Cycling Club',
+    birthplace: 'Leuven',
+    age: 20,
+    height: '178cm',
+    weight: '68kg',
+  },
+  {
+    slug: "glen-van-nuuffelen",
+    name: "GLEN VAN NUFFELEN",
+    role: "ACADEMY • AGE 25",
+    category: "men",
+    country: "Belgium",
+    title: "ACADEMY • AGE 25",
+    description: "Versatile rider. Road & track capability. Future team leader.",
+    team: "Benediction Cycling Club",
+    discipline: "Road Cycling",
+    image: "/images/team/cyclist-2.jpg",
+  },
+  {
+    slug: "diane-ingabire",
+    name: "DIANE INGABIRE",
+    role: "DEVELOPMENT • AGE 22",
     category: "women",
-    image: "/images/team/riders/jessica-umulisa.jpg",
-    quote: "Dream big, train hard and let the road show what you are made of.",
-    qa: buildQa([
-      "Fresh fruit",
-      "Drinking water and calling home",
-      "Resting and watching movies",
-      "The bike, though I love music too",
-      "Listening to music",
-    ]),
-    highlights: [
-      {
-        year: "Year TBC",
-        event: "National Championships",
-        result: "National ITT champion",
-      },
-      {
-        year: "Year TBC",
-        event: "African Continental Championships",
-        result: "Dominated the intermediate hill climbs",
-      },
-      {
-        year: "Year TBC",
-        event: "Benediction Cycling Club",
-        result: "Joined the women's development team",
-      },
-    ],
-  },
-  // SAMPLE: replace with club-verified information
-  {
-    id: "chrispin-ntambara",
-    slug: "chrispin-ntambara",
-    name: "Chrispin Ntambara",
-    title: "Junior Squad Rider",
-    role: "Junior Rider",
     country: "Rwanda",
-    age: 15,
+    title: "DEVELOPMENT • AGE 22",
+    description: "Rising star. Sprinter prospect. Women's cycling ambassador.",
     team: "Benediction Cycling Club",
-    description:
-      "High-cadence pedaling technique with strong aerobic endurance foundation on dirt roads.",
-    bio: "Chrispin Ntambara is one of the youngest riders in the Benediction junior squad, with a high-cadence style and strong aerobic endurance built on dirt roads. He is a rising grassroots talent with a bright future.",
-    heightCm: 164,
-    weightKg: 50,
-    badge: "Rising Grassroots Talent",
-    category: "junior",
-    image: "/images/team/riders/chrispin-ntambara.jpg",
-    quote: "Every big journey starts with a small pedal stroke.",
-    qa: buildQa([
-      "Bananas",
-      "Resting and drinking water",
-      "Playing with friends",
-      "The bike, definitely",
-      "Football",
-    ]),
-    highlights: [
-      {
-        year: "Year TBC",
-        event: "Benediction Junior Squad",
-        result: "Joined the junior squad",
-      },
-      {
-        year: "Year TBC",
-        event: "Dirt road training",
-        result: "Built a strong aerobic base",
-      },
-      {
-        year: "Year TBC",
-        event: "Grassroots program",
-        result: "Named a rising grassroots talent",
-      },
-    ],
+    discipline: "Road Cycling",
+    dateOfBirth: "2001-07-17",
+    birthplace: "Mukamira",
+    age: 25,
+    image: "/images/team/cyclist-3.jpg",
   },
-  // SAMPLE: replace with club-verified information
   {
-    id: "ryan-muhizi",
-    slug: "ryan-muhizi",
-    name: "Ryan Muhizi",
-    title: "U17 National Champion",
-    role: "Junior Rider",
-    country: "Rwanda",
-    age: 16,
-    team: "Benediction Cycling Club",
-    description:
-      "Local Rubavu youth prodigy discovered during the annual Kivu Hill Climb Trials.",
-    bio: "Ryan Muhizi is a local Rubavu youth prodigy who was discovered during the annual Kivu Hill Climb Trials. He has gone on to become U17 National Champion and is one of the brightest prospects in the junior squad.",
-    heightCm: 169,
-    weightKg: 55,
-    badge: "U17 National Champion",
+    slug: "valentine-nzayisengwa",
+    name: "VALENTINE NZAYISENGA",
+    role: "JUNIOR • AGE 17",
     category: "junior",
-    image: "/images/team/riders/ryan-muhizi.jpg",
-    quote:
-      "The trials showed me what I can do, and training will show me how far I can go.",
-    qa: buildQa([
-      "Orange juice",
-      "Telling my coach how it went",
-      "Riding with friends",
-      "The bike, I only dance when nobody is watching",
-      "Drawing",
-    ]),
-    highlights: [
-      {
-        year: "Year TBC",
-        event: "Kivu Hill Climb Trials",
-        result: "Discovered by the club's coaches",
-      },
-      {
-        year: "Year TBC",
-        event: "National Championships",
-        result: "U17 National Champion",
-      },
-      {
-        year: "Year TBC",
-        event: "Benediction Junior Squad",
-        result: "Joined the junior squad",
-      },
-    ],
+    country: "Rwanda",
+    title: "JUNIOR • AGE 17",
+    description: "Young talent. Mountain climber. National junior circuit leader.",
+    team: "Benediction Cycling Club",
+    discipline: "Road Cycling",
+    dateOfBirth: "2000-03-15",
+    birthplace: "Butaka",
+    age: 26,
+    image: "/images/team/cyclist-4.jpg",
+  },
+  {
+    slug: "jelle-roelandt",
+    name: "JELLE ROELANDT",
+    role: "FIRST TEAM • AGE 30",
+    category: "men",
+    country: "Rwanda",
+    title: "FIRST TEAM • AGE 30",
+    description: "Time-trial specialist. Individual pursuit expert. Precision handler.",
+    team: "Benediction Cycling Club",
+    discipline: "Road Cycling",
+    image: "/images/team/cyclist-5.jpg",
+  },
+  {
+    id: '14',
+    slug: 'jackson-nkurikiyinka',
+    name: 'JACKSON NKURIKIYINKA',
+    category: 'junior',
+    country: 'Rwanda',
+    role: 'JUNIOR • AGE 18',
+    title: 'JUNIOR • AGE 18',
+    description: 'Junior squad member. High-altitude training specialist. Development pathway.',
+    team: 'Benediction Cycling Club',
+    discipline: 'Road Cycling',
+    height: '181cm',
+    weight: '57kg',
+    dateOfBirth: '2008-07-05',
+    birthplace: 'Mukamira',
+    age: 18,
+    image: '/images/team/cyclist-6.jpg',
+  },
+  {
+    slug: "noah-brits",
+    name: "NOAH BRITS",
+    role: "ACADEMY • AGE 23",
+    category: "men",
+    country: "Belgium",
+    title: "ACADEMY • AGE 23",
+    description: "All-rounder. Team player. Tactical support specialist.",
+    discipline: "Road Cycling",
+    team: "Benediction Cycling Club",
+    height: "181cm",
+    weight: "63kg",
+    image: "/images/team/cyclist-7.jpg",
+  },
+  {
+    slug: "foeke-du-bois",
+    name: "FOEKE DUBOIS",
+    role: "JUNIOR • AGE 16",
+    category: "junior",
+    country: "Belgium",
+    title: "JUNIOR • AGE 16",
+    description: "Youngest squad member. High potential. Development focus.",
+    team: "Benediction Cycling Club",
+    discipline: "Road Cycling",
+    height: "172cm",
+    weight: "65kg",
+    dateOfBirth: "1992-11-09",
+    birthplace: "Jette",
+    age: 33,
+    image: "/images/team/cyclist-8.jpg",
   },
 ];
+
+import { SHOW_SAMPLE_PROFILE_DATA, sampleProfiles } from "./sampleProfiles";
+
+function fillMissing(rider: Cyclist): Cyclist {
+  if (!SHOW_SAMPLE_PROFILE_DATA) return rider;
+  const sample = rider.slug ? sampleProfiles[rider.slug] : undefined;
+  if (!sample) return rider;
+  const merged: Cyclist = { ...rider };
+  let used = false;
+  (Object.keys(sample) as (keyof Cyclist)[]).forEach((key) => {
+    if (merged[key] === undefined && sample[key] !== undefined) {
+      (merged as Record<string, unknown>)[key] = sample[key];
+      used = true;
+    }
+  });
+  if (used) merged.usesSampleData = true;
+  return merged;
+}
+
+export const cyclists: Cyclist[] = baseCyclists.map(fillMissing);

@@ -1,9 +1,31 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+
 type PhotoPlaceholderProps = {
   name: string;
   className?: string;
+  src?: string;
+  sizes?: string;
 };
 
-export default function PhotoPlaceholder({ name, className = "" }: PhotoPlaceholderProps) {
+export default function PhotoPlaceholder({ name, className = "", src, sizes }: PhotoPlaceholderProps) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
+    return (
+      <Image
+        src={src}
+        alt={name}
+        fill
+        sizes={sizes}
+        className="object-cover object-top"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
   return (
     <div
       role="img"

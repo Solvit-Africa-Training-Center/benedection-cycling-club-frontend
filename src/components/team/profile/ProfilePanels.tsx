@@ -1,8 +1,8 @@
 import type { Cyclist } from "@/data/cyclists";
+import { ageFromDateOfBirth } from "@/data/cyclists";
 import {
   BikeIcon,
   CalendarIcon,
-  FlagIcon,
   GlobeIcon,
   LocationIcon,
   QuoteIcon,
@@ -22,56 +22,31 @@ type ProfileRow = {
 
 function rowsFor(rider: Cyclist): ProfileRow[] {
   const rows: ProfileRow[] = [];
-  if (rider.dateOfBirth) {
-    rows.push({
-      key: "dob",
-      label: "Date of birth",
-      value: rider.dateOfBirth,
-      Icon: CalendarIcon,
-    });
-  } else {
+  if (rider.dateOfBirth !== undefined || rider.age !== undefined) {
     rows.push({
       key: "age",
       label: "Age",
-      value: String(rider.age),
+      value: rider.dateOfBirth !== undefined ? String(ageFromDateOfBirth(rider.dateOfBirth)) : String(rider.age),
       Icon: CalendarIcon,
     });
   }
-  if (rider.country) {
+  if (rider.birthplace !== undefined) {
+    rows.push({ key: "birthplace", label: "Place of birth", value: rider.birthplace, Icon: LocationIcon });
+  }
+  if (rider.country !== undefined) {
     rows.push({ key: "nationality", label: "Nationality", value: rider.country, Icon: GlobeIcon });
   }
-  if (rider.hometown) {
-    rows.push({ key: "hometown", label: "Hometown", value: rider.hometown, Icon: LocationIcon });
+  if (rider.height !== undefined) {
+    rows.push({ key: "height", label: "Height", value: rider.height, Icon: RulerIcon });
   }
-  if (rider.heightCm !== undefined && rider.heightCm !== null) {
-    rows.push({
-      key: "height",
-      label: "Height",
-      value: `${rider.heightCm}cm`,
-      Icon: RulerIcon,
-    });
+  if (rider.weight !== undefined) {
+    rows.push({ key: "weight", label: "Weight", value: rider.weight, Icon: ScaleIcon });
   }
-  if (rider.weightKg !== undefined && rider.weightKg !== null) {
-    rows.push({
-      key: "weight",
-      label: "Weight",
-      value: `${rider.weightKg}kg`,
-      Icon: ScaleIcon,
-    });
-  }
-  if (rider.discipline) {
+  if (rider.discipline !== undefined) {
     rows.push({ key: "discipline", label: "Discipline", value: rider.discipline, Icon: BikeIcon });
   }
-  if (rider.team) {
+  if (rider.team !== undefined) {
     rows.push({ key: "team", label: "Team", value: rider.team, Icon: TeamIcon });
-  }
-  if (rider.racingSince !== undefined) {
-    rows.push({
-      key: "racing-since",
-      label: "Racing since",
-      value: String(rider.racingSince),
-      Icon: FlagIcon,
-    });
   }
   return rows;
 }
@@ -99,7 +74,9 @@ export function PersonalProfilePanel({ rider }: { rider: Cyclist }) {
             <dt className="w-28 shrink-0 font-sans text-xs font-semibold uppercase tracking-wide text-blue-400">
               {row.label}
             </dt>
-            <dd className="font-sans text-sm text-white">{row.value}</dd>
+            <dd className="font-sans text-sm text-white">
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>

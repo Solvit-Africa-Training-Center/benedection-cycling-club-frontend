@@ -1,18 +1,20 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { cyclists } from "@/data/cyclists";
-import ProfileHero from "@/components/team/profile/ProfileHero";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { cyclists } from '@/data/cyclists';
+import ProfileHero from '@/components/team/profile/ProfileHero';
 import {
   PersonalProfilePanel,
   QuestionsAnswersPanel,
-} from "@/components/team/profile/ProfilePanels";
+} from '@/components/team/profile/ProfilePanels';
 import CareerHighlights, {
   RiderGallery,
-} from "@/components/team/profile/CareerHighlights";
-import FollowJourneyBanner from "@/components/team/profile/FollowJourneyBanner";
+} from '@/components/team/profile/CareerHighlights';
+import FollowJourneyBanner from '@/components/team/profile/FollowJourneyBanner';
 
 export function generateStaticParams() {
-  return cyclists.map((cyclist) => ({ slug: cyclist.slug }));
+  return cyclists.map((cyclist) => ({
+    slug: cyclist.name.toLowerCase().replace(/\s+/g, '-'),
+  }));
 }
 
 type RiderPageProps = {
@@ -27,13 +29,7 @@ export default async function RiderPage({ params }: RiderPageProps) {
     notFound();
   }
 
-  const displayName = rider.displayName ?? rider.name;
-  const gallery: (string | undefined)[] = [
-    rider.image,
-    undefined,
-    undefined,
-    undefined,
-  ];
+  const displayName = rider.name;
 
   return (
     <main className="min-h-screen bg-brand-navy font-sans text-white">
@@ -56,7 +52,7 @@ export default async function RiderPage({ params }: RiderPageProps) {
 
         <CareerHighlights rider={rider} />
 
-        <RiderGallery name={displayName} images={gallery} />
+        <RiderGallery name={displayName} rider={rider} />
 
         <FollowJourneyBanner />
       </div>
