@@ -44,6 +44,17 @@ body {
   filter: brightness(1.2) contrast(1.08);
 }
 
+.shop-art-jerseys,
+.shop-art-shorts {
+  background: #77787a;
+  padding: 0.75rem;
+}
+
+.shop-art-jerseys img,
+.shop-art-shorts img {
+  border: 1px solid rgb(255 255 255 / 0.12);
+}
+
 .shop-art-fallback {
   position: relative;
   font-family: var(--font-barlow);
