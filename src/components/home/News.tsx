@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const posts = [
   {
-    image: "/news1.jpg",
+    image: "/news1.jpeg",
     zoom: "",
     badge: "Stage Recap",
     badgeClass: "text-brand-lime",
@@ -17,7 +17,7 @@ const posts = [
     href: "/news",
   },
   {
-    image: "/news2.png",
+    image: "/news2.jpeg",
     zoom: "scale-[1.15]",
     badge: "Academy",
     badgeClass: "text-emerald-300",
@@ -31,7 +31,7 @@ const posts = [
     href: "/news",
   },
   {
-    image: "/news3.png",
+    image: "/news3.jpeg",
     zoom: "scale-[1.15]",
     badge: "Engineering",
     badgeClass: "text-sky-300",
@@ -88,7 +88,7 @@ export default function News() {
               className="group flex flex-col overflow-hidden rounded-2xl bg-[#1a2030]"
             >
               <Link href={post.href} className="flex h-full flex-col">
-                <div className="relative aspect-[16/9] overflow-hidden">
+                <div className="relative aspect-16/9 overflow-hidden">
                   {/* Wrapper = hover zoom */}
                   <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
                     {/* Image = fixed zoom to hide dark borders */}

@@ -20,7 +20,7 @@ export default function Hero() {
       {/* Dark overlay that fades into the page color */}
       <div className="absolute inset-0 -z-10 bg-linear-to-b from-brand-navy/50 via-brand-navy/75 to-brand-navy" />
 
-      <div className="mx-auto flex min-h-[420px] max-w-7xl flex-col justify-center px-4 py-16 md:min-h-[520px] md:px-6">
+      <div className="mx-auto flex min-h-420px max-w-7xl flex-col justify-center px-4 py-16 md:min-h-520px md:px-6">
         {/* Triangle row */}
         <svg
           width="84"
@@ -50,10 +50,11 @@ export default function Hero() {
           of Rubavu
         </h1>
 
-        <p className="mt-6 max-w-md text-sm leading-relaxed text-gray-300 md:text-base">
-          Forged at 2,400 meters along Lake Kivu&apos;s jagged volcanic
-          ridgelines. Benediction Club develops Rwanda&apos;s fiercest
-          climbers, racing with tactical intellect and world-tour endurance.
+        <p className="mt-6 max-w-3xl text-sm leading-relaxed text-gray-300 md:text-base">
+      Founded in 2005, Benediction Banafrica Team is a cycling development programme based in Rubavu, Rwanda, on the shores of Lake Kivu. Our mission is to develop young cycling talent, create opportunities for men and women in sport, and connect Rwandan and African riders with national and international competition.
+      Through cycling, we promote discipline, education, teamwork and personal development. We aim to help young athletes build strong futures both on and off the bike while contributing to the growth of cycling in Rwanda and across Africa.
+      Partner with us. Support our riders. Help build the future of African cycling.
+
         </p>
       </div>
     </section>

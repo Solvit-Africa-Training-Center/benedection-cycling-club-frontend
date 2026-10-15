@@ -133,7 +133,7 @@ export default function Navbar() {
       )}
 
       {/* Gradient bottom line */}
-      <div className="h-[3px] w-full bg-linear-to-r from-blue-600 via-emerald-400 to-brand-lime" />
+      <div className="h-3px w-full bg-linear-to-r from-blue-600 via-emerald-400 to-brand-lime" />
     </header>
   );
 }

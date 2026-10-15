@@ -28,11 +28,11 @@ export default function Team() {
         </div>
 
         {/* Sliding row: swipe or scroll sideways to see every rider */}
-        <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] lg:gap-5 [&::-webkit-scrollbar]:hidden">
+        <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 scrollbar-width:none lg:gap-5 [&::-webkit-scrollbar]:hidden">
           {riders.map((rider) => (
             <article
               key={rider.name}
-              className="relative aspect-[3/4] w-[calc((100%-1rem)/2)] shrink-0 snap-start overflow-hidden rounded-2xl bg-gray-300 lg:w-[calc((100%-3.75rem)/4)]"
+              className="relative aspect-3/4 w-[calc((100%-1rem)/2)] shrink-0 snap-start overflow-hidden rounded-2xl bg-gray-300 lg:w-[calc((100%-3.75rem)/4)]"
             >
               <Image
                 src={rider.image}
