@@ -32,7 +32,7 @@ const products: Product[] = [
     name: "Pro Race Aero Jersey 2026",
     price: 140,
     category: "Jerseys",
-    image: "/jersey.jpeg",
+    image: "/jersey.png",
     sizes: ["XS", "S", "M", "L", "XL"],
     description: "The official Benediction Banafrica race jersey, built for fast training days and race-day performance.",
   },
@@ -40,7 +40,7 @@ const products: Product[] = [
     name: "Elite Endurance Bib Shorts",
     price: 135,
     category: "Shorts",
-    image: "/short.jpeg",
+    image: "/short.png",
     sizes: ["XS", "S", "M", "L", "XL"],
     description: "Comfortable endurance bib shorts with a supportive fit for long rides and hard efforts.",
   },
@@ -88,16 +88,17 @@ const fallbackArtwork: Record<Product["category"], string> = {
   Helmet: "HELMET",
 };
 
-function ProductArtwork({ product }: { product: Product }) {
+function ProductArtwork({ product, className = "" }: { product: Product; className?: string }) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
-    <div className={`shop-art shop-art-${product.category.toLowerCase()}`}>
+    <div className={`shop-art shop-art-${product.category.toLowerCase()} ${className}`}>
       {!imageFailed && (
         <Image
           src={product.image}
           alt=""
           fill
+          sizes="(min-width: 1024px) 50vw, 100vw"
           className="h-full w-full object-contain mix-blend-multiply"
           onError={() => setImageFailed(true)}
         />
@@ -207,9 +208,7 @@ export default function ShopScreen() {
           </section>
 
           <section className="mx-auto grid max-w-7xl gap-8 px-4 py-8 md:px-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:py-12">
-            <div className="rounded-sm bg-[#77787a] p-4 sm:p-8">
-              <ProductArtwork product={product} />
-            </div>
+            <ProductArtwork product={product} className="rounded-sm" />
             <div className="flex flex-col justify-center">
               <p className="font-display text-3xl font-bold text-brand-lime">${product.price}</p>
               <p className="mt-5 text-sm leading-relaxed text-gray-300">{product.description}</p>
@@ -292,17 +291,18 @@ export default function ShopScreen() {
         <section className="mx-auto max-w-7xl px-4 py-5 md:px-8">
           <div className="mb-7 flex gap-8 border-b border-white/10 pb-4 text-[10px] font-bold uppercase text-gray-400"><span className={view === "bag" ? "text-brand-lime" : ""}>① Shopping bag</span><span className={view === "checkout" ? "text-brand-lime" : ""}>② Order details</span><span>③ Confirmation</span></div>
           {view === "bag" ? (
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
               <div>
                 <div className="mb-4 flex justify-between border-b border-white/10 pb-3"><h2 className="font-display font-bold uppercase">Your items</h2><span className="text-[10px] text-gray-400">{cartCount} {cartCount === 1 ? "item" : "items"}</span></div>
                 {cart.length ? <div className="divide-y divide-white/10">{cart.map((item) => {
                   const product = products.find((entry) => entry.name === item.productName)!;
-                  return <article key={`${item.productName}-${item.size}`} className="grid gap-4 py-4 sm:grid-cols-[160px_1fr]">
-                    <ProductArtwork product={product} />
+                  return <article key={`${item.productName}-${item.size}`} className="grid gap-4 py-4 sm:grid-cols-[180px_minmax(0,1fr)]">
+                    <ProductArtwork product={product} className="shop-art-bag" />
                     <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">Benediction / pro team kit</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3><p className="mt-3 text-xs text-gray-400">Size: {item.size}</p></div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">Remove</button></div></div>
                   </article>;
                 })}</div> : <p className="py-10 text-sm text-gray-400">Your bag is empty. Continue shopping to add team kit.</p>}
-              </div>{orderSummary()}
+              </div>
+              {orderSummary()}
             </div>
           ) : (
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
