@@ -27,6 +27,7 @@ export type Cyclist = {
   gallery?: string[];
   qa?: RiderQA[];
   quote?: string;
+  usesSampleData?: boolean;
 };
 
 export function ageFromDateOfBirth(iso: string, today: Date = new Date()): number {
@@ -54,7 +55,7 @@ const QA_QUESTIONS = [
 ] as const;
 
 // Junior = under 19 years old. Jackson Nkurikiyinka turns 19 on 2027-07-05; change his category then.
-export const cyclists: Cyclist[] = [
+const baseCyclists: Cyclist[] = [
   {
     slug: "mugisha-moise",
     name: "Moise Mugisha",
@@ -310,12 +311,21 @@ export const cyclists: Cyclist[] = [
   },
 
   {
+    slug: 'sybren-nicolaides',
     id: '9',
-    name: 'ESPOIR UHIRIWE',
-    category: 'ALL PERSONNEL',
-    role: 'FIRST TEAM • AGE 31',
-    description: 'Endurance specialist. Mountain stage expert. Tour de Rwanda champion.',
+    name: 'SYBREN NICOLAIDES',
+    category: 'men',
+    country: 'Belgium',
+    role: 'FIRST TEAM',
+    description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
     image: '/images/team/cyclist-1.jpg',
+    title: 'FIRST TEAM',
+    discipline: 'Road Cycling',
+    team: 'Benediction Cycling Club',
+    birthplace: 'Leuven',
+    age: 20,
+    height: '178cm',
+    weight: '68kg',
   },
   {
     slug: "glen-van-nuuffelen",
@@ -421,3 +431,23 @@ export const cyclists: Cyclist[] = [
     image: "/images/team/cyclist-8.jpg",
   },
 ];
+
+import { SHOW_SAMPLE_PROFILE_DATA, sampleProfiles } from "./sampleProfiles";
+
+function fillMissing(rider: Cyclist): Cyclist {
+  if (!SHOW_SAMPLE_PROFILE_DATA) return rider;
+  const sample = rider.slug ? sampleProfiles[rider.slug] : undefined;
+  if (!sample) return rider;
+  const merged: Cyclist = { ...rider };
+  let used = false;
+  (Object.keys(sample) as (keyof Cyclist)[]).forEach((key) => {
+    if (merged[key] === undefined && sample[key] !== undefined) {
+      (merged as Record<string, unknown>)[key] = sample[key];
+      used = true;
+    }
+  });
+  if (used) merged.usesSampleData = true;
+  return merged;
+}
+
+export const cyclists: Cyclist[] = baseCyclists.map(fillMissing);
