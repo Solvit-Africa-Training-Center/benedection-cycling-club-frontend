@@ -157,7 +157,7 @@ export default function PartnerScreen() {
             </p>
           </div>
           <a
-            href="mailto:info@benedictioncyclingclub.com?subject=Partnership%20enquiry"
+            href="/contact"
             className="inline-flex w-fit items-center rounded-full bg-brand-teal px-6 py-3 text-xs font-bold uppercase tracking-widest text-brand-navy transition-colors hover:bg-brand-lime"
           >
             Partner with us
