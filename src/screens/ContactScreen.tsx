@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { cloneElement, FormEvent, useState } from "react";
+import type { ClubContact } from "@/lib/api/types";
 
-const contactDetails = [
+const fallbackDetails = [
   {
     label: "P.O. BOX",
     value: "173, Rubavu",
@@ -41,13 +42,80 @@ const contactDetails = [
 const inputClassName =
   "mt-2 w-full rounded-md border border-white/10 bg-[#30384a] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-500 focus:border-brand-teal focus:ring-1 focus:ring-brand-teal";
 
-export default function ContactScreen() {
-  const [submitted, setSubmitted] = useState(false);
+function detailsFromContacts(contacts?: ClubContact[], location?: string) {
+  const place = location?.trim();
+  const phone = contacts?.find((item) => item.kind === "phone" && item.value?.trim());
+  const email = contacts?.find((item) => item.kind === "email" && item.value?.trim());
+  const rows = fallbackDetails.map((detail) => {
+    if (detail.label === "Email" && email?.value) {
+      return { ...detail, value: email.value, href: `mailto:${email.value}` };
+    }
+    if (detail.label === "Phone" && phone?.value) {
+      return { ...detail, value: phone.value, href: `tel:${phone.value.replace(/\s+/g, "")}` };
+    }
+    return detail;
+  });
+  if (!place) return rows;
+  const postal = rows[0];
+  return [
+    {
+      label: "Location",
+      value: place,
+      href: `https://maps.google.com/?q=${encodeURIComponent(place)}`,
+      icon: cloneElement(postal.icon),
+    },
+    ...rows,
+  ];
+}
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+export default function ContactScreen({
+  contacts,
+  location,
+}: {
+  contacts?: ClubContact[];
+  location?: string;
+}) {
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const contactDetails = detailsFromContacts(contacts, location);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
-    event.currentTarget.reset();
+    setError(null);
+    setSubmitted(false);
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const name = String(data.get("name") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
+    const phone = String(data.get("phone") ?? "").trim();
+    const type = String(data.get("type") ?? "client");
+    const message = String(data.get("message") ?? "").trim();
+    const subject = `${type[0]?.toUpperCase() ?? "C"}${type.slice(1)} enquiry`;
+
+    setPending(true);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          subject,
+          message: phone ? `Phone: ${phone}\n\n${message}` : message,
+        }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || "Could not send the message.");
+      }
+      setSubmitted(true);
+      form.reset();
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Could not send the message.");
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -92,8 +160,8 @@ export default function ContactScreen() {
                 <a
                   key={detail.label}
                   href={detail.href}
-                  target={detail.label === "P.O. BOX" ? "_blank" : undefined}
-                  rel={detail.label === "P.O. BOX" ? "noreferrer" : undefined}
+                  target={detail.label === "P.O. BOX" || detail.label === "Location" ? "_blank" : undefined}
+                  rel={detail.label === "P.O. BOX" || detail.label === "Location" ? "noreferrer" : undefined}
                   className="flex items-center gap-3 text-sm text-gray-300 transition-colors hover:text-brand-teal md:text-base"
                 >
                   <span className="h-5 w-5 shrink-0 text-brand-teal [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:stroke-2">
@@ -170,13 +238,19 @@ export default function ContactScreen() {
           <div className="mt-8 flex flex-col items-center gap-4">
             <button
               type="submit"
-              className="w-full max-w-xs rounded-full bg-[#276b24] px-8 py-3 font-display text-2xl uppercase leading-none text-white transition-colors hover:bg-brand-teal hover:text-brand-navy"
+              disabled={pending}
+              className="w-full max-w-xs rounded-full bg-[#276b24] px-8 py-3 font-display text-2xl uppercase leading-none text-white transition-colors hover:bg-brand-teal hover:text-brand-navy disabled:opacity-60"
             >
-              Submit
+              {pending ? "Sending…" : "Submit"}
             </button>
             {submitted && (
               <p role="status" className="text-sm text-brand-lime">
                 Thanks for reaching out. We&apos;ll get back to you soon.
+              </p>
+            )}
+            {error && (
+              <p role="alert" className="text-sm text-red-400">
+                {error}
               </p>
             )}
           </div>

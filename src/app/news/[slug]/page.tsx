@@ -1,11 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { news } from "@/data/news";
-
-export function generateStaticParams() {
-  return news.map((article) => ({ slug: article.slug }));
-}
+import { getNewsArticle } from "@/lib/api";
 
 export default async function NewsArticlePage({
   params,
@@ -13,7 +9,7 @@ export default async function NewsArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = news.find((a) => a.slug === slug);
+  const article = await getNewsArticle(slug);
 
   if (!article) notFound();
 
@@ -49,6 +45,7 @@ export default async function NewsArticlePage({
             fill
             priority
             sizes="(min-width: 896px) 896px, 100vw"
+            unoptimized={article.image.startsWith("http")}
             className={`object-cover ${article.position ?? "object-center"}`}
           />
         </div>

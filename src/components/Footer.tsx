@@ -119,7 +119,7 @@ export default function Footer() {
       {/* Bottom line */}
       <div className="mx-auto max-w-7xl border-t border-white/10 px-4 py-5 md:px-6">
         <p className="text-[11px] text-gray-400">
-          © 2025 Benediction Cycling Club Rubavu (Banafrica). All rights
+          © 2026 Benediction Cycling Club Rubavu (Banafrica). All rights
           reserved. Registered Rwandan Sporting Entity.
         </p>
       </div>

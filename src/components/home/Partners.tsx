@@ -1,4 +1,4 @@
-const partners = [
+const fallbackPartners = [
   { name: "Skol", caption: "Official Beverage" },
   { name: "Minisports", caption: "Republic of Rwanda" },
   { name: "Ferwacy", caption: "Rwanda Cycling Fed." },
@@ -7,7 +7,11 @@ const partners = [
   { name: "UCI Tour", caption: "Africa Continental" },
 ];
 
-export default function Partners() {
+export default function Partners({
+  partners = fallbackPartners,
+}: {
+  partners?: { name: string; caption?: string }[];
+}) {
   return (
     <section className="bg-[#1b212d] text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-14">
@@ -31,9 +35,11 @@ export default function Partners() {
               <p className="font-display text-xl font-bold uppercase tracking-wide text-gray-300">
                 {partner.name}
               </p>
+              {partner.caption ? (
               <p className="mt-1 text-[8px] uppercase tracking-wider text-gray-500">
                 {partner.caption}
               </p>
+              ) : null}
             </div>
           ))}
         </div>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import RosterSection from "@/components/team/RosterSection";
 import StaffSection from "@/components/team/StaffSection";
 import TrialsBanner from "@/components/team/TrialsBanner";
+import { getCyclists, getStaff } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Team | Benediction Cycling Club",
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
     "Engineered on the volcanic grades of Rwanda and honed along the mist of Lake Kivu.",
 };
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const [cyclists, staff] = await Promise.all([getCyclists(), getStaff()]);
+
   return (
     <main className="min-h-screen bg-brand-navy font-sans text-white">
       <section className="relative overflow-hidden min-h-[max(60vh,380px)]">
@@ -43,10 +46,10 @@ export default function TeamPage() {
         </div>
       </section>
 
-      <RosterSection />
+      <RosterSection cyclists={cyclists} />
 
       <div className="mt-16">
-        <StaffSection />
+        <StaffSection staff={staff} />
       </div>
 
       <div className="mt-16 pb-16">

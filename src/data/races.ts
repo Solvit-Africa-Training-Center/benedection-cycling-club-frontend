@@ -5,8 +5,9 @@ export type Team = "men" | "women" | "junior" | "all";
 export type Race = {
   id: string;
   name: string;
-  startDate: string;
+  startDate?: string;
   endDate?: string;
+  seasonYear?: number;
   location: string;
   team: Team;
 };
@@ -14,6 +15,8 @@ export type Race = {
 export type RaceResult = {
   place: number;
   riderSlug: string;
+  riderName?: string;
+  cyclistId?: number;
   race: string;
   time: string;
 };
@@ -23,7 +26,14 @@ export type ClubStat = {
   label: string;
 };
 
-export function getRaceStatus(race: Race, todayIso: string): "upcoming" | "ongoing" | "completed" {
+export function getRaceStatus(race: Race, todayIso: string): "upcoming" | "ongoing" | "completed" | "season" {
+  if (!race.startDate) {
+    if (!race.seasonYear) return "season";
+    const todayYear = Number(todayIso.slice(0, 4));
+    if (race.seasonYear < todayYear) return "completed";
+    if (race.seasonYear > todayYear) return "upcoming";
+    return "season";
+  }
   const end = race.endDate ?? race.startDate;
   if (end < todayIso) {
     return "completed";

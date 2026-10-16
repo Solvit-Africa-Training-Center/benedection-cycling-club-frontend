@@ -1,7 +1,7 @@
-import { staff } from "@/data/staff";
+import type { StaffMember } from "@/data/staff";
 import StaffCard from "./StaffCard";
 
-export default function StaffSection() {
+export default function StaffSection({ staff }: { staff: StaffMember[] }) {
   return (
     <section aria-labelledby="staff-heading" className="mx-auto w-full max-w-7xl px-4 md:px-6">
       <h2

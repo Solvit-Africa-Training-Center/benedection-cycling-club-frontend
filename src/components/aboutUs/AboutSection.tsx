@@ -3,7 +3,7 @@ import Image from "next/image";
 type AboutSectionProps = {
   title: string;
   text: string;
-  quote: string;
+  quote?: string;
   /** Path in /public, for example "/about-story.jpg". When set, it replaces the title panel. */
   image?: string;
   /** Put the panel on the right and the text on the left (used for Mission). */
@@ -58,12 +58,14 @@ export default function AboutSection({
 
         {/* Text + quote */}
         <div className={reverse ? "lg:order-1" : ""}>
-          <p className="max-w-xl text-xs leading-relaxed text-gray-400 md:text-sm">
+          <p className="max-w-xl whitespace-pre-line text-xs leading-relaxed text-gray-400 md:text-sm">
             {text}
           </p>
-          <blockquote className="mt-8 max-w-xs rounded-sm bg-[#141a26] p-4 text-xs italic leading-relaxed text-gray-300 lg:ml-10">
-            &ldquo;{quote}&rdquo;
-          </blockquote>
+          {quote ? (
+            <blockquote className="mt-8 max-w-xs rounded-sm bg-[#141a26] p-4 text-xs italic leading-relaxed text-gray-300 lg:ml-10">
+              &ldquo;{quote}&rdquo;
+            </blockquote>
+          ) : null}
         </div>
       </div>
     </section>

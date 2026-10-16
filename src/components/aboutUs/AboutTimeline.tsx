@@ -1,4 +1,15 @@
-const milestones = [
+export type TimelineMilestone = {
+  tag: string;
+  year: string;
+  title: string;
+  text: string;
+  achievement: string;
+  yearClass: string;
+  achievementClass: string;
+  current: boolean;
+};
+
+const fallbackMilestones: TimelineMilestone[] = [
   {
     tag: "Year 01",
     year: "2012",
@@ -41,7 +52,12 @@ const milestones = [
   },
 ];
 
-export default function AboutTimeline() {
+export default function AboutTimeline({
+  milestones = fallbackMilestones,
+}: {
+  milestones?: TimelineMilestone[];
+}) {
+  const items = milestones.length ? milestones : fallbackMilestones;
   return (
     <section className="bg-[#1b212d] text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
@@ -61,9 +77,9 @@ export default function AboutTimeline() {
 
         {/* Cards */}
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {milestones.map((m) => (
+          {items.map((m, index) => (
             <article
-              key={m.year}
+              key={`${m.year}-${m.title}-${index}`}
               className="flex flex-col rounded-sm bg-[#222836] p-5"
             >
               <div className="flex items-start justify-between gap-2">

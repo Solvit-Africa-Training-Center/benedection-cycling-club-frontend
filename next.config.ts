@@ -1,16 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   devIndicators: false,
-  images:{
+  allowedDevOrigins: ["192.168.56.1"],
+  images: {
     qualities: [75, 100],
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "localhost" },
+    ],
   },
 };
-
-module.exports = {
-  allowedDevOrigins: ['192.168.56.1'],
-}
 
 export default nextConfig;
