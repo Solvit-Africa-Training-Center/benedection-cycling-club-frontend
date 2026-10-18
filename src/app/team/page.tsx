@@ -13,30 +13,20 @@ export const metadata: Metadata = {
 export default function TeamPage() {
   return (
     <main className="min-h-screen bg-brand-navy font-sans text-white">
-      <section className="relative overflow-hidden min-h-[max(60vh,380px)]">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/team/riders/hero_team.jpg"
-            alt=""
-            aria-hidden="true"
-            fill
-            sizes="100vw"
-            className="object-cover object-center scale-110 blur-2xl opacity-60 pointer-events-none select-none"
-          />
-          <Image
-            src="/images/team/riders/hero_team.jpg"
-            alt="Benediction Cycling Club riders"
-            fill
-            priority
-            sizes="100vw"
-            className="object-contain object-center"
-          />
-        </div>
+      <section className="relative overflow-hidden min-h-[clamp(26rem,60vw,85vh)]">
+        <Image
+          src="/images/team/riders/hero_team.jpg"
+          alt="Benediction Cycling Club riders"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_30%]"
+        />
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-linear-to-b from-transparent to-brand-navy"
         />
-        <div className="relative z-10 flex min-h-[max(60vh,380px)] flex-col justify-end pb-10 pt-12 md:pt-16">
+        <div className="relative z-10 flex min-h-[clamp(26rem,60vw,85vh)] flex-col justify-end pb-10 pt-12 md:pt-16">
           <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
             <p className="mb-2 font-sans text-xs font-bold uppercase tracking-widest text-brand-lime">
               Rooted in Rwanda. Riding for the World.
