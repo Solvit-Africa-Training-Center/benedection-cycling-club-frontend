@@ -6,8 +6,9 @@ import { TrophyIcon } from "./icons";
 const GALLERY_ASPECT = "4 / 5";
 
 function buildGalleryTiles(rider: Cyclist): string[] {
-  const own = Array.from(new Set((rider.gallery ?? []) as string[])).filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
-  if (own.length >= 4) return own.slice(0, 4);
+  const raw = ((rider.gallery ?? []) as string[]).filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+  if (raw.length >= 4) return raw.slice(0, 4);
+  const own = Array.from(new Set(raw));
   if (own.length >= 1) {
     const repeated: string[] = [];
     while (repeated.length < 4) repeated.push(...own);
