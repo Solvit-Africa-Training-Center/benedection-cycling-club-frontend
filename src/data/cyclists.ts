@@ -254,6 +254,7 @@ const baseCyclists: Cyclist[] = [
       "5th — Tour du Cameroun youth classification (2026)",
     ],
     image: "/images/team/riders/phocas-nshimiyimana.jpg",
+    gallery: ["/images/team/gallery/phocas-nshimiyimana-1.jpg"],
     quote: "Every climb is a second chance to put the group under pressure.",
     qa: buildQa(["Bananas", "Checking my cadence", "Stretching and drinking", "The bike, I am only fast on two wheels", "Reading cycling news"]),
   },
@@ -303,6 +304,7 @@ const baseCyclists: Cyclist[] = [
       "7th — Tour du Cameroun youth classification (2024)",
     ],
     image: "/images/team/riders/jean-claude-niyomugabo.jpg",
+    gallery: ["/images/team/gallery/jean-claude-niyomugabo-1.jpg"],
     quote: "Never chase the sprint; make the sprint come to you.",
     qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
   },
@@ -316,6 +318,7 @@ const baseCyclists: Cyclist[] = [
     role: 'FIRST TEAM',
     description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
     image: '/images/team/riders/sybren-nicolaides.jpg',
+    gallery: ["/images/team/gallery/sybren-nicolaides-1.jpg"],
     title: 'FIRST TEAM',
     discipline: 'Road Cycling',
     team: 'Benediction Cycling Club',
@@ -365,6 +368,7 @@ const baseCyclists: Cyclist[] = [
     birthplace: "Butaka",
     age: 26,
     image: "/images/team/riders/valentine.jpg",
+    gallery: ["/images/team/gallery/valentine-nzayisengwa-1.jpg"],
   },
   {
     slug: "jelle-roelandt",
@@ -427,6 +431,7 @@ const baseCyclists: Cyclist[] = [
     birthplace: "Jette",
     age: 33,
     image: "/images/team/riders/foeke-dubois.jpg",
+    gallery: ["/images/team/gallery/foeke-dubois-1.jpg"],
   },
 ];
 
