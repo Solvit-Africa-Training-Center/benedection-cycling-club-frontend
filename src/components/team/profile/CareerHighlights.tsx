@@ -3,6 +3,8 @@ import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { TrophyIcon } from "./icons";
 
+const GALLERY_ASPECT = "4 / 5";
+
 export default function CareerHighlights({ rider }: { rider: Cyclist }) {
   const results = rider.topResults ?? [];
 
@@ -45,20 +47,22 @@ export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) 
           src ? (
             <div
               key={`${name}-gallery-${index}`}
-              className="relative aspect-[4/3] overflow-hidden rounded-sm"
+              className="relative overflow-hidden rounded-sm"
+              style={{ aspectRatio: GALLERY_ASPECT }}
             >
               <Image
                 src={src}
                 alt={`${name} gallery photo ${index + 1}`}
                 fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover"
+                sizes="(min-width: 768px) 25vw, 50vw"
+                className="object-contain object-center"
               />
             </div>
           ) : (
             <div
               key={`${name}-gallery-${index}`}
-              className="relative aspect-[4/3] overflow-hidden rounded-sm"
+              className="relative overflow-hidden rounded-sm"
+              style={{ aspectRatio: GALLERY_ASPECT }}
             >
               <PhotoPlaceholder
                 name={name}
