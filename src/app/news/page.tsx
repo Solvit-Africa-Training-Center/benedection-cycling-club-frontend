@@ -1,9 +1,9 @@
 import NewsHero from "@/components/news/NewsHero";
 import NewsGrid from "@/components/news/NewsGrid";
 import NewsPagination from "@/components/news/NewsPagination";
-import { news } from "@/data/news";
+import { getNewsArticles } from "@/lib/api";
 
-const PAGE_SIZE = 6; // use 6 while testing with only 9 articles
+const PAGE_SIZE = 6;
 
 export default async function NewsPage({
   searchParams,
@@ -11,6 +11,7 @@ export default async function NewsPage({
   searchParams: Promise<{ page?: string }>;
 }) {
   const { page } = await searchParams;
+  const news = await getNewsArticles();
 
   const totalPages = Math.max(1, Math.ceil(news.length / PAGE_SIZE));
   const current = Math.min(Math.max(Number(page) || 1, 1), totalPages);

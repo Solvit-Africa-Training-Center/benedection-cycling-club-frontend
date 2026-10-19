@@ -80,11 +80,26 @@ const stats: {
   },
 ];
 
-export default function AboutStats() {
+export default function AboutStats({
+  yearsRacing,
+  majorTrophies,
+}: {
+  yearsRacing?: number;
+  majorTrophies?: number;
+}) {
+  const display = stats.map((stat) => {
+    if (stat.title === "Years of racing" && yearsRacing) {
+      return { ...stat, value: String(yearsRacing) };
+    }
+    if (stat.title === "Major trophies" && majorTrophies) {
+      return { ...stat, value: String(majorTrophies) };
+    }
+    return stat;
+  });
   return (
     <section className="bg-[#121823]">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 py-10 sm:grid-cols-2 md:px-6 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {display.map((stat) => (
           <article
             key={stat.label}
             className="rounded-sm bg-[#1a2030] p-5 text-white"

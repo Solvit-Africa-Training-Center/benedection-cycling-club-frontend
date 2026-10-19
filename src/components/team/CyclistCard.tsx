@@ -12,7 +12,7 @@ export default function CyclistCard({ cyclist }: CyclistCardProps) {
 
   return (
     <Link
-      href={`/team/${cyclist.slug}`}
+      href={`/team/${cyclist.slug ?? cyclist.id ?? encodeURIComponent(cyclist.name)}`}
       aria-label={`View profile: ${cyclist.name}`}
       className="group relative block rounded-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-brand-lime focus-visible:outline-offset-4"
     >

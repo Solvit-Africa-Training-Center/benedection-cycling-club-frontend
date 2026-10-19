@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 
@@ -11,20 +10,12 @@ export default function ProfileHero({ rider }: { rider: Cyclist }) {
     <section aria-label={`${displayName} overview`}>
       <div className="grid items-center gap-10 md:grid-cols-2">
         <div className="relative aspect-square w-full overflow-hidden rounded-lg">
-          {image ? (
-            <Image
-              src={image}
-              alt={displayName}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top"
-            />
-          ) : (
-            <PhotoPlaceholder
-              name={displayName}
-              className="absolute inset-0 h-full w-full"
-            />
-          )}
+          <PhotoPlaceholder
+            name={displayName}
+            src={image}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="absolute inset-0 h-full w-full"
+          />
         </div>
 
         <div>
@@ -37,7 +28,7 @@ export default function ProfileHero({ rider }: { rider: Cyclist }) {
             </p>
           ) : null}
           {bio ? (
-            <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-gray-300">
+            <p className="mt-4 max-w-md whitespace-pre-line font-sans text-sm leading-relaxed text-gray-300">
               {bio}
             </p>
           ) : (

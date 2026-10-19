@@ -1,16 +1,17 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import type { Cyclist } from "@/data/cyclists";
 
-const riders = [
-  { name: "Mugisha Moise", role: "Cyclist", image: "/member1.jpg" },
-  { name: "Manizabayo Eric", role: "Cyclist", image: "/member2.jpg" },
-  { name: "Masengesho Vainqueur", role: "Cyclist", image: "/member3.jpg" },
-  { name: "Uwiduhaye Mike", role: "Cyclist", image: "/member4.jpg" },
-  { name: "Nzafashwanayo Jean Claude", role: "Cyclist", image: "/member5.jpg" },
+const fallbackRiders: Pick<Cyclist, "name" | "role" | "image" | "slug">[] = [
+  { name: "Mugisha Moise", role: "Cyclist", image: "/member1.jpg", slug: "mugisha-moise" },
+  { name: "Manizabayo Eric", role: "Cyclist", image: "/member2.jpg", slug: "manizabayo-eric" },
+  { name: "Masengesho Vainqueur", role: "Cyclist", image: "/member3.jpg", slug: "masengesho-vainqueur" },
+  { name: "Uwiduhaye Mike", role: "Cyclist", image: "/member4.jpg", slug: "uwiduhaye-mike" },
+  { name: "Nzafashwanayo Jean Claude", role: "Cyclist", image: "/member5.jpg", slug: "nzafashwanayo-jean-claude" },
 ];
 
-export default function Team() {
+export default function Team({ riders = fallbackRiders }: { riders?: Pick<Cyclist, "name" | "role" | "image" | "slug">[] }) {
   return (
     <section className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
@@ -31,16 +32,19 @@ export default function Team() {
         <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 scrollbar-width:none lg:gap-5 [&::-webkit-scrollbar]:hidden">
           {riders.map((rider) => (
             <article
-              key={rider.name}
+              key={rider.slug ?? rider.name}
               className="relative aspect-3/4 w-[calc((100%-1rem)/2)] shrink-0 snap-start overflow-hidden rounded-2xl bg-gray-300 lg:w-[calc((100%-3.75rem)/4)]"
             >
+              {rider.image ? (
               <Image
                 src={rider.image}
                 alt={`${rider.name}, ${rider.role}`}
                 fill
+                unoptimized={rider.image.startsWith("http")}
                 sizes="(min-width: 1024px) 25vw, 50vw"
                 className="object-cover object-top"
               />
+              ) : null}
               {/* Vertical name label */}
               <p className="absolute left-3 top-4 rotate-180 font-display uppercase leading-tight text-brand-navy [writing-mode:vertical-rl]">
                 <span className="block text-xs font-semibold tracking-wide">

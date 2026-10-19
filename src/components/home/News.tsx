@@ -1,48 +1,37 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { NewsArticle } from "@/data/news";
 
-const posts = [
+const fallbackPosts: NewsArticle[] = [
   {
     image: "/news1.jpeg",
-    zoom: "",
-    badge: "Stage Recap",
-    badgeClass: "text-brand-lime",
     date: "Oct 24, 2025",
     category: "Tour du Rwanda",
     title:
       "Tactical mastery in the northern crags: how Benediction secured the breakaway",
     excerpt:
       "A minute-by-minute breakdown of the strategic crosswind attack deployed at kilometer 92 on the descent towards Rubavu.",
-    readTime: "4 min read",
-    href: "/news",
+    slug: "news",
   },
   {
     image: "/news2.jpeg",
-    zoom: "scale-[1.15]",
-    badge: "Academy",
-    badgeClass: "text-emerald-300",
     date: "Oct 18, 2025",
     category: "Development Squad",
     title:
       "Next-gen climbers: six junior athletes promoted to the Continental roster",
     excerpt:
       "Discover the breakthrough riders stepping up from the Rubavu Youth Academy into the UCI Continental peloton for 2026.",
-    readTime: "3 min read",
-    href: "/news",
+    slug: "news",
   },
   {
     image: "/news3.jpeg",
-    zoom: "scale-[1.15]",
-    badge: "Engineering",
-    badgeClass: "text-sky-300",
     date: "Oct 10, 2025",
     category: "Tech Insights",
     title:
       "Aero tuning for 12% incline: custom gearing for the Virunga volcano stages",
     excerpt:
       "Head mechanic Emmanuel Bizimana reveals the gear ratios and tubeless pressures optimized for cobblestone and volcanic ash tarmac.",
-    readTime: "6 min read",
-    href: "/news",
+    slug: "news",
   },
 ];
 
@@ -64,7 +53,9 @@ function Arrow() {
   );
 }
 
-export default function News() {
+export default function News({ articles = fallbackPosts }: { articles?: NewsArticle[] }) {
+  const posts = articles.slice(0, 3);
+
   return (
     <section className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
@@ -84,26 +75,23 @@ export default function News() {
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <article
-              key={post.title}
+              key={post.slug + post.title}
               className="group flex flex-col overflow-hidden rounded-2xl bg-[#1a2030]"
             >
-              <Link href={post.href} className="flex h-full flex-col">
+              <Link href={post.slug === "news" ? "/news" : `/news/${post.slug}`} className="flex h-full flex-col">
                 <div className="relative aspect-16/9 overflow-hidden">
-                  {/* Wrapper = hover zoom */}
                   <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
-                    {/* Image = fixed zoom to hide dark borders */}
                     <Image
                       src={post.image}
                       alt={post.title}
                       fill
+                      unoptimized={post.image.startsWith("http")}
                       sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                      className={`object-cover ${post.zoom}`}
+                      className={`object-cover ${post.position ?? ""}`}
                     />
                   </div>
-                  <span
-                    className={`absolute bottom-2 left-2 rounded-sm bg-black/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${post.badgeClass}`}
-                  >
-                    {post.badge}
+                  <span className="absolute bottom-2 left-2 rounded-sm bg-black/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-lime">
+                    {post.category}
                   </span>
                 </div>
 
@@ -118,7 +106,7 @@ export default function News() {
                     {post.excerpt}
                   </p>
                   <div className="mt-auto flex items-center justify-between pt-6 text-xs text-gray-500">
-                    <span>{post.readTime}</span>
+                    <span>Read more</span>
                     <Arrow />
                   </div>
                 </div>
