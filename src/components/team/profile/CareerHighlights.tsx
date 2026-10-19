@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { TrophyIcon } from "./icons";
@@ -41,32 +40,19 @@ export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) 
         Gallery
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-        {tiles.map((src, index) =>
-          src ? (
-            <div
-              key={`${name}-gallery-${index}`}
-              className="relative aspect-[4/3] overflow-hidden rounded-sm"
-            >
-              <Image
-                src={src}
-                alt={`${name} gallery photo ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover"
-              />
-            </div>
-          ) : (
+        {tiles.map((src, index) => (
             <div
               key={`${name}-gallery-${index}`}
               className="relative aspect-[4/3] overflow-hidden rounded-sm"
             >
               <PhotoPlaceholder
                 name={name}
+                src={src}
+                sizes="(max-width: 768px) 50vw, 25vw"
                 className="absolute inset-0 h-full w-full"
               />
             </div>
-          )
-        )}
+          ))}
       </div>
     </section>
   );

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { partners } from "@/data/partners";
+import type { Partner } from "@/data/partners";
 
 const triangleColors = ["#c6f10e", "#2563eb", "#34d399", "#c6f10e", "#2563eb", "#34d399"];
 
@@ -20,7 +20,7 @@ function TriangleRow() {
   );
 }
 
-function PartnerCard({ partner }: { partner: (typeof partners)[number] }) {
+function PartnerCard({ partner }: { partner: Partner }) {
   const [logoFailed, setLogoFailed] = useState(false);
 
   return (
@@ -33,6 +33,7 @@ function PartnerCard({ partner }: { partner: (typeof partners)[number] }) {
               alt={`${partner.name} logo`}
               fill
               sizes="(max-width: 640px) 100vw, 25vw"
+              unoptimized={partner.logo.startsWith("http")}
               className="object-contain object-center p-3"
               onError={() => setLogoFailed(true)}
             />
@@ -55,10 +56,14 @@ function PartnerCard({ partner }: { partner: (typeof partners)[number] }) {
         <h2 className="font-display text-2xl font-bold uppercase leading-none tracking-wide text-slate-100">
           {partner.name}
         </h2>
-        <p className="mt-3 text-[11px] font-bold uppercase leading-relaxed tracking-wider text-brand-teal">
-          {partner.specialization}
+        {partner.description.trim() === partner.specialization.trim() ? null : (
+          <p className="mt-3 text-[11px] font-bold uppercase leading-relaxed tracking-wider text-brand-teal">
+            {partner.specialization}
+          </p>
+        )}
+        <p className={`flex-1 text-sm leading-relaxed text-gray-400 ${partner.description.trim() === partner.specialization.trim() ? "mt-3" : "mt-4"}`}>
+          {partner.description}
         </p>
-        <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-400">{partner.description}</p>
 
         {partner.website ? (
           <a
@@ -80,7 +85,7 @@ function PartnerCard({ partner }: { partner: (typeof partners)[number] }) {
   );
 }
 
-export default function PartnerScreen() {
+export default function PartnerScreen({ partners }: { partners: Partner[] }) {
   return (
     <main className="min-h-screen bg-brand-navy text-white">
       <section className="relative isolate overflow-hidden border-b border-white/10">
@@ -123,7 +128,7 @@ export default function PartnerScreen() {
             </h2>
           </div>
           <p className="max-w-xs text-right text-xs leading-relaxed text-gray-500">
-            Eight partners. One peloton. A shared commitment to going further.
+            {partners.length} partners. One peloton. A shared commitment to going further.
           </p>
         </div>
 

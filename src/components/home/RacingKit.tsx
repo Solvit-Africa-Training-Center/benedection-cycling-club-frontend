@@ -11,20 +11,20 @@ type Product = {
   imageBack?: string;
 };
 
+export type RacingKitProduct = Product;
+
 const products: Product[] = [
   {
     name: "Cycling Jersey",
     tagline: "Fuel for the climb",
     price: "$140.00",
-    // image: "/kit/jersey-front.png",
-    // imageBack: "/kit/jersey-back.png",
+    image: "/jersey.png",
   },
   {
     name: "Cycling Short",
     tagline: "Endless miles",
     price: "$140.00",
-    // image: "/kit/shorts-front.png",
-    // imageBack: "/kit/shorts-back.png",
+    image: "/short.png",
   },
   {
     name: "Cycling Glass",
@@ -86,6 +86,7 @@ function ProductPhoto({ product }: { product: Product }) {
             alt={`${product.name}, front`}
             fill
             sizes="(min-width: 1024px) 25vw, 50vw"
+            unoptimized={product.image.startsWith("http")}
             className={hasBack ? "object-contain p-4" : "object-cover"}
           />
         </div>
@@ -107,7 +108,8 @@ function ProductPhoto({ product }: { product: Product }) {
   );
 }
 
-export default function RacingKit() {
+export default function RacingKit({ items }: { items?: Product[] }) {
+  const catalog = items?.length ? items : products;
   return (
     <section className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
@@ -127,7 +129,7 @@ export default function RacingKit() {
 
         {/* Cards */}
         <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
-          {products.map((product) => (
+          {catalog.map((product) => (
             <article
               key={product.name}
               className="rounded-2xl bg-[#1a2030] p-3 md:p-4"

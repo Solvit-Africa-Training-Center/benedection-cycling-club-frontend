@@ -20,6 +20,7 @@ export default function PhotoPlaceholder({ name, className = "", src, sizes }: P
         alt={name}
         fill
         sizes={sizes}
+        unoptimized={src.startsWith("http")}
         className="object-cover object-top"
         onError={() => setFailed(true)}
       />

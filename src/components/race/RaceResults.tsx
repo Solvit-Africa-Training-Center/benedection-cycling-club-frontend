@@ -1,14 +1,7 @@
-import { raceResults } from "@/data/races";
-import { cyclists } from "@/data/cyclists";
+import Link from "next/link";
+import type { RaceResult } from "@/data/races";
 
-interface ResultRow {
-  place: number;
-  riderSlug: string;
-  race: string;
-  time: string;
-}
-
-export default function RaceResults() {
+export default function RaceResults({ results }: { results: RaceResult[] }) {
   return (
     <section className="py-12 md:py-16">
       <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-white md:text-4xl">RACE RESULTS</h2>
@@ -25,12 +18,21 @@ export default function RaceResults() {
             </tr>
           </thead>
           <tbody>
-            {raceResults.map((result: ResultRow, index: number) => {
-              const rider = cyclists.find((c) => c.slug === result.riderSlug) ?? { name: result.riderSlug };
+            {results.map((result, index) => {
+              const riderName = result.riderName ?? result.riderSlug;
+              const href = result.riderSlug ? `/team/${result.riderSlug}` : null;
               return (
-                <tr key={result.place} className={`border-t border-blue-900/50 text-sm text-gray-200 ${index % 2 === 1 ? "bg-white/[0.03]" : ""}`}>
-                  <td className="px-4 py-3 text-sm text-gray-200">{result.place}</td>
-                  <td className="px-4 py-3 font-medium text-white">{rider.name}</td>
+                <tr key={`${result.race}-${result.riderSlug}-${index}`} className={`border-t border-blue-900/50 text-sm text-gray-200 ${index % 2 === 1 ? "bg-white/[0.03]" : ""}`}>
+                  <td className="px-4 py-3 text-sm text-gray-200">{result.place || "—"}</td>
+                  <td className="px-4 py-3 font-medium text-white">
+                    {href ? (
+                      <Link href={href} className="hover:text-brand-lime">
+                        {riderName}
+                      </Link>
+                    ) : (
+                      riderName
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-200">{result.race}</td>
                   <td className="px-4 py-3 text-sm text-gray-200 tabular-nums">{result.time}</td>
                 </tr>

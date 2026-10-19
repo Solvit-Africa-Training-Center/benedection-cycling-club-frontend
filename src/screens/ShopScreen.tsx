@@ -1,50 +1,45 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
+import type { ShopProductView } from "@/lib/api";
 
-type Category = "All items" | "Jerseys" | "Shorts" | "Glasses" | "Gloves" | "Socks" | "Helmet";
+type Product = ShopProductView & { filter?: string; sample?: boolean };
 
-type Product = {
-  name: string;
-  price: number;
-  category: Exclude<Category, "All items">;
-  image: string;
-  sizes: string[];
-  description: string;
-  filter?: string;
-};
+type CartLine = { productId?: number; productName: string; size: string; color?: string; quantity: number };
 
-type CartLine = { productName: string; size: string; quantity: number };
-
-const categories: Category[] = [
-  "All items",
-  "Jerseys",
-  "Shorts",
-  "Glasses",
-  "Gloves",
-  "Socks",
-  "Helmet",
-];
-
-const products: Product[] = [
+const fallbackProducts: Product[] = [
   {
+    id: 1,
+    slug: "pro-race-aero-jersey-2026",
+    currency: "USD",
+    categorySlug: "jerseys",
     name: "Pro Race Aero Jersey 2026",
     price: 140,
     category: "Jerseys",
     image: "/jersey.png",
     sizes: ["XS", "S", "M", "L", "XL"],
     description: "The official Benediction Banafrica race jersey, built for fast training days and race-day performance.",
+    sample: true,
   },
   {
+    id: 2,
+    slug: "elite-endurance-bib-shorts",
+    currency: "USD",
+    categorySlug: "shorts",
     name: "Elite Endurance Bib Shorts",
     price: 135,
     category: "Shorts",
     image: "/short.png",
     sizes: ["XS", "S", "M", "L", "XL"],
     description: "Comfortable endurance bib shorts with a supportive fit for long rides and hard efforts.",
+    sample: true,
   },
   {
+    id: 3,
+    slug: "aero-polarized-sunglasses",
+    currency: "USD",
+    categorySlug: "glasses",
     name: "Aero Polarized Sunglasses",
     price: 32,
     category: "Glasses",
@@ -52,34 +47,50 @@ const products: Product[] = [
     sizes: ["One size"],
     description: "Lightweight polarized glasses with a mirrored blue CAT 3 lens for bright cycling conditions.",
     filter: "CAT 3 Mirrored Blue",
+    sample: true,
   },
   {
+    id: 4,
+    slug: "pro-team-aero-fingerless-gloves",
+    currency: "USD",
+    categorySlug: "gloves",
     name: "Pro Team Aero Fingerless Gloves",
     price: 35,
     category: "Gloves",
     image: "/gloves.jpg",
     sizes: ["S", "M", "L", "XL"],
     description: "Fingerless cycling gloves with padded palms and breathable fabric for confident control.",
+    sample: true,
   },
   {
+    id: 5,
+    slug: "high-cuff-imongo-racing-socks",
+    currency: "USD",
+    categorySlug: "socks",
     name: "High-Cuff Imongo Racing Socks",
     price: 18,
     category: "Socks",
     image: "/socks.jpg",
     sizes: ["S/M (37-41)", "L/XL (42-46)"],
     description: "High-cuff racing socks designed to complete the Benediction team look while keeping feet comfortable.",
+    sample: true,
   },
   {
+    id: 6,
+    slug: "elite-cycling-helmet",
+    currency: "USD",
+    categorySlug: "helmet",
     name: "Elite Cycling Helmet",
     price: 95,
     category: "Helmet",
     image: "/helmet.jpg",
     sizes: ["S", "M", "L", "XL"],
     description: "A lightweight cycling helmet with a secure fit for everyday training and competitive riding.",
+    sample: true,
   },
 ];
 
-const fallbackArtwork: Record<Product["category"], string> = {
+const fallbackArtwork: Record<string, string> = {
   Jerseys: "JERSEY",
   Shorts: "BIB",
   Glasses: "AERO",
@@ -99,6 +110,7 @@ function ProductArtwork({ product, className = "" }: { product: Product; classNa
           alt=""
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
+          unoptimized={product.image.startsWith("http")}
           className="h-full w-full object-contain mix-blend-multiply"
           onError={() => setImageFailed(true)}
         />
@@ -158,12 +170,72 @@ function CartButton({
   );
 }
 
-export default function ShopScreen() {
-  const [activeCategory, setActiveCategory] = useState<Category>("All items");
+function CartButton({
+  cartCount,
+  onClick,
+}: {
+  cartCount: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Open shopping cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+      className="flex items-center gap-3 border border-white/10 bg-black/20 px-4 py-3 text-left transition-colors hover:border-brand-lime"
+    >
+      <div
+        className="relative"
+        aria-label={`${cartCount} ${cartCount === 1 ? "item" : "items"} in cart`}
+      >
+        <svg
+          aria-hidden="true"
+          className="h-7 w-7 text-brand-lime"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+          <circle cx="10" cy="20" r="1" />
+          <circle cx="18" cy="20" r="1" />
+        </svg>
+        <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-lime px-1 text-[10px] font-bold text-brand-navy">
+          {cartCount}
+        </span>
+      </div>
+      <div>
+        <span className="block text-[10px] uppercase tracking-widest text-gray-500">Cart</span>
+        <span className="font-display text-xl font-bold text-brand-lime">
+          {cartCount} {cartCount === 1 ? "item" : "items"}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+export default function ShopScreen({
+  products: catalogProducts,
+  categories: catalogCategories,
+}: {
+  products?: Product[];
+  categories?: { name: string; slug: string }[];
+}) {
+  const products = catalogProducts?.length ? catalogProducts : fallbackProducts;
+  const categories = [
+    "All items",
+    ...(catalogCategories?.length
+      ? catalogCategories.map((category) => category.name)
+      : Array.from(new Set(products.map((product) => product.category)))),
+  ];
+  const [activeCategory, setActiveCategory] = useState("All items");
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [view, setView] = useState<"shop" | "product" | "cart" | "checkout">("shop");
+  const [view, setView] = useState<"shop" | "product" | "cart" | "checkout" | "done">("shop");
   const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
+  const [detailQuantity, setDetailQuantity] = useState(1);
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => {
     const product = products.find((entry) => entry.name === item.productName);
@@ -188,12 +260,146 @@ export default function ShopScreen() {
   }
 
   function addToCart(productName: string, size: string) {
+    const product = products.find((entry) => entry.name === productName);
+    const color = product?.filter;
     setCart((current) => {
-      const line = current.find((item) => item.productName === productName && item.size === size);
+      const line = current.find((item) => item.productName === productName && item.size === size && item.color === color);
       return line
-        ? current
-        : [...current, { productName, size, quantity: 1 }];
+        ? current.map((item) => item === line ? { ...item, quantity: item.quantity + quantity } : item)
+        : [...current, { productName, size, quantity }];
     });
+  }
+
+  async function handleCheckout(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCheckoutError(null);
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const customer_name = String(data.get("name") ?? "").trim();
+    const customer_email = String(data.get("email") ?? "").trim();
+    const customer_phone = String(data.get("phone") ?? "").trim();
+    const address = [
+      String(data.get("street") ?? ""),
+      String(data.get("address2") ?? ""),
+      String(data.get("city") ?? ""),
+      String(data.get("postal") ?? ""),
+      String(data.get("country") ?? ""),
+    ]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(", ");
+    const color = String(data.get("color") ?? "").trim();
+    const extra = String(data.get("notes") ?? "").trim();
+    const sizeLines = cart
+      .map((item) => {
+        const details = [`size ${item.size}`, item.color && `color ${item.color}`].filter(Boolean).join(", ");
+        return `${item.productName} × ${item.quantity} (${details})`;
+      })
+      .join("\n");
+    const note = [sizeLines, color && `Color: ${color}`, address && `Delivery: ${address}`, extra && `Notes: ${extra}`]
+      .filter(Boolean)
+      .join("\n");
+    const grouped = new Map<number, number>();
+    for (const item of cart) {
+      if (!item.productId) continue;
+      grouped.set(item.productId, (grouped.get(item.productId) ?? 0) + item.quantity);
+    }
+    const items = [...grouped.entries()].map(([product_id, quantity]) => ({ product_id, quantity }));
+    if (!items.length) {
+      setCheckoutError("These sample products are not in the club shop yet. Connect the live catalog before sending a request.");
+      return;
+    }
+    setCheckoutPending(true);
+    try {
+      const response = await fetch("/api/shop/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_name,
+          customer_email,
+          ...(customer_phone ? { customer_phone } : {}),
+          note,
+          items,
+        }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || "Could not submit the order request.");
+      }
+      setCart([]);
+      setView("done");
+      form.reset();
+    } catch (submitError) {
+      setCheckoutError(submitError instanceof Error ? submitError.message : "Could not submit the order request.");
+    } finally {
+      setCheckoutPending(false);
+    }
+  }
+
+  async function handleCheckout(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCheckoutError(null);
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    const customer_name = String(data.get("name") ?? "").trim();
+    const customer_email = String(data.get("email") ?? "").trim();
+    const customer_phone = String(data.get("phone") ?? "").trim();
+    const address = [
+      String(data.get("street") ?? ""),
+      String(data.get("address2") ?? ""),
+      String(data.get("city") ?? ""),
+      String(data.get("postal") ?? ""),
+      String(data.get("country") ?? ""),
+    ]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(", ");
+    const color = String(data.get("color") ?? "").trim();
+    const extra = String(data.get("notes") ?? "").trim();
+    const sizeLines = cart
+      .map((item) => {
+        const details = [`size ${item.size}`, item.color && `color ${item.color}`].filter(Boolean).join(", ");
+        return `${item.productName} × ${item.quantity} (${details})`;
+      })
+      .join("\n");
+    const note = [sizeLines, color && `Color: ${color}`, address && `Delivery: ${address}`, extra && `Notes: ${extra}`]
+      .filter(Boolean)
+      .join("\n");
+    const grouped = new Map<number, number>();
+    for (const item of cart) {
+      if (!item.productId) continue;
+      grouped.set(item.productId, (grouped.get(item.productId) ?? 0) + item.quantity);
+    }
+    const items = [...grouped.entries()].map(([product_id, quantity]) => ({ product_id, quantity }));
+    if (!items.length) {
+      setCheckoutError("These sample products are not in the club shop yet. Connect the live catalog before sending a request.");
+      return;
+    }
+    setCheckoutPending(true);
+    try {
+      const response = await fetch("/api/shop/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_name,
+          customer_email,
+          ...(customer_phone ? { customer_phone } : {}),
+          note,
+          items,
+        }),
+      });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(payload?.error || "Could not submit the order request.");
+      }
+      setCart([]);
+      setView("done");
+      form.reset();
+    } catch (submitError) {
+      setCheckoutError(submitError instanceof Error ? submitError.message : "Could not submit the order request.");
+    } finally {
+      setCheckoutPending(false);
+    }
   }
 
   function updateQuantity(productName: string, size: string, change: number) {
@@ -302,6 +508,40 @@ export default function ShopScreen() {
     }
   }
 
+  if (view === "done") {
+    return (
+      <main className="min-h-screen bg-brand-navy text-white">
+        <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-lime">Order request sent</p>
+          <h1 className="mt-3 font-display text-4xl font-bold uppercase">Thank you</h1>
+          <p className="mt-4 text-sm text-gray-400">
+            The club will confirm availability, delivery and the payable total. There is no online payment.
+          </p>
+          <button type="button" onClick={() => setView("shop")} className="mt-8 bg-brand-lime px-6 py-3 text-xs font-bold uppercase text-brand-navy">
+            Back to shop
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  if (view === "done") {
+    return (
+      <main className="min-h-screen bg-brand-navy text-white">
+        <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-lime">Order request sent</p>
+          <h1 className="mt-3 font-display text-4xl font-bold uppercase">Thank you</h1>
+          <p className="mt-4 text-sm text-gray-400">
+            The club will confirm availability, delivery and the payable total. There is no online payment.
+          </p>
+          <button type="button" onClick={() => setView("shop")} className="mt-8 bg-brand-lime px-6 py-3 text-xs font-bold uppercase text-brand-navy">
+            Back to shop
+          </button>
+        </section>
+      </main>
+    );
+  }
+
   if (view !== "shop" && view !== "product") {
     return (
       <main className="min-h-screen bg-brand-navy text-white">
@@ -330,19 +570,21 @@ export default function ShopScreen() {
             </div>
           ) : (
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
-              <form onSubmit={(event) => event.preventDefault()} className="space-y-4">
+              <form onSubmit={handleCheckout} className="space-y-4">
                 <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">Contact details</legend><h2 className="font-display text-lg font-bold uppercase">Contact details</h2>
                   <label className="block text-[10px] text-gray-300">Full name *<input required name="name" autoComplete="name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Your name" /></label>
-                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Email address *<input required type="email" name="email" autoComplete="email" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="you@example.com" /></label><label className="block text-[10px] text-gray-300">Phone number *<input required type="tel" name="phone" autoComplete="tel" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Include country code" /></label></div>
+                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Email address *<input required type="email" name="email" autoComplete="email" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="you@example.com" /></label><label className="block text-[10px] text-gray-300">Phone number (optional)<input type="tel" name="phone" autoComplete="tel" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Include country code" /></label></div>
                 </fieldset>
                 <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">Delivery address</legend><h2 className="font-display text-lg font-bold uppercase">Delivery address</h2>
                   <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Country / territory *<input required name="country" autoComplete="country-name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">Postal code *<input required name="postal" autoComplete="postal-code" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label></div>
                   <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Street address *<input required name="street" autoComplete="address-line1" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">Address line 2<input name="address2" autoComplete="address-line2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Apartment, suite or building" /></label></div>
                   <label className="block text-[10px] text-gray-300">City *<input required name="city" autoComplete="address-level2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label>
                   <label className="flex items-center gap-2 border-t border-white/10 pt-4 text-[10px] text-gray-300"><input type="checkbox" name="sameBilling" defaultChecked className="accent-brand-lime" /> Billing address is the same as delivery address</label>
+                  <label className="block text-[10px] text-gray-300">Color (optional)<input name="color" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="If a color matters for this order" /></label>
                   <label className="block text-[10px] text-gray-300">Order notes (optional)<textarea name="notes" rows={3} className="mt-2 w-full resize-y border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Anything we should know?" /></label>
                 </fieldset>
-                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("cart")} className="text-xs text-gray-400">← Back to cart</button><button type="submit" disabled={!cart.length} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">Submit order</button></div>
+                {checkoutError ? <p role="alert" className="text-sm text-red-400">{checkoutError}</p> : null}
+                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("cart")} className="text-xs text-gray-400">← Back to cart</button><button type="submit" disabled={!cart.length || checkoutPending} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">{checkoutPending ? "Sending…" : "Submit order"}</button></div>
               </form>
               {orderSummary()}
             </div>
@@ -383,7 +625,7 @@ export default function ShopScreen() {
               }`}
             >
               {category}
-              {category === "All items" && " (6)"}
+                  {category === "All items" ? ` (${products.length})` : ""}
             </button>
           ))}
         </div>

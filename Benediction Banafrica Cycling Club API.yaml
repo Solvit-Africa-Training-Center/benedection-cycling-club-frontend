@@ -1,0 +1,1456 @@
+openapi: 3.0.3
+info:
+  title: Benediction Banafrica Cycling Club API
+  version: 1.0.0
+  description: Public club content for the website. Visitors can send the contact
+    form and a shop cart request. There is no visitor login and no payment.
+paths:
+  /api/club/:
+    get:
+      operationId: club_retrieve
+      tags:
+      - club
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubOverview'
+          description: ''
+  /api/contact/:
+    post:
+      operationId: contact_create
+      tags:
+      - contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisitorMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VisitorMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VisitorMessage'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitorMessage'
+          description: ''
+  /api/news/:
+    get:
+      operationId: news_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - news
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsArticleList'
+          description: ''
+  /api/news/{slug}/:
+    get:
+      operationId: news_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - news
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsArticle'
+          description: ''
+  /api/partners/:
+    get:
+      operationId: partners_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - partners
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClubSponsorList'
+          description: ''
+  /api/races/:
+    get:
+      operationId: races_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - races
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClubRaceList'
+          description: ''
+  /api/races/{id}/:
+    get:
+      operationId: races_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - races
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubRaceDetail'
+          description: ''
+  /api/races/milestones/:
+    get:
+      operationId: races_milestones_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - races
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamMilestoneList'
+          description: ''
+  /api/races/trophies/:
+    get:
+      operationId: races_trophies_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - races
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTrophyList'
+          description: ''
+  /api/shop/cart/:
+    post:
+      operationId: shop_cart_create
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartRequestWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CartRequestWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CartRequestWrite'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartRequestWrite'
+          description: ''
+  /api/shop/categories/:
+    get:
+      operationId: shop_categories_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shop
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShopCategoryList'
+          description: ''
+  /api/shop/products/:
+    get:
+      operationId: shop_products_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shop
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShopProductList'
+          description: ''
+  /api/shop/products/{slug}/:
+    get:
+      operationId: shop_products_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopProduct'
+          description: ''
+  /api/team/cyclists/:
+    get:
+      operationId: team_cyclists_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+          enum:
+          - kids
+          - men
+          - women
+        description: |-
+          * `men` - Men
+          * `women` - Women
+          * `kids` - Kids
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - team
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCyclistList'
+          description: ''
+  /api/team/cyclists/{id}/:
+    get:
+      operationId: team_cyclists_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - team
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclistDetail'
+          description: ''
+  /api/team/staff/:
+    get:
+      operationId: team_staff_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: staff_role
+        schema:
+          type: string
+          enum:
+          - assistant_sports_director
+          - coach
+          - logistic
+          - mechanic
+          - representative
+          - soigneur
+          - sports_director
+          - team_manager
+        description: |-
+          * `mechanic` - Mechanic
+          * `logistic` - Logistic
+          * `coach` - Coach
+          * `representative` - Representative
+          * `team_manager` - Team manager
+          * `sports_director` - Sports director
+          * `assistant_sports_director` - Assistant sports director
+          * `soigneur` - Soigneur
+      tags:
+      - team
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClubStaffList'
+          description: ''
+  /api/team/staff/{id}/:
+    get:
+      operationId: team_staff_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - team
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubStaff'
+          description: ''
+components:
+  schemas:
+    CartItemWrite:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: integer
+          minimum: 1
+      required:
+      - product_id
+      - quantity
+    CartRequestWrite:
+      type: object
+      properties:
+        customer_name:
+          type: string
+          maxLength: 120
+        customer_email:
+          type: string
+          format: email
+          maxLength: 254
+        customer_phone:
+          type: string
+          maxLength: 30
+        note:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemWrite'
+      required:
+      - customer_email
+      - customer_name
+      - items
+    CategoryEnum:
+      enum:
+      - men
+      - women
+      - kids
+      type: string
+      description: |-
+        * `men` - Men
+        * `women` - Women
+        * `kids` - Kids
+    ClubContact:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        value:
+          type: string
+          maxLength: 160
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - kind
+      - value
+    ClubOverview:
+      type: object
+      properties:
+        profile:
+          $ref: '#/components/schemas/ClubProfile'
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubSection'
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubContact'
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubReference'
+      required:
+      - contacts
+      - profile
+      - references
+      - sections
+    ClubProfile:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 160
+        tagline:
+          type: string
+          maxLength: 200
+        founded_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        location:
+          type: string
+          maxLength: 200
+        reference_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        contact_note:
+          type: string
+      required:
+      - name
+    ClubRace:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 160
+        race_type:
+          type: string
+          maxLength: 80
+        location:
+          type: string
+          maxLength: 160
+        season_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+        reference_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        team_position:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        team_note:
+          type: string
+          maxLength: 160
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        highlight_video_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+      required:
+      - id
+      - name
+    ClubRaceDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 160
+        race_type:
+          type: string
+          maxLength: 80
+        location:
+          type: string
+          maxLength: 160
+        season_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        description:
+          type: string
+        reference_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        team_position:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        team_note:
+          type: string
+          maxLength: 160
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        highlight_video_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceResult'
+          readOnly: true
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/RaceReference'
+          readOnly: true
+      required:
+      - id
+      - name
+      - references
+      - results
+    ClubReference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+          maxLength: 200
+        note:
+          type: string
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        cyclist:
+          type: integer
+          nullable: true
+        cyclist_name:
+          type: string
+          readOnly: true
+          nullable: true
+        race:
+          type: integer
+          nullable: true
+        race_name:
+          type: string
+          readOnly: true
+          nullable: true
+        season_year:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - cyclist_name
+      - id
+      - race_name
+      - season_year
+      - title
+      - url
+    ClubSection:
+      type: object
+      properties:
+        slug:
+          type: string
+          maxLength: 80
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          maxLength: 160
+        body:
+          type: string
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - body
+      - slug
+      - title
+    ClubSponsor:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 160
+        short_description:
+          type: string
+          maxLength: 280
+        website_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        logo:
+          type: string
+          format: uri
+          nullable: true
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - id
+      - name
+    ClubStaff:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 120
+        staff_role:
+          $ref: '#/components/schemas/StaffRoleEnum'
+        nationality:
+          type: string
+          maxLength: 80
+        age:
+          type: integer
+          readOnly: true
+          nullable: true
+        about:
+          type: string
+        photo:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - age
+      - id
+      - name
+      - staff_role
+    Cyclist:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        nationality:
+          type: string
+          maxLength: 80
+        birth_place:
+          type: string
+          maxLength: 120
+        age:
+          type: integer
+          readOnly: true
+          nullable: true
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        bps:
+          type: string
+          maxLength: 50
+        position:
+          type: string
+          maxLength: 80
+        favorite_food:
+          type: string
+          maxLength: 120
+        about:
+          type: string
+        photo:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - age
+      - category
+      - id
+      - name
+    CyclistDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        nationality:
+          type: string
+          maxLength: 80
+        birth_place:
+          type: string
+          maxLength: 120
+        age:
+          type: integer
+          readOnly: true
+          nullable: true
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,1})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        bps:
+          type: string
+          maxLength: 50
+        position:
+          type: string
+          maxLength: 80
+        favorite_food:
+          type: string
+          maxLength: 120
+        about:
+          type: string
+        photo:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclistResult'
+          readOnly: true
+        references:
+          type: array
+          items:
+            $ref: '#/components/schemas/CyclistReference'
+          readOnly: true
+      required:
+      - age
+      - category
+      - id
+      - name
+      - references
+      - results
+    CyclistReference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+          maxLength: 200
+        note:
+          type: string
+      required:
+      - id
+      - title
+      - url
+    CyclistResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        race:
+          type: integer
+        race_name:
+          type: string
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+          readOnly: true
+        classification:
+          type: string
+          maxLength: 80
+        finishing_position:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        result_time:
+          type: string
+          maxLength: 40
+        award:
+          type: string
+          maxLength: 120
+      required:
+      - id
+      - race
+      - race_name
+      - start_date
+    KindEnum:
+      enum:
+      - phone
+      - email
+      type: string
+      description: |-
+        * `phone` - Phone
+        * `email` - Email
+    NewsArticle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 220
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        body:
+          type: string
+        cover_image:
+          type: string
+          format: uri
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - body
+      - id
+      - title
+    PaginatedClubRaceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubRace'
+    PaginatedClubSponsorList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubSponsor'
+    PaginatedClubStaffList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClubStaff'
+    PaginatedCyclistList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cyclist'
+    PaginatedNewsArticleList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsArticle'
+    PaginatedShopCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopCategory'
+    PaginatedShopProductList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopProduct'
+    PaginatedTeamMilestoneList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamMilestone'
+    PaginatedTrophyList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Trophy'
+    ProductPhoto:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        alt_text:
+          type: string
+          maxLength: 160
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - id
+      - image
+    RaceReference:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+          maxLength: 200
+        note:
+          type: string
+      required:
+      - id
+      - title
+      - url
+    RaceResult:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        cyclist:
+          type: integer
+        cyclist_name:
+          type: string
+          readOnly: true
+        classification:
+          type: string
+          maxLength: 80
+        finishing_position:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        result_time:
+          type: string
+          maxLength: 40
+        award:
+          type: string
+          maxLength: 120
+      required:
+      - cyclist
+      - cyclist_name
+      - id
+    ShopCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 80
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 100
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - id
+      - name
+    ShopProduct:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 160
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 180
+            pattern: ^[-a-zA-Z0-9_]+$
+          - type: string
+            maxLength: 0
+        description:
+          type: string
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        currency:
+          type: string
+          maxLength: 3
+        stock:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        category:
+          allOf:
+          - $ref: '#/components/schemas/ShopCategory'
+          readOnly: true
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductPhoto'
+          readOnly: true
+      required:
+      - category
+      - id
+      - name
+      - photos
+      - price
+    StaffRoleEnum:
+      enum:
+      - mechanic
+      - logistic
+      - coach
+      - representative
+      - team_manager
+      - sports_director
+      - assistant_sports_director
+      - soigneur
+      type: string
+      description: |-
+        * `mechanic` - Mechanic
+        * `logistic` - Logistic
+        * `coach` - Coach
+        * `representative` - Representative
+        * `team_manager` - Team manager
+        * `sports_director` - Sports director
+        * `assistant_sports_director` - Assistant sports director
+        * `soigneur` - Soigneur
+    TeamMilestone:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        event_name:
+          type: string
+          maxLength: 160
+        summary:
+          type: string
+        is_confirmed:
+          type: boolean
+      required:
+      - event_name
+      - id
+      - summary
+      - year
+    Trophy:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        race:
+          type: integer
+        race_name:
+          type: string
+          readOnly: true
+        start_date:
+          type: string
+          format: date
+          readOnly: true
+        cyclist:
+          type: integer
+        cyclist_name:
+          type: string
+          readOnly: true
+        classification:
+          type: string
+          default: ''
+          maxLength: 80
+        finishing_position:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+        result_time:
+          type: string
+          maxLength: 40
+        award:
+          type: string
+          maxLength: 120
+      required:
+      - cyclist
+      - cyclist_name
+      - id
+      - race
+      - race_name
+      - start_date
+    VisitorMessage:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 120
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        subject:
+          type: string
+          maxLength: 160
+        message:
+          type: string
+      required:
+      - email
+      - message
+      - name
+      - subject
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
