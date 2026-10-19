@@ -5,8 +5,10 @@ const navigation = [
   { label: "About us", href: "/about" },
   { label: "News", href: "/news" },
   { label: "Team", href: "/team" },
-  { label: "Race Reports", href: "/news" },
+  { label: "Race", href: "/race" },
   { label: "Partners", href: "/partners" },
+  { label: "Shop", href: "/shop" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const clubHub = [
