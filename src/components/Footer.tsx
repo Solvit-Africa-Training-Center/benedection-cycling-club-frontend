@@ -1,20 +1,21 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const navigation = [
-  { label: "Home", href: "/" },
-  { label: "About us", href: "/about" },
-  { label: "News", href: "/news" },
-  { label: "Team", href: "/team" },
-  { label: "Race Reports", href: "/news" },
-  { label: "Partners", href: "/partners" },
-];
+  { key: "navHome", href: "/" },
+  { key: "navAbout", href: "/about" },
+  { key: "navNews", href: "/news" },
+  { key: "navTeam", href: "/team" },
+  { key: "navRaceReports", href: "/news" },
+  { key: "navPartners", href: "/partners" },
+] as const;
 
 const clubHub = [
-  { label: "Pro Team Kit", href: "/shop" },
-  { label: "Sponsors", href: "/partners" },
-  { label: "Join The Academy", href: "/contact" },
-  { label: "HQ & Press", href: "/contact" },
-];
+  { key: "hubKit", href: "/shop" },
+  { key: "hubSponsors", href: "/partners" },
+  { key: "hubAcademy", href: "/contact" },
+  { key: "hubPress", href: "/contact" },
+] as const;
 
 const iconProps = {
   width: 16,
@@ -81,7 +82,7 @@ function LinkColumn({
       </h3>
       <ul className="mt-3 space-y-2">
         {items.map(({ label, href }) => (
-          <li key={label}>
+          <li key={href + label}>
             <Link
               href={href}
               className="text-xs text-gray-400 transition-colors hover:text-brand-lime"
@@ -95,7 +96,16 @@ function LinkColumn({
   );
 }
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations("footer");
+  const navItems = navigation.map(({ key, href }) => ({
+    label: t(key),
+    href,
+  }));
+  const hubItems = clubHub.map(({ key, href }) => ({
+    label: t(key),
+    href,
+  }));
   return (
     <footer className="bg-brand-navy text-white">
       {/* Decorative strip */}
@@ -126,26 +136,24 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="font-display text-xl font-bold uppercase tracking-wide">
-              Benediction CC
+              {t("brandName")}
             </h2>
             <span className="rounded-sm bg-blue-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-              Banafrica
+              {t("badge")}
             </span>
           </div>
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-gray-400">
-            Forging elite African cyclists from the high-altitude shores of
-            Lake Kivu in Rubavu. Racing with Rwandan grit, aerodynamic
-            precision, and uncompromising discipline on the global stage.
+            {t("tagline")}
           </p>
         </div>
 
-        <LinkColumn title="Navigation" items={navigation} />
-        <LinkColumn title="Club Hub" items={clubHub} />
+        <LinkColumn title={t("navTitle")} items={navItems} />
+        <LinkColumn title={t("hubTitle")} items={hubItems} />
 
         {/* Contact */}
         <div>
           <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
-            Get in touch
+            {t("contactTitle")}
           </h3>
 
           <ul className="mt-3 space-y-3">
@@ -167,8 +175,7 @@ export default function Footer() {
       {/* Bottom line */}
       <div className="mx-auto max-w-7xl border-t border-white/10 px-4 py-5 md:px-6">
         <p className="text-[11px] text-gray-400">
-          © 2026 Benediction Cycling Club Rubavu (Banafrica). All rights
-          reserved. Registered Rwandan Sporting Entity.
+          {t("copyright")}
         </p>
       </div>
     </footer>

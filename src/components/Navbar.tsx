@@ -4,22 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import LanguageToggle from "./LanguageToggle";
 
 const links = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "News", href: "/news" },
-  { label: "Team", href: "/team" },
-  { label: "Race", href: "/race" },
-  { label: "Partners", href: "/partners" },
-  { label: "Shop", href: "/shop" },
-  { label: "Contact", href: "/contact" },
-];
+  { key: "home", href: "/" },
+  { key: "about", href: "/about" },
+  { key: "news", href: "/news" },
+  { key: "team", href: "/team" },
+  { key: "race", href: "/race" },
+  { key: "partners", href: "/partners" },
+  { key: "shop", href: "/shop" },
+  { key: "contact", href: "/contact" },
+] as const;
 
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<"EN" | "DE">("EN");
+  const t = useTranslations("nav");
 
   return (
     <header className="sticky top-0 z-50 bg-brand-navy font-display text-white">
@@ -28,7 +30,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
-            alt="Benediction Cycling Club logo"
+            alt={t("logoAlt")}
             width={800}
             height={400}
             quality={100}
@@ -46,7 +48,7 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <nav className="hidden items-center gap-6 lg:flex">
-          {links.map(({ label, href }) => {
+          {links.map(({ key, href }) => {
             const active = pathname === href;
             return (
               <Link
@@ -58,7 +60,7 @@ export default function Navbar() {
                     : "text-sm font-medium uppercase tracking-wide text-gray-400 transition-colors hover:text-white"
                 }
               >
-                {label}
+                {t(key)}
               </Link>
             );
           })}
@@ -66,33 +68,13 @@ export default function Navbar() {
 
         {/* Right side: language toggle + mobile button */}
         <div className="flex items-center gap-3">
-          <div
-            role="group"
-            aria-label="Language"
-            className="flex rounded-full border border-white/15 bg-white/5 p-1"
-          >
-            {(["EN", "DE"] as const).map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => setLang(code)}
-                aria-pressed={lang === code}
-                className={`rounded-full px-4 py-1 text-sm font-semibold transition-colors ${
-                  lang === code
-                    ? "bg-linear-to-r from-brand-teal to-emerald-500 text-white"
-                    : "text-gray-300 hover:text-white"
-                }`}
-              >
-                {code}
-              </button>
-            ))}
-          </div>
+          <LanguageToggle />
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            aria-label="Toggle menu"
+            aria-label={t("menuButton")}
             className="rounded-md p-2 text-gray-300 hover:text-white lg:hidden"
           >
             <svg
@@ -117,7 +99,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <nav className="flex flex-col gap-1 border-t border-white/10 px-4 py-3 lg:hidden">
-          {links.map(({ label, href }) => (
+          {links.map(({ key, href }) => (
             <Link
               key={href}
               href={href}
@@ -126,7 +108,7 @@ export default function Navbar() {
                 pathname === href ? "text-brand-lime" : "text-gray-300"
               }`}
             >
-              {label}
+              {t(key)}
             </Link>
           ))}
         </nav>

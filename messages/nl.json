@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "Over ons",
+    "news": "Nieuws",
+    "team": "Team",
+    "race": "Wedstrijden",
+    "partners": "Partners",
+    "shop": "Shop",
+    "contact": "Contact",
+    "menuButton": "Menu openen of sluiten",
+    "logoAlt": "Benediction Cycling Club logo"
+  },
+  "footer": {
+    "brandName": "Benediction CC",
+    "badge": "Banafrica",
+    "tagline": "Elite Afrikaanse wielrenners smeden vanaf de hooggelegen oevers van het Kivumeer in Rubavu. Koersen met Rwandese vechtlust, aerodynamische precisie en compromisloze discipline op het wereldtoneel.",
+    "navTitle": "Navigatie",
+    "navHome": "Home",
+    "navAbout": "Over ons",
+    "navNews": "Nieuws",
+    "navTeam": "Team",
+    "navRaceReports": "Wedstrijdverslagen",
+    "navPartners": "Partners",
+    "hubTitle": "Clubhub",
+    "hubKit": "Pro Team Kit",
+    "hubSponsors": "Sponsors",
+    "hubAcademy": "Sluit je aan bij de academie",
+    "hubPress": "HQ & pers",
+    "contactTitle": "Neem contact op",
+    "copyright": "© 2026 Benediction Cycling Club Rubavu (Banafrica). Alle rechten voorbehouden. Geregistreerde Rwandese sportentiteit."
+  },
+  "language": {
+    "label": "Taal",
+    "english": "English",
+    "dutch": "Nederlands"
+  }
+}

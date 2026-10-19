@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "news": "News",
+    "team": "Team",
+    "race": "Race",
+    "partners": "Partners",
+    "shop": "Shop",
+    "contact": "Contact",
+    "menuButton": "Toggle menu",
+    "logoAlt": "Benediction Cycling Club logo"
+  },
+  "footer": {
+    "brandName": "Benediction CC",
+    "badge": "Banafrica",
+    "tagline": "Forging elite African cyclists from the high-altitude shores of Lake Kivu in Rubavu. Racing with Rwandan grit, aerodynamic precision, and uncompromising discipline on the global stage.",
+    "navTitle": "Navigation",
+    "navHome": "Home",
+    "navAbout": "About us",
+    "navNews": "News",
+    "navTeam": "Team",
+    "navRaceReports": "Race Reports",
+    "navPartners": "Partners",
+    "hubTitle": "Club Hub",
+    "hubKit": "Pro Team Kit",
+    "hubSponsors": "Sponsors",
+    "hubAcademy": "Join The Academy",
+    "hubPress": "HQ & Press",
+    "contactTitle": "Get in touch",
+    "copyright": "© 2026 Benediction Cycling Club Rubavu (Banafrica). All rights reserved. Registered Rwandan Sporting Entity."
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "dutch": "Nederlands"
+  }
+}
