@@ -304,8 +304,7 @@ const baseCyclists: Cyclist[] = [
       "4th overall — Race to Remember (2026)",
       "7th — Tour du Cameroun youth classification (2024)",
     ],
-    // PHOTO: save the photo as public/images/team/riders/jean-claude-niyomugabo.jpg, then uncomment the next line
-    // image: "/images/team/riders/jean-claude-niyomugabo.jpg",
+    image: "/images/team/riders/Jean Claude Niyomugabo .jpg",
     quote: "Never chase the sprint; make the sprint come to you.",
     qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
   },
@@ -318,7 +317,7 @@ const baseCyclists: Cyclist[] = [
     country: 'Belgium',
     role: 'FIRST TEAM',
     description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
-    image: '/images/team/cyclist-1.jpg',
+    image: '/images/team/riders/Sybren Nicolaides.png',
     title: 'FIRST TEAM',
     discipline: 'Road Cycling',
     team: 'Benediction Cycling Club',
@@ -337,7 +336,7 @@ const baseCyclists: Cyclist[] = [
     description: "Versatile rider. Road & track capability. Future team leader.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
-    image: "/images/team/cyclist-2.jpg",
+    image: "/images/team/riders/Glen Van Nuffelen.png",
   },
   {
     slug: "diane-ingabire",
@@ -352,7 +351,7 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: "2001-07-17",
     birthplace: "Mukamira",
     age: 25,
-    image: "/images/team/cyclist-3.jpg",
+    image: "/images/team/riders/Diane_Ingabire.png",
   },
   {
     slug: "valentine-nzayisengwa",
@@ -367,7 +366,7 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: "2000-03-15",
     birthplace: "Butaka",
     age: 26,
-    image: "/images/team/cyclist-4.jpg",
+    image: "/images/team/riders/valentine.jpg",
   },
   {
     slug: "jelle-roelandt",
@@ -379,7 +378,7 @@ const baseCyclists: Cyclist[] = [
     description: "Time-trial specialist. Individual pursuit expert. Precision handler.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
-    image: "/images/team/cyclist-5.jpg",
+    image: "/images/team/riders/Jelle Roelandt.png",
   },
   {
     id: '14',
@@ -397,7 +396,7 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: '2008-07-05',
     birthplace: 'Mukamira',
     age: 18,
-    image: '/images/team/cyclist-6.jpg',
+    image: '/images/team/riders/Braided Cyclist in Team Jersey.png',
   },
   {
     slug: "noah-brits",
@@ -411,7 +410,7 @@ const baseCyclists: Cyclist[] = [
     team: "Benediction Cycling Club",
     height: "181cm",
     weight: "63kg",
-    image: "/images/team/cyclist-7.jpg",
+    image: "/images/team/riders/Noah Brits.png",
   },
   {
     slug: "foeke-du-bois",
@@ -428,7 +427,6 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: "1992-11-09",
     birthplace: "Jette",
     age: 33,
-    image: "/images/team/cyclist-8.jpg",
   },
 ];
 
