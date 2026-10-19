@@ -1,3 +1,5 @@
+import TimelineSlider from "@/components/aboutUs/TimelineSlider";
+
 export type TimelineMilestone = {
   tag: string;
   year: string;
@@ -75,44 +77,46 @@ export default function AboutTimeline({
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((m, index) => (
-            <article
-              key={`${m.year}-${m.title}-${index}`}
-              className="flex flex-col rounded-sm bg-[#222836] p-5"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span
-                  className={`rounded-sm px-2 py-1 text-[9px] font-semibold uppercase tracking-wider ${
-                    m.current
-                      ? "bg-brand-lime text-brand-navy"
-                      : "bg-white/10 text-gray-400"
-                  }`}
-                >
-                  {m.tag}
-                </span>
-                <span
-                  className={`font-display text-2xl font-bold leading-none ${m.yearClass}`}
-                >
-                  {m.year}
-                </span>
-              </div>
-
-              <h3 className="mt-5 font-display text-base font-bold uppercase leading-tight tracking-wide text-gray-100">
-                {m.title}
-              </h3>
-              <p className="mt-3 text-xs leading-relaxed text-gray-400">
-                {m.text}
-              </p>
-
-              <p
-                className={`mt-auto pt-5 text-[10px] font-bold uppercase tracking-wider ${m.achievementClass}`}
+        {/* Cards: one sliding row with arrows */}
+        <div className="mt-12">
+          <TimelineSlider>
+            {items.map((m, index) => (
+              <article
+                key={`${m.year}-${m.title}-${index}`}
+                className="flex flex-col rounded-sm bg-[#222836] p-5"
               >
-                Achievement: {m.achievement}
-              </p>
-            </article>
-          ))}
+                <div className="flex items-start justify-between gap-2">
+                  <span
+                    className={`rounded-sm px-2 py-1 text-[9px] font-semibold uppercase tracking-wider ${
+                      m.current
+                        ? "bg-brand-lime text-brand-navy"
+                        : "bg-white/10 text-gray-400"
+                    }`}
+                  >
+                    {m.tag}
+                  </span>
+                  <span
+                    className={`font-display text-2xl font-bold leading-none ${m.yearClass}`}
+                  >
+                    {m.year}
+                  </span>
+                </div>
+
+                <h3 className="mt-5 font-display text-base font-bold uppercase leading-tight tracking-wide text-gray-100">
+                  {m.title}
+                </h3>
+                <p className="mt-3 text-xs leading-relaxed text-gray-400">
+                  {m.text}
+                </p>
+
+                <p
+                  className={`mt-auto pt-5 text-[10px] font-bold uppercase tracking-wider ${m.achievementClass}`}
+                >
+                  Achievement: {m.achievement}
+                </p>
+              </article>
+            ))}
+          </TimelineSlider>
         </div>
       </div>
     </section>

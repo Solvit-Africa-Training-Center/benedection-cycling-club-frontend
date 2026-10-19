@@ -29,12 +29,7 @@ export default async function Home() {
       <Team riders={cyclists.slice(0, 5)} />
       <RacingKit items={kit} />
       <SupportBanner />
-      <Partners
-        partners={partners.slice(0, 6).map((partner) => ({
-          name: partner.name,
-          caption: partner.specialization,
-        }))}
-      />
+      <Partners />
     </>
   );
 }
