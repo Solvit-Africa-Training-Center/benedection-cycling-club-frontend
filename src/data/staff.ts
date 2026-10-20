@@ -11,11 +11,13 @@ export const staff: StaffMember[] = [
     name: "Benoit Munyakindi",
     role: "Representative",
     country: "Rwanda",
+    image: "/images/team/staff/benoit-munyakindi.jpg",
   },
   {
     name: "Dady Bagabo",
     role: "Team Manager",
     country: "Rwanda",
+    image: "/images/team/staff/dady-bagabo.jpg",
   },
   {
     name: "Germaine Mukamana",
@@ -27,7 +29,7 @@ export const staff: StaffMember[] = [
     name: "Luc Van Nuffelen",
     role: "Sports Director",
     country: "Belgium",
-    image: "/images/team/staff/luc-van-neffelen.jpg",
+    image: "/images/team/staff/luc-van-nuffelen.jpg",
   },
   {
     name: "Mpatswenimana Fabrice",
@@ -51,5 +53,6 @@ export const staff: StaffMember[] = [
     name: "Innocent Uwamungu",
     role: "Soigneur",
     country: "Rwanda",
+    image: "/images/team/staff/innocent-uwamungu.jpg",
   },
 ];
