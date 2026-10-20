@@ -32,7 +32,7 @@ export const sampleProfiles: Record<string, Partial<Cyclist>> = {
     qa: qa(["Waffles", "A cold drink and a shower", "Coffee with friends", "The bike, no doubt", "Photography"]),
     quote: "Race smart, finish strong.",
   },
-  "foeke-du-bois": {
+  "foeke-dubois": {
     qa: qa(["Dark chocolate", "Checking the results", "A long walk outside", "The bike, my dancing is terrible", "Gardening"]),
     quote: "Experience is the best teammate.",
   },

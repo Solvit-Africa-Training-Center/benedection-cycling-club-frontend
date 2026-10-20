@@ -2,6 +2,21 @@ import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { TrophyIcon } from "./icons";
 
+const GALLERY_ASPECT = "4 / 5";
+
+function buildGalleryTiles(rider: Cyclist): string[] {
+  const raw = ((rider.gallery ?? []) as string[]).filter((v): v is string => typeof v === 'string' && v.trim().length > 0);
+  if (raw.length >= 4) return raw.slice(0, 4);
+  const own = Array.from(new Set(raw));
+  if (own.length >= 1) {
+    const repeated: string[] = [];
+    while (repeated.length < 4) repeated.push(...own);
+    return repeated.slice(0, 4);
+  }
+  if (rider.image) return [rider.image, rider.image, rider.image, rider.image];
+  return [];
+}
+
 export default function CareerHighlights({ rider }: { rider: Cyclist }) {
   const results = rider.topResults ?? [];
 
@@ -32,18 +47,17 @@ export default function CareerHighlights({ rider }: { rider: Cyclist }) {
 }
 
 export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) {
-  const gallery = Array.from(new Set(rider.gallery ?? []));
-  const tiles = [gallery[0], gallery[1], gallery[2], gallery[3]];
+  const tiles = buildGalleryTiles(rider);
   return (
     <section aria-label={`${name} gallery`} className="mt-14">
       <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white">
         Gallery
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-        {tiles.map((src, index) => (
             <div
               key={`${name}-gallery-${index}`}
-              className="relative aspect-[4/3] overflow-hidden rounded-sm"
+              className="relative overflow-hidden rounded-sm bg-[#d9dce1]"
+              style={{ aspectRatio: GALLERY_ASPECT }}
             >
               <PhotoPlaceholder
                 name={name}
