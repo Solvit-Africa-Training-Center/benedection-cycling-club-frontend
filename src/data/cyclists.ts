@@ -176,11 +176,10 @@ const baseCyclists: Cyclist[] = [
       "6th — Rwanda National Championships, Men's ITT (2022)",
     ],
     image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
-    gallery: ["/images/team/gallery/nzafashwanayo-jean-claude-2.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-1.jpg"],
+    gallery: ["/images/team/gallery/nzafashwanayo-jean-claude-1.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg"],
     quote: "Attack when it hurts, because that is when the race is decided.",
     qa: buildQa(["Sweet potatoes", "Drinking a lot of water", "Washing and checking my bike", "The bike, I am only fast on two wheels", "Football with friends"]),
   },
-
   {
     slug: "uwiduhaye-mike",
     name: "Mike Uwiduhaye",
@@ -205,7 +204,7 @@ const baseCyclists: Cyclist[] = [
       "14th — Rwanda National Championships, Men's Road Race (2025)",
     ],
     image: "/images/team/riders/uwiduhaye-mike.jpg",
-    gallery: ["/images/team/gallery/uwiduhaye-mike-2.jpg", "/images/team/gallery/uwiduhaye-mike-2.jpg", "/images/team/gallery/uwiduhaye-mike-3.jpg", "/images/team/gallery/uwiduhaye-mike-3.jpg"],
+    gallery: ["/images/team/gallery/uwiduhaye-mike-1.jpg", "/images/team/gallery/uwiduhaye-mike-2.jpg", "/images/team/gallery/uwiduhaye-mike-3.jpg"],
     quote: "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
     qa: buildQa(["Chocolate biscuits", "Watching the finish replay", "Sleeping in, then a short spin", "The dance floor, I love music too much", "Playing video games"]),
   },
@@ -228,14 +227,12 @@ const baseCyclists: Cyclist[] = [
     topResults: [
       "5th — Tour du Cameroun youth classification (2026)",
       "7th overall — Race to Remember (2026)",
-      "5th — Tour du Cameroun youth classification (2026)",
     ],
     image: "/images/team/riders/phocas-nshimiyimana.jpg",
     gallery: ["/images/team/gallery/phocas-nshimiyimana-1.jpg"],
     quote: "Every climb is a second chance to put the group under pressure.",
     qa: buildQa(["Bananas", "Checking my cadence", "Stretching and drinking", "The bike, I am only fast on two wheels", "Reading cycling news"]),
   },
-
   {
     slug: "espoir-uhiriwe",
     name: "Espoir Uhiriwe",
@@ -285,7 +282,6 @@ const baseCyclists: Cyclist[] = [
     quote: "Never chase the sprint; make the sprint come to you.",
     qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
   },
-
   {
     slug: 'sybren-nicolaides',
     id: '9',
@@ -294,42 +290,6 @@ const baseCyclists: Cyclist[] = [
     country: 'Belgium',
     role: 'FIRST TEAM',
     description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
-    image: '/images/team/riders/sybren-nicolaides.jpg',
-    gallery: ["/images/team/gallery/sybren-nicolaides-1.jpg"],
-    title: 'FIRST TEAM',
-    discipline: 'Road Cycling',
-    team: 'Benediction Cycling Club',
-    birthplace: 'Leuven',
-    age: 20,
-    height: '178cm',
-    weight: '68kg',
-  },
-  {
-    slug: "glen-van-nuuffelen",
-    name: "GLEN VAN NUFFELEN",
-    role: "ACADEMY • AGE 25",
-    category: "men",
-    country: "Belgium",
-    title: "ACADEMY • AGE 25",
-    description: "Versatile rider. Road & track capability. Future team leader.",
-    team: "Benediction Cycling Club",
-    discipline: "Road Cycling",
-    image: "/images/team/riders/glen-van-nuffelen.jpg",
-  },
-  {
-    slug: "diane-ingabire",
-    name: "DIANE INGABIRE",
-    role: "DEVELOPMENT • AGE 22",
-    category: "women",
-    country: "Rwanda",
-    title: "DEVELOPMENT • AGE 22",
-    description: "Rising star. Sprinter prospect. Women's cycling ambassador.",
-    team: "Benediction Cycling Club",
-    discipline: "Road Cycling",
-    dateOfBirth: "2001-07-17",
-    birthplace: "Mukamira",
-    age: 25,
-    image: "/images/team/riders/diane-ingabire.jpg",
   },
   {
     slug: "valentine-nzayisengwa",
@@ -345,7 +305,6 @@ const baseCyclists: Cyclist[] = [
     birthplace: "Butaka",
     age: 26,
     image: "/images/team/riders/valentine.jpg",
-    gallery: ["/images/team/gallery/valentine-nzayisenga-1.jpg"],
   },
   {
     slug: "jelle-roelandt",
@@ -357,7 +316,6 @@ const baseCyclists: Cyclist[] = [
     description: "Time-trial specialist. Individual pursuit expert. Precision handler.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
-    image: "/images/team/riders/jelle-roelandt.jpg",
   },
   {
     id: '14',
@@ -375,7 +333,6 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: '2008-07-05',
     birthplace: 'Mukamira',
     age: 18,
-    image: '/images/team/riders/jackson-nkurikiyinka.jpg',
   },
   {
     slug: "noah-brits",
@@ -389,7 +346,6 @@ const baseCyclists: Cyclist[] = [
     team: "Benediction Cycling Club",
     height: "181cm",
     weight: "63kg",
-    image: "/images/team/riders/noah-brits.jpg",
   },
   {
     slug: "foeke-dubois",
@@ -407,8 +363,6 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: "1992-11-09",
     birthplace: "Jette",
     age: 33,
-    image: "/images/team/riders/foeke-dubois.jpg",
-    gallery: ["/images/team/gallery/foeke-dubois-1.jpg"],
   },
 ];
 

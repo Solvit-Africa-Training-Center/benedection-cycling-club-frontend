@@ -124,6 +124,52 @@ function ProductArtwork({ product, className = "" }: { product: Product; classNa
   );
 }
 
+function CartButton({
+  cartCount,
+  onClick,
+}: {
+  cartCount: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Open shopping cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+      className="flex items-center gap-3 border border-white/10 bg-black/20 px-4 py-3 text-left transition-colors hover:border-brand-lime"
+    >
+      <div
+        className="relative"
+        aria-label={`${cartCount} ${cartCount === 1 ? "item" : "items"} in cart`}
+      >
+        <svg
+          aria-hidden="true"
+          className="h-7 w-7 text-brand-lime"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
+          <circle cx="10" cy="20" r="1" />
+          <circle cx="18" cy="20" r="1" />
+        </svg>
+        <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-lime px-1 text-[10px] font-bold text-brand-navy">
+          {cartCount}
+        </span>
+      </div>
+      <div>
+        <span className="block text-[10px] uppercase tracking-widest text-gray-500">Cart</span>
+        <span className="font-display text-xl font-bold text-brand-lime">
+          {cartCount} {cartCount === 1 ? "item" : "items"}
+        </span>
+      </div>
+    </button>
+  );
+}
+
 export default function ShopScreen({
   products: catalogProducts,
   categories: catalogCategories,
@@ -141,9 +187,8 @@ export default function ShopScreen({
   const [activeCategory, setActiveCategory] = useState("All items");
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [view, setView] = useState<"shop" | "product" | "bag" | "checkout" | "done">("shop");
+  const [view, setView] = useState<"shop" | "product" | "cart" | "checkout" | "done">("shop");
   const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
-  const [detailQuantity, setDetailQuantity] = useState(1);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
@@ -157,7 +202,7 @@ export default function ShopScreen({
       activeCategory === "All items"
         ? products
         : products.filter((product) => product.category === activeCategory),
-    [activeCategory],
+    [activeCategory, products],
   );
 
   function selectSize(productName: string, size: string) {
@@ -166,18 +211,32 @@ export default function ShopScreen({
 
   function openProduct(product: Product) {
     setSelectedProductName(product.name);
-    setDetailQuantity(1);
     setView("product");
   }
 
   function addToCart(productName: string, size: string, quantity = 1) {
     const product = products.find((entry) => entry.name === productName);
+    if (!product) return;
     const color = product?.filter;
     setCart((current) => {
-      const line = current.find((item) => item.productName === productName && item.size === size && item.color === color);
+      const line = current.find(
+        (item) =>
+          item.productId === (product.sample ? undefined : product.id) &&
+          item.productName === productName &&
+          item.size === size &&
+          item.color === color,
+      );
       return line
-        ? current.map((item) => item === line ? { ...item, quantity: item.quantity + quantity } : item)
-        : [...current, { productId: product?.sample ? undefined : product?.id, productName, size, color, quantity }];
+        ? current.map((item) => (item === line ? { ...item, quantity: item.quantity + quantity } : item))
+        : [
+            {
+              productId: product.sample ? undefined : product.id,
+              productName,
+              size,
+              color,
+              quantity,
+            },
+          ];
     });
   }
 
@@ -292,9 +351,12 @@ export default function ShopScreen({
         <main className="min-h-screen bg-brand-navy text-white">
           <section className="border-b border-white/10 bg-linear-to-br from-[#151b28] via-brand-navy to-[#17241f] px-4 py-8 md:px-8">
             <div className="mx-auto max-w-7xl">
-              <button type="button" onClick={() => setView("shop")} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand-lime">
-                ← Back to products
-              </button>
+              <div className="flex items-start justify-between gap-5">
+                <button type="button" onClick={() => setView("shop")} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand-lime">
+                  ← Back to products
+                </button>
+                {cartCount > 0 && <CartButton cartCount={cartCount} onClick={() => setView("cart")} />}
+              </div>
               <p className="mt-6 text-xs font-bold uppercase tracking-[0.28em] text-brand-lime">Benediction / pro team kit</p>
               <h1 className="mt-2 max-w-3xl font-display text-4xl font-bold uppercase leading-none text-slate-200 sm:text-6xl">
                 {product.name}
@@ -331,41 +393,18 @@ export default function ShopScreen({
                 </div>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <div className="flex items-center border border-white/10 bg-[#171d29]">
-                  <button
-                    type="button"
-                    aria-label="Decrease quantity"
-                    onClick={() => setDetailQuantity((quantity) => Math.max(1, quantity - 1))}
-                    className="px-4 py-3 text-gray-300 hover:text-brand-lime"
-                  >
-                    −
-                  </button>
-                  <span className="min-w-10 text-center text-sm font-bold">{detailQuantity}</span>
-                  <button
-                    type="button"
-                    aria-label="Increase quantity"
-                    onClick={() => setDetailQuantity((quantity) => quantity + 1)}
-                    className="px-4 py-3 text-gray-300 hover:text-brand-lime"
-                  >
-                    +
-                  </button>
-                </div>
-                <strong className="font-display text-2xl text-slate-200">
-                  ${(product.price * detailQuantity).toFixed(2)}
-                </strong>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    addToCart(product.name, selectedSize);
+                    setView("cart");
+                  }}
+                  className="flex min-w-48 flex-1 items-center justify-center bg-brand-lime px-4 py-4 text-xs font-bold uppercase tracking-widest text-brand-navy transition-colors hover:bg-white"
+                >
+                  Add to cart
+                </button>
               </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  addToCart(product.name, selectedSize, detailQuantity);
-                  setView("bag");
-                }}
-                className="mt-6 flex w-full items-center justify-center bg-brand-lime px-4 py-4 text-xs font-bold uppercase tracking-widest text-brand-navy transition-colors hover:bg-white"
-              >
-                Add {detailQuantity} to bag
-              </button>
             </div>
           </section>
         </main>
@@ -390,19 +429,19 @@ export default function ShopScreen({
     );
   }
 
-  if (view !== "shop") {
+  if (view !== "shop" && view !== "product") {
     return (
       <main className="min-h-screen bg-brand-navy text-white">
         <section className="border-b border-white/10 bg-linear-to-br from-[#151b28] via-brand-navy to-[#17241f] px-4 py-8 md:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="flex justify-between text-[9px] uppercase tracking-wide text-gray-400"><span>Official pro shop / checkout</span><button type="button" onClick={() => setView("bag")} className="font-bold text-brand-lime">Bag ({cartCount})</button></div>
-            <h1 className="mt-3 font-display text-4xl font-bold uppercase text-slate-200 sm:text-5xl">{view === "bag" ? "Your shopping bag" : "Contact & delivery"}</h1>
-            <p className="mt-2 text-xs text-gray-400">{view === "bag" ? "Your team kit, ready for the next step. Check your selection before continuing." : "Tell us who’s riding and where your kit should go."}</p>
+            <div className="flex justify-between text-[9px] uppercase tracking-wide text-gray-400"><span>Official pro shop / checkout</span><button type="button" onClick={() => setView("cart")} className="font-bold text-brand-lime">Cart ({cartCount})</button></div>
+            <h1 className="mt-3 font-display text-4xl font-bold uppercase text-slate-200 sm:text-5xl">{view === "cart" ? "Your shopping cart" : "Contact & delivery"}</h1>
+            <p className="mt-2 text-xs text-gray-400">{view === "cart" ? "Your team kit, ready for the next step. Check your selection before continuing." : "Tell us who’s riding and where your kit should go."}</p>
           </div>
         </section>
         <section className="mx-auto max-w-7xl px-4 py-5 md:px-8">
-          <div className="mb-7 flex gap-8 border-b border-white/10 pb-4 text-[10px] font-bold uppercase text-gray-400"><span className={view === "bag" ? "text-brand-lime" : ""}>① Shopping bag</span><span className={view === "checkout" ? "text-brand-lime" : ""}>② Order details</span><span>③ Confirmation</span></div>
-          {view === "bag" ? (
+          <div className="mb-7 flex gap-8 border-b border-white/10 pb-4 text-[10px] font-bold uppercase text-gray-400"><span className={view === "cart" ? "text-brand-lime" : ""}>① Shopping cart</span><span className={view === "checkout" ? "text-brand-lime" : ""}>② Order details</span><span>③ Confirmation</span></div>
+          {view === "cart" ? (
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
               <div>
                 <div className="mb-4 flex justify-between border-b border-white/10 pb-3"><h2 className="font-display font-bold uppercase">Your items</h2><span className="text-[10px] text-gray-400">{cartCount} {cartCount === 1 ? "item" : "items"}</span></div>
@@ -412,7 +451,7 @@ export default function ShopScreen({
                     <ProductArtwork product={product} className="shop-art-bag" />
                     <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">Benediction / pro team kit</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3><p className="mt-3 text-xs text-gray-400">Size: {item.size}</p></div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">Remove</button></div></div>
                   </article>;
-                })}</div> : <p className="py-10 text-sm text-gray-400">Your bag is empty. Continue shopping to add team kit.</p>}
+                })}</div> : <p className="py-10 text-sm text-gray-400">Your cart is empty. Continue shopping to add team kit.</p>}
               </div>
               {orderSummary()}
             </div>
@@ -432,7 +471,7 @@ export default function ShopScreen({
                   <label className="block text-[10px] text-gray-300">Order notes (optional)<textarea name="notes" rows={3} className="mt-2 w-full resize-y border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Anything we should know?" /></label>
                 </fieldset>
                 {checkoutError ? <p role="alert" className="text-sm text-red-400">{checkoutError}</p> : null}
-                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("bag")} className="text-xs text-gray-400">← Back to bag</button><button type="submit" disabled={!cart.length || checkoutPending} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">{checkoutPending ? "Sending…" : "Submit order"}</button></div>
+                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("cart")} className="text-xs text-gray-400">← Back to cart</button><button type="submit" disabled={!cart.length || checkoutPending} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">{checkoutPending ? "Sending…" : "Submit order"}</button></div>
               </form>
               {orderSummary()}
             </div>
@@ -453,33 +492,6 @@ export default function ShopScreen({
             <h1 className="font-display text-5xl font-bold uppercase leading-none tracking-tight text-slate-200 sm:text-7xl">
               Featured products
             </h1>
-            <button type="button" onClick={() => setView("bag")} aria-label={`Open shopping bag, ${cartCount} ${cartCount === 1 ? "item" : "items"}`} className="flex items-center gap-3 border border-white/10 bg-black/20 px-4 py-3 text-left transition-colors hover:border-brand-lime">
-              <div className="relative" aria-label={`${cartCount} ${cartCount === 1 ? "item" : "items"} in cart`}>
-                <svg
-                  aria-hidden="true"
-                  className="h-7 w-7 text-brand-lime"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6" />
-                  <circle cx="10" cy="20" r="1" />
-                  <circle cx="18" cy="20" r="1" />
-                </svg>
-                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-lime px-1 text-[10px] font-bold text-brand-navy">
-                  {cartCount}
-                </span>
-              </div>
-              <div>
-                <span className="block text-[10px] uppercase tracking-widest text-gray-500">Cart</span>
-                <span className="font-display text-xl font-bold text-brand-lime">
-                  {cartCount} {cartCount === 1 ? "item" : "items"}
-                </span>
-              </div>
-            </button>
           </div>
         </div>
       </section>
