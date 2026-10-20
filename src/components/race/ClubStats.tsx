@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { clubStats } from "@/data/races";
+import type { ClubStat } from "@/data/races";
+import { clubStats as fallbackStats } from "@/data/races";
 
 function CountUp({ target }: { target: number }) {
   const [value, setValue] = useState(1);
@@ -50,11 +51,12 @@ function CountUp({ target }: { target: number }) {
   );
 }
 
-export default function ClubStats() {
+export default function ClubStats({ stats = fallbackStats }: { stats?: ClubStat[] }) {
+  const items = stats.length ? stats : fallbackStats;
   return (
     <section className="py-12 md:py-16">
       <div className="grid grid-cols-1 divide-y divide-white/15 md:grid-cols-3 md:divide-x md:divide-y-0">
-        {clubStats.map((stat) => (
+        {items.map((stat) => (
           <div key={stat.label} className="flex flex-col items-center py-10 text-center">
             <CountUp target={stat.value} />
             <p className="mt-3 font-display text-lg font-semibold text-white md:text-xl">{stat.label}</p>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PartnerScreen from "@/screens/PartnerScreen";
+import { getPartners } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Partners | Benediction Cycling Club",
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
     "Meet the official sponsors and partners supporting Benediction Banafrica Cycling Team.",
 };
 
-export default function PartnersPage() {
-  return <PartnerScreen />;
+export default async function PartnersPage() {
+  const partners = await getPartners();
+  return <PartnerScreen partners={partners} />;
 }

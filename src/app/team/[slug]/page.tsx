@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { cyclists } from '@/data/cyclists';
+import { getCyclist } from '@/lib/api';
 import ProfileHero from '@/components/team/profile/ProfileHero';
 import {
   PersonalProfilePanel,
@@ -11,19 +11,13 @@ import CareerHighlights, {
 } from '@/components/team/profile/CareerHighlights';
 import FollowJourneyBanner from '@/components/team/profile/FollowJourneyBanner';
 
-export function generateStaticParams() {
-  return cyclists.map((cyclist) => ({
-    slug: cyclist.name.toLowerCase().replace(/\s+/g, '-'),
-  }));
-}
-
 type RiderPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export default async function RiderPage({ params }: RiderPageProps) {
   const { slug } = await params;
-  const rider = cyclists.find((cyclist) => cyclist.slug === slug);
+  const rider = await getCyclist(slug);
 
   if (!rider) {
     notFound();

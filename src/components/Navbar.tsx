@@ -19,7 +19,7 @@ const links = [
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<"EN" | "DE">("EN");
+  const [lang, setLang] = useState<"EN" | "NL">("EN");
 
   return (
     <header className="sticky top-0 z-50 bg-brand-navy font-display text-white">
@@ -71,7 +71,7 @@ export default function Navbar() {
             aria-label="Language"
             className="flex rounded-full border border-white/15 bg-white/5 p-1"
           >
-            {(["EN", "DE"] as const).map((code) => (
+            {(["EN", "NL"] as const).map((code) => (
               <button
                 key={code}
                 type="button"

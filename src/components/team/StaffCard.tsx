@@ -16,6 +16,7 @@ export default function StaffCard({ member }: StaffCardProps) {
             alt={member.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            unoptimized={member.image.startsWith("http")}
             className="object-cover object-top"
           />
         ) : (

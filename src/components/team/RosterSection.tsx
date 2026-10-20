@@ -1,23 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { cyclists, type RiderCategory } from "@/data/cyclists";
+import { type Cyclist, type RiderCategory } from "@/data/cyclists";
 import CyclistCard from "./CyclistCard";
 
 type FilterKey = "all" | RiderCategory;
 
-export default function RosterSection() {
+export default function RosterSection({ cyclists }: { cyclists: Cyclist[] }) {
   const [active, setActive] = useState<FilterKey>("all");
 
   const allCount = cyclists.length;
-  const menCount = useMemo(() => cyclists.filter((r) => r.category === "men").length, []);
+  const menCount = useMemo(() => cyclists.filter((r) => r.category === "men").length, [cyclists]);
   const womenCount = useMemo(
     () => cyclists.filter((r) => r.category === "women").length,
-    []
+    [cyclists]
   );
   const juniorCount = useMemo(
     () => cyclists.filter((r) => r.category === "junior").length,
-    []
+    [cyclists]
   );
 
   const filters: { key: FilterKey; label: string }[] = [
@@ -29,7 +29,7 @@ export default function RosterSection() {
 
   const riders = useMemo(
     () => (active === "all" ? cyclists : cyclists.filter((r) => r.category === active)),
-    [active]
+    [active, cyclists]
   );
 
   return (
@@ -69,7 +69,7 @@ export default function RosterSection() {
 
       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 pt-6 sm:grid-cols-2 lg:grid-cols-4">
         {riders.map((rider) => (
-          <CyclistCard key={rider.slug} cyclist={rider} />
+          <CyclistCard key={rider.slug ?? rider.name} cyclist={rider} />
         ))}
       </div>
     </section>
