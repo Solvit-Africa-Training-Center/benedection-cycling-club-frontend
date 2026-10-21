@@ -1,5 +1,15 @@
+import { DEFAULT_LANG, type AppLang } from "@/lib/i18n/config";
 import { API_FETCH_TIMEOUT_MS, API_REVALIDATE_SECONDS, getApiBaseUrl } from "./config";
 import type { Paginated } from "./types";
+
+async function requestLang(): Promise<AppLang> {
+  try {
+    const { getRequestLang } = await import("@/lib/i18n/server");
+    return await getRequestLang();
+  } catch {
+    return DEFAULT_LANG;
+  }
+}
 
 export class ApiError extends Error {
   constructor(
@@ -77,9 +87,13 @@ export async function apiGet<T>(
     throw new ApiError("API_BASE_URL is not set", 503, path);
   }
 
-  const url = withQuery(joinUrl(base, path), query);
+  const lang = await requestLang();
+  const url = withQuery(joinUrl(base, path), { ...query, lang });
   const response = await request(url, {
-    headers: { Accept: "application/json" },
+    headers: {
+      Accept: "application/json",
+      "Accept-Language": lang,
+    },
     next: { revalidate: API_REVALIDATE_SECONDS },
   });
 
@@ -96,12 +110,14 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
     throw new ApiError("API_BASE_URL is not set", 503, path);
   }
 
-  const url = joinUrl(base, path);
+  const lang = await requestLang();
+  const url = withQuery(joinUrl(base, path), { lang });
   const response = await request(url, {
     method: "POST",
     cache: "no-store",
     headers: {
       Accept: "application/json",
+      "Accept-Language": lang,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),

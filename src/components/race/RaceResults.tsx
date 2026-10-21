@@ -1,20 +1,34 @@
+"use client";
+
 import Link from "next/link";
 import type { RaceResult } from "@/data/races";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export default function RaceResults({ results }: { results: RaceResult[] }) {
+  const { t } = useI18n();
   return (
     <section className="py-12 md:py-16">
-      <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-white md:text-4xl">RACE RESULTS</h2>
+      <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-white md:text-4xl">
+        {t.race.results}
+      </h2>
 
       <div className="mt-6 overflow-x-auto rounded-sm border border-blue-900/50 bg-[#0c1626]">
         <table className="w-full min-w-[640px] text-left">
-          <caption className="sr-only">Race results</caption>
+          <caption className="sr-only">{t.race.results}</caption>
           <thead className="bg-white/5">
             <tr>
-              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">Place</th>
-              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">Rider</th>
-              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">Race</th>
-              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">Time</th>
+              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">
+                {t.race.place}
+              </th>
+              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">
+                {t.race.rider}
+              </th>
+              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">
+                {t.race.raceCol}
+              </th>
+              <th scope="col" className="px-4 py-3 text-sm font-semibold text-gray-200">
+                {t.race.time}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -22,7 +36,10 @@ export default function RaceResults({ results }: { results: RaceResult[] }) {
               const riderName = result.riderName ?? result.riderSlug;
               const href = result.riderSlug ? `/team/${result.riderSlug}` : null;
               return (
-                <tr key={`${result.race}-${result.riderSlug}-${index}`} className={`border-t border-blue-900/50 text-sm text-gray-200 ${index % 2 === 1 ? "bg-white/[0.03]" : ""}`}>
+                <tr
+                  key={`${result.race}-${result.riderSlug}-${index}`}
+                  className={`border-t border-blue-900/50 text-sm text-gray-200 ${index % 2 === 1 ? "bg-white/[0.03]" : ""}`}
+                >
                   <td className="px-4 py-3 text-sm text-gray-200">{result.place || "—"}</td>
                   <td className="px-4 py-3 font-medium text-white">
                     {href ? (

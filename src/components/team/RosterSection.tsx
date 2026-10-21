@@ -2,12 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { type Cyclist, type RiderCategory } from "@/data/cyclists";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 import CyclistCard from "./CyclistCard";
 
 type FilterKey = "all" | RiderCategory;
 
 export default function RosterSection({ cyclists }: { cyclists: Cyclist[] }) {
+  const { t, languages } = useI18n();
   const [active, setActive] = useState<FilterKey>("all");
+  const categoryLabels = languages.labels.cyclist_category;
 
   const allCount = cyclists.length;
   const menCount = useMemo(() => cyclists.filter((r) => r.category === "men").length, [cyclists]);
@@ -21,10 +24,10 @@ export default function RosterSection({ cyclists }: { cyclists: Cyclist[] }) {
   );
 
   const filters: { key: FilterKey; label: string }[] = [
-    { key: "all", label: `All Personnel (${allCount})` },
-    { key: "men", label: `UCI Continental Men (${menCount})` },
-    { key: "women", label: `Women's Development Team (${womenCount})` },
-    { key: "junior", label: `Junior Squad [U-19] (${juniorCount})` },
+    { key: "all", label: `${t.team.allPersonnel} (${allCount})` },
+    { key: "men", label: `${categoryLabels.men ?? "Men"} (${menCount})` },
+    { key: "women", label: `${categoryLabels.women ?? "Women"} (${womenCount})` },
+    { key: "junior", label: `${categoryLabels.kids ?? "Kids"} (${juniorCount})` },
   ];
 
   const riders = useMemo(
@@ -36,7 +39,7 @@ export default function RosterSection({ cyclists }: { cyclists: Cyclist[] }) {
     <section aria-labelledby="roster-heading" className="mx-auto w-full max-w-7xl px-4 md:px-6">
       <div
         role="tablist"
-        aria-label="Filter personnel by squad"
+        aria-label={t.team.filterAria}
         className="flex flex-wrap gap-2"
       >
         {filters.map((filter) => {
@@ -64,7 +67,7 @@ export default function RosterSection({ cyclists }: { cyclists: Cyclist[] }) {
         id="roster-heading"
         className="mt-10 font-display text-3xl font-bold uppercase text-white md:text-4xl"
       >
-        First Team &amp; Academy Cyclists
+        {t.team.rosterHeading}
       </h2>
 
       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 pt-6 sm:grid-cols-2 lg:grid-cols-4">

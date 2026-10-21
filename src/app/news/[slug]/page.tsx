@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getNewsArticle } from "@/lib/api";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import { getRequestLang } from "@/lib/i18n/server";
 
 export default async function NewsArticlePage({
   params,
@@ -9,6 +11,7 @@ export default async function NewsArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const t = getDictionary(await getRequestLang());
   const article = await getNewsArticle(slug);
 
   if (!article) notFound();
@@ -22,12 +25,12 @@ export default async function NewsArticlePage({
           href="/news"
           className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-brand-lime"
         >
-          &larr; Back to news
+          &larr; {t.news.back}
         </Link>
 
         <div className="mt-6 flex items-center gap-4">
           <span className="rounded-sm bg-brand-lime px-3 py-1 font-display text-sm font-bold uppercase tracking-wide text-brand-navy">
-            {article.category}
+            {article.category || t.news.category}
           </span>
           <span className="font-display text-base font-bold uppercase tracking-wide text-gray-300">
             {article.date}

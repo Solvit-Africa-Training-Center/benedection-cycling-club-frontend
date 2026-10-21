@@ -1,13 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import type { NewsArticle } from "@/data/news";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export default function NewsGrid({ articles }: { articles: NewsArticle[] }) {
+  const { t } = useI18n();
   return (
     <section className="bg-brand-navy text-white">
       <div className="mx-auto max-w-7xl px-4 pt-6 md:px-6 md:pt-8">
         <h2 className="font-display text-3xl font-bold uppercase tracking-tight text-gray-100 md:text-4xl">
-          Latest news
+          {t.news.latest}
         </h2>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -29,7 +33,7 @@ export default function NewsGrid({ articles }: { articles: NewsArticle[] }) {
 
               <div className="flex flex-1 flex-col p-5">
                 <span className="w-fit rounded-sm bg-brand-lime px-3 py-1 font-display text-sm font-bold uppercase tracking-wide text-brand-navy">
-                  {article.category}
+                  {article.category || t.news.category}
                 </span>
 
                 <h3 className="mt-4 font-display text-lg font-bold uppercase leading-tight tracking-wide">
@@ -47,7 +51,7 @@ export default function NewsGrid({ articles }: { articles: NewsArticle[] }) {
                     href={`/news/${article.slug}`}
                     className="font-display text-base font-bold uppercase tracking-wide text-brand-lime transition-opacity hover:opacity-80"
                   >
-                    Read more
+                    {t.common.readMore}
                   </Link>
                 </div>
               </div>

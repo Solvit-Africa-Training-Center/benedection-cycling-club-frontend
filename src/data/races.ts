@@ -24,6 +24,7 @@ export type RaceResult = {
 export type ClubStat = {
   value: number;
   label: string;
+  roster?: "men" | "women" | "junior";
 };
 
 export function getRaceStatus(race: Race, todayIso: string): "upcoming" | "ongoing" | "completed" | "season" {
@@ -79,7 +80,7 @@ export const raceResults: RaceResult[] = [
 ];
 
 export const clubStats: ClubStat[] = [
-  { value: 51, label: "Wins by Benediction Club Men team in 2026" },
-  { value: 12, label: "Wins by Benediction Club Women team in 2026" },
-  { value: 8, label: "Wins by Benediction Club Junior Team" },
+  { value: 51, label: "Wins by Benediction Club Men team in 2026", roster: "men" },
+  { value: 12, label: "Wins by Benediction Club Women team in 2026", roster: "women" },
+  { value: 8, label: "Wins by Benediction Club Junior Team", roster: "junior" },
 ];

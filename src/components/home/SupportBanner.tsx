@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 function BikeIcon() {
   return (
@@ -24,7 +27,14 @@ function BikeIcon() {
   );
 }
 
-export default function SupportBanner() {
+export default function SupportBanner({
+  title,
+  body,
+}: {
+  title?: string;
+  body?: string;
+}) {
+  const { t } = useI18n();
   return (
     <section className="bg-[#0d111b] text-white">
       <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-14">
@@ -35,15 +45,13 @@ export default function SupportBanner() {
             {/* Text */}
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-lime">
-                Join the squad // Become part of our journey
+                {t.home.supportKicker}
               </p>
               <h2 className="mt-4 max-w-md font-display text-3xl font-bold uppercase leading-tight tracking-tight md:text-4xl">
-                Support Rwandan cycling on the global stage
+                {title || t.home.supportTitle}
               </h2>
-              <p className="mt-4 max-w-sm text-xs leading-relaxed text-gray-300">
-                Whether you are an aspiring junior cyclist, an international
-                supporter, or a performance sponsor, join our movement forging
-                champions from Rubavu to the world.
+              <p className="mt-4 max-w-sm whitespace-pre-line text-xs leading-relaxed text-gray-300">
+                {body || t.home.supportBody}
               </p>
             </div>
 
@@ -53,13 +61,13 @@ export default function SupportBanner() {
                 href="/contact"
                 className="bg-brand-lime px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-brand-navy transition-opacity hover:opacity-90"
               >
-                Join the academy
+                {t.home.joinAcademy}
               </Link>
               <Link
                 href="/partners"
                 className="bg-[#0d111b] px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-black"
               >
-                Partner with us
+                {t.home.partnerWithUs}
               </Link>
             </div>
           </div>

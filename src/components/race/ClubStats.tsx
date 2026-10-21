@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ClubStat } from "@/data/races";
 import { clubStats as fallbackStats } from "@/data/races";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 function CountUp({ target }: { target: number }) {
   const [value, setValue] = useState(1);
@@ -52,14 +53,21 @@ function CountUp({ target }: { target: number }) {
 }
 
 export default function ClubStats({ stats = fallbackStats }: { stats?: ClubStat[] }) {
+  const { t } = useI18n();
   const items = stats.length ? stats : fallbackStats;
+  function labelFor(stat: ClubStat) {
+    if (stat.roster === "men") return t.race.winsMen;
+    if (stat.roster === "women") return t.race.winsWomen;
+    if (stat.roster === "junior") return t.race.winsJunior;
+    return stat.label;
+  }
   return (
     <section className="py-12 md:py-16">
       <div className="grid grid-cols-1 divide-y divide-white/15 md:grid-cols-3 md:divide-x md:divide-y-0">
         {items.map((stat) => (
-          <div key={stat.label} className="flex flex-col items-center py-10 text-center">
+          <div key={stat.roster ?? stat.label} className="flex flex-col items-center py-10 text-center">
             <CountUp target={stat.value} />
-            <p className="mt-3 font-display text-lg font-semibold text-white md:text-xl">{stat.label}</p>
+            <p className="mt-3 font-display text-lg font-semibold text-white md:text-xl">{labelFor(stat)}</p>
           </div>
         ))}
       </div>

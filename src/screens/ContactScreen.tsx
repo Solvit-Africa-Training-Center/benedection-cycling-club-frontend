@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { cloneElement, FormEvent, useState } from "react";
 import type { ClubContact } from "@/lib/api/types";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
+import type { Dictionary } from "@/lib/i18n/dictionary";
 
 const fallbackDetails = [
   {
@@ -42,24 +44,41 @@ const fallbackDetails = [
 const inputClassName =
   "mt-2 w-full rounded-md border border-white/10 bg-[#30384a] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-500 focus:border-brand-teal focus:ring-1 focus:ring-brand-teal";
 
-function detailsFromContacts(contacts?: ClubContact[], location?: string) {
+function detailsFromContacts(
+  t: Dictionary,
+  kindLabels: Record<string, string> | undefined,
+  contacts?: ClubContact[],
+  location?: string,
+) {
   const place = location?.trim();
   const phone = contacts?.find((item) => item.kind === "phone" && item.value?.trim());
   const email = contacts?.find((item) => item.kind === "email" && item.value?.trim());
+  const emailLabel = kindLabels?.email || t.contact.email;
+  const phoneLabel = kindLabels?.phone || t.contact.phone;
   const rows = fallbackDetails.map((detail) => {
-    if (detail.label === "Email" && email?.value) {
-      return { ...detail, value: email.value, href: `mailto:${email.value}` };
+    if (detail.label === "Email") {
+      return {
+        ...detail,
+        label: emailLabel,
+        value: email?.value || detail.value,
+        href: email?.value ? `mailto:${email.value}` : detail.href,
+      };
     }
-    if (detail.label === "Phone" && phone?.value) {
-      return { ...detail, value: phone.value, href: `tel:${phone.value.replace(/\s+/g, "")}` };
+    if (detail.label === "Phone") {
+      return {
+        ...detail,
+        label: phoneLabel,
+        value: phone?.value || detail.value,
+        href: phone?.value ? `tel:${phone.value.replace(/\s+/g, "")}` : detail.href,
+      };
     }
-    return detail;
+    return { ...detail, label: t.contact.postal };
   });
   if (!place) return rows;
   const postal = rows[0];
   return [
     {
-      label: "Location",
+      label: t.contact.location,
       value: place,
       href: `https://maps.google.com/?q=${encodeURIComponent(place)}`,
       icon: cloneElement(postal.icon),
@@ -75,15 +94,16 @@ export default function ContactScreen({
   contacts?: ClubContact[];
   location?: string;
 }) {
-  const [submitted, setSubmitted] = useState(false);
+  const { t, languages } = useI18n();
+  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
-  const contactDetails = detailsFromContacts(contacts, location);
+  const contactDetails = detailsFromContacts(t, languages.labels.contact_kind, contacts, location);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    setSubmitted(false);
+    setSuccess(null);
     const form = event.currentTarget;
     const data = new FormData(form);
     const name = String(data.get("name") ?? "").trim();
@@ -105,14 +125,16 @@ export default function ContactScreen({
           message: phone ? `Phone: ${phone}\n\n${message}` : message,
         }),
       });
+      const payload = (await response.json().catch(() => null)) as
+        | { error?: string; detail?: string }
+        | null;
       if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || "Could not send the message.");
+        throw new Error(payload?.error || t.contact.sendFailed);
       }
-      setSubmitted(true);
+      setSuccess(payload?.detail || t.contact.thanks);
       form.reset();
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Could not send the message.");
+      setError(submitError instanceof Error ? submitError.message : t.contact.sendFailed);
     } finally {
       setPending(false);
     }
@@ -134,9 +156,9 @@ export default function ContactScreen({
 
         <div className="mx-auto flex min-h-[230px] max-w-7xl flex-col justify-center px-4 py-12 md:min-h-[280px] md:px-6">
           <h1 className="font-display text-5xl font-bold uppercase leading-none tracking-tight md:text-7xl">
-            Contact <span className="text-brand-teal">Us</span>
+            {t.contact.title} <span className="text-brand-teal">{t.contact.titleAccent}</span>
           </h1>
-          <p className="mt-4 text-base text-gray-200 md:text-lg">Get in touch with the team</p>
+          <p className="mt-4 text-base text-gray-200 md:text-lg">{t.contact.subtitle}</p>
         </div>
       </section>
 
@@ -144,24 +166,24 @@ export default function ContactScreen({
         <div className="grid gap-10 md:grid-cols-[1.15fr_0.85fr] md:items-center">
           <div className="rounded-3xl bg-linear-to-br from-[#1c263c] via-[#202b36] to-[#27331f] px-6 py-9 text-center shadow-lg shadow-black/20 md:px-10">
             <h2 className="font-display text-4xl leading-none text-white md:text-5xl">
-              Let&apos;s <span className="text-brand-teal">Connect</span>
+              {t.contact.lets} <span className="text-brand-teal">{t.contact.connect}</span>
             </h2>
             <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-gray-300 md:text-base">
-              Have a question or want to work with us? We would love to hear from you!
+              {t.contact.intro}
             </p>
           </div>
 
           <div>
             <h2 className="font-display text-3xl uppercase leading-none text-white md:text-4xl">
-              Direct contact
+              {t.contact.direct}
             </h2>
             <div className="mt-6 space-y-4">
               {contactDetails.map((detail) => (
                 <a
                   key={detail.label}
                   href={detail.href}
-                  target={detail.label === "P.O. BOX" || detail.label === "Location" ? "_blank" : undefined}
-                  rel={detail.label === "P.O. BOX" || detail.label === "Location" ? "noreferrer" : undefined}
+                  target={detail.label === t.contact.postal || detail.label === t.contact.location ? "_blank" : undefined}
+                  rel={detail.label === t.contact.postal || detail.label === t.contact.location ? "noreferrer" : undefined}
                   className="flex items-center gap-3 text-sm text-gray-300 transition-colors hover:text-brand-teal md:text-base"
                 >
                   <span className="h-5 w-5 shrink-0 text-brand-teal [&>svg]:h-full [&>svg]:w-full [&>svg]:fill-none [&>svg]:stroke-current [&>svg]:stroke-2">
@@ -183,20 +205,20 @@ export default function ContactScreen({
         >
           <div>
             <h2 className="font-display text-3xl uppercase leading-none md:text-4xl">
-              Send us a message
+              {t.contact.send}
             </h2>
             <p className="mt-3 text-sm text-gray-400">
-              Fill out the form below and we&apos;ll get back to you as soon as possible.
+              {t.contact.formHint}
             </p>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             <label className="font-display text-xl text-gray-200">
-              Name <span className="text-red-500">*</span>
+              {t.contact.name} <span className="text-red-500">*</span>
               <input className={inputClassName} name="name" required autoComplete="name" />
             </label>
             <label className="font-display text-xl text-gray-200">
-              Phone number <span className="text-red-500">*</span>
+              {t.contact.phone} <span className="text-red-500">*</span>
               <input
                 className={inputClassName}
                 name="phone"
@@ -206,7 +228,7 @@ export default function ContactScreen({
               />
             </label>
             <label className="font-display text-xl text-gray-200">
-              Email <span className="text-red-500">*</span>
+              {t.contact.email} <span className="text-red-500">*</span>
               <input
                 className={inputClassName}
                 name="email"
@@ -219,18 +241,18 @@ export default function ContactScreen({
 
           <div className="mt-6 grid gap-5 md:grid-cols-[7rem_1fr] md:items-start">
             <label htmlFor="contact-type" className="font-display text-xl text-gray-200">
-              Type:
+              {t.contact.type}
             </label>
             <select id="contact-type" name="type" className={inputClassName.replace("mt-2", "mt-0")}>
-              <option value="client">Client</option>
-              <option value="sponsor">Sponsor</option>
-              <option value="other">Other</option>
+              <option value="client">{t.contact.client}</option>
+              <option value="sponsor">{t.contact.sponsor}</option>
+              <option value="other">{t.contact.other}</option>
             </select>
           </div>
 
           <div className="mt-6 grid gap-5 md:grid-cols-[7rem_1fr] md:items-start">
             <label htmlFor="message" className="font-display text-xl text-gray-200">
-              Message:
+              {t.contact.message}
             </label>
             <textarea id="message" name="message" required rows={5} className={inputClassName.replace("mt-2", "mt-0")} />
           </div>
@@ -241,11 +263,11 @@ export default function ContactScreen({
               disabled={pending}
               className="w-full max-w-xs rounded-full bg-[#276b24] px-8 py-3 font-display text-2xl uppercase leading-none text-white transition-colors hover:bg-brand-teal hover:text-brand-navy disabled:opacity-60"
             >
-              {pending ? "Sending…" : "Submit"}
+              {pending ? t.common.sending : t.common.submit}
             </button>
-            {submitted && (
+            {success && (
               <p role="status" className="text-sm text-brand-lime">
-                Thanks for reaching out. We&apos;ll get back to you soon.
+                {success}
               </p>
             )}
             {error && (

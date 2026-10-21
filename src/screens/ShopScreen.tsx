@@ -1,8 +1,11 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import type { ShopProductView } from "@/lib/api";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
+
+const ALL_ITEMS = "__all__";
 
 type Product = ShopProductView & { filter?: string; sample?: boolean };
 
@@ -91,19 +94,26 @@ const fallbackProducts: Product[] = [
 ];
 
 const fallbackArtwork: Record<string, string> = {
-  Jerseys: "JERSEY",
-  Shorts: "BIB",
-  Glasses: "AERO",
-  Gloves: "GLOVE",
-  Socks: "SOCK",
-  Helmet: "HELMET",
+  jerseys: "JERSEY",
+  "bib-shorts": "BIB",
+  shorts: "BIB",
+  glasses: "AERO",
+  "cycling-glass": "AERO",
+  gloves: "GLOVE",
+  socks: "SOCK",
+  helmet: "HELMET",
+  caps: "CAP",
 };
 
 function ProductArtwork({ product, className = "" }: { product: Product; className?: string }) {
   const [imageFailed, setImageFailed] = useState(false);
 
+  useEffect(() => {
+    setImageFailed(false);
+  }, [product.image]);
+
   return (
-    <div className={`shop-art shop-art-${product.category.toLowerCase()} ${className}`}>
+    <div className={`shop-art shop-art-${product.categorySlug} ${className}`}>
       {!imageFailed && (
         <Image
           src={product.image}
@@ -117,7 +127,7 @@ function ProductArtwork({ product, className = "" }: { product: Product; classNa
       )}
       {imageFailed && (
         <span className="shop-art-fallback" aria-hidden="true">
-          {fallbackArtwork[product.category]}
+          {fallbackArtwork[product.categorySlug] ?? product.categorySlug.toUpperCase()}
         </span>
       )}
     </div>
@@ -131,16 +141,18 @@ function CartButton({
   cartCount: number;
   onClick: () => void;
 }) {
+  const { t } = useI18n();
+  const itemLabel = cartCount === 1 ? t.shop.item : t.shop.items;
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={`Open shopping cart, ${cartCount} ${cartCount === 1 ? "item" : "items"}`}
+      aria-label={`${t.shop.cart}, ${cartCount} ${itemLabel}`}
       className="flex items-center gap-3 border border-white/10 bg-black/20 px-4 py-3 text-left transition-colors hover:border-brand-lime"
     >
       <div
         className="relative"
-        aria-label={`${cartCount} ${cartCount === 1 ? "item" : "items"} in cart`}
+        aria-label={`${cartCount} ${itemLabel}`}
       >
         <svg
           aria-hidden="true"
@@ -161,9 +173,9 @@ function CartButton({
         </span>
       </div>
       <div>
-        <span className="block text-[10px] uppercase tracking-widest text-gray-500">Cart</span>
+        <span className="block text-[10px] uppercase tracking-widest text-gray-500">{t.shop.cart}</span>
         <span className="font-display text-xl font-bold text-brand-lime">
-          {cartCount} {cartCount === 1 ? "item" : "items"}
+          {cartCount} {itemLabel}
         </span>
       </div>
     </button>
@@ -177,31 +189,37 @@ export default function ShopScreen({
   products?: Product[];
   categories?: { name: string; slug: string }[];
 }) {
+  const { t } = useI18n();
   const products = catalogProducts?.length ? catalogProducts : fallbackProducts;
   const categories = [
-    "All items",
+    { slug: ALL_ITEMS, name: t.shop.allItems },
     ...(catalogCategories?.length
-      ? catalogCategories.map((category) => category.name)
-      : Array.from(new Set(products.map((product) => product.category)))),
+      ? catalogCategories.map((category) => ({ slug: category.slug, name: category.name }))
+      : Array.from(new Set(products.map((product) => product.categorySlug))).map((slug) => ({
+          slug,
+          name: products.find((product) => product.categorySlug === slug)?.category || slug,
+        }))),
   ];
-  const [activeCategory, setActiveCategory] = useState("All items");
+  const [activeCategory, setActiveCategory] = useState(ALL_ITEMS);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
   const [view, setView] = useState<"shop" | "product" | "cart" | "checkout" | "done">("shop");
-  const [selectedProductName, setSelectedProductName] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutPending, setCheckoutPending] = useState(false);
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
   const subtotal = cart.reduce((sum, item) => {
-    const product = products.find((entry) => entry.name === item.productName);
+    const product = products.find((entry) =>
+      item.productId != null ? entry.id === item.productId : entry.name === item.productName,
+    );
     return sum + (product?.price ?? 0) * item.quantity;
   }, 0);
 
   const visibleProducts = useMemo(
     () =>
-      activeCategory === "All items"
+      activeCategory === ALL_ITEMS
         ? products
-        : products.filter((product) => product.category === activeCategory),
+        : products.filter((product) => product.categorySlug === activeCategory),
     [activeCategory, products],
   );
 
@@ -210,12 +228,12 @@ export default function ShopScreen({
   }
 
   function openProduct(product: Product) {
-    setSelectedProductName(product.name);
+    setSelectedProductId(product.id ?? null);
     setView("product");
   }
 
   function addToCart(productName: string, size: string, quantity = 1) {
-    const product = products.find((entry) => entry.name === productName);
+    const product = products.find((entry) => entry.id === selectedProductId || entry.name === productName);
     if (!product) return;
     const color = product?.filter;
     setCart((current) => {
@@ -276,7 +294,7 @@ export default function ShopScreen({
     }
     const items = [...grouped.entries()].map(([product_id, quantity]) => ({ product_id, quantity }));
     if (!items.length) {
-      setCheckoutError("These sample products are not in the club shop yet. Connect the live catalog before sending a request.");
+      setCheckoutError(t.shop.sampleOnly);
       return;
     }
     setCheckoutPending(true);
@@ -294,13 +312,13 @@ export default function ShopScreen({
       });
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(payload?.error || "Could not submit the order request.");
+        throw new Error(payload?.error || t.shop.cartFailed);
       }
       setCart([]);
       setView("done");
       form.reset();
     } catch (submitError) {
-      setCheckoutError(submitError instanceof Error ? submitError.message : "Could not submit the order request.");
+      setCheckoutError(submitError instanceof Error ? submitError.message : t.shop.cartFailed);
     } finally {
       setCheckoutPending(false);
     }
@@ -318,30 +336,30 @@ export default function ShopScreen({
     return (
       <aside className="h-fit rounded-sm border border-white/10 bg-[#171d29] p-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold uppercase text-slate-200">Order summary</h2>
-          <span className="text-[9px] uppercase text-gray-500">{cartCount} {cartCount === 1 ? "item" : "items"}</span>
+          <h2 className="font-display text-lg font-bold uppercase text-slate-200">{t.shop.orderSummary}</h2>
+          <span className="text-[9px] uppercase text-gray-500">{cartCount} {cartCount === 1 ? t.shop.item : t.shop.items}</span>
         </div>
         <div className="mt-4 space-y-3 text-xs">
-          <div className="flex justify-between"><span className="text-gray-400">Merchandise subtotal</span><strong className="font-display text-lg text-slate-200">${subtotal}</strong></div>
-          <div className="flex justify-between text-gray-400"><span>Delivery</span><span>To be confirmed</span></div>
-          <div className="flex justify-between text-gray-400"><span>Taxes</span><span>To be confirmed</span></div>
-          <div className="border-t border-white/10 pt-3"><div className="flex justify-between text-gray-300"><span>Payable total</span><span>To be confirmed</span></div></div>
-          <p className="text-[10px] leading-relaxed text-gray-400">We’ll confirm delivery, taxes, and the payable total after reviewing your request.</p>
+          <div className="flex justify-between"><span className="text-gray-400">{t.shop.subtotal}</span><strong className="font-display text-lg text-slate-200">${subtotal}</strong></div>
+          <div className="flex justify-between text-gray-400"><span>{t.shop.delivery}</span><span>{t.shop.toConfirm}</span></div>
+          <div className="flex justify-between text-gray-400"><span>{t.shop.taxes}</span><span>{t.shop.toConfirm}</span></div>
+          <div className="border-t border-white/10 pt-3"><div className="flex justify-between text-gray-300"><span>{t.shop.payable}</span><span>{t.shop.toConfirm}</span></div></div>
+          <p className="text-[10px] leading-relaxed text-gray-400">{t.shop.confirmNote}</p>
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
           <button type="button" onClick={() => setView("shop")} className="flex w-full items-center justify-center border border-white/20 px-3 py-3 text-[11px] font-bold uppercase text-gray-200 transition-colors hover:border-brand-lime hover:text-brand-lime">
-            ← Continue shopping
+            {t.shop.continueShopping}
           </button>
           <button type="button" disabled={!cart.length} onClick={() => setView("checkout")} className="flex w-full items-center justify-center gap-2 bg-brand-lime px-3 py-3 text-[11px] font-bold uppercase text-brand-navy transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50">
-            Continue to checkout <span aria-hidden="true">→</span>
+            {t.shop.continueCheckout} <span aria-hidden="true">→</span>
           </button>
         </div>
       </aside>
     );
   }
 
-  if (view === "product" && selectedProductName) {
-    const product = products.find((entry) => entry.name === selectedProductName);
+  if (view === "product" && selectedProductId != null) {
+    const product = products.find((entry) => entry.id === selectedProductId);
 
     if (product) {
       const selectedSize =
@@ -353,11 +371,11 @@ export default function ShopScreen({
             <div className="mx-auto max-w-7xl">
               <div className="flex items-start justify-between gap-5">
                 <button type="button" onClick={() => setView("shop")} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-brand-lime">
-                  ← Back to products
+                  ← {t.shop.backToProducts}
                 </button>
                 {cartCount > 0 && <CartButton cartCount={cartCount} onClick={() => setView("cart")} />}
               </div>
-              <p className="mt-6 text-xs font-bold uppercase tracking-[0.28em] text-brand-lime">Benediction / pro team kit</p>
+              <p className="mt-6 text-xs font-bold uppercase tracking-[0.28em] text-brand-lime">{t.shop.kitLine}</p>
               <h1 className="mt-2 max-w-3xl font-display text-4xl font-bold uppercase leading-none text-slate-200 sm:text-6xl">
                 {product.name}
               </h1>
@@ -372,7 +390,7 @@ export default function ShopScreen({
 
               <div className="mt-8">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  {product.category === "Glasses" ? "Lens filter" : "Select size"}
+                  {product.categorySlug === "glasses" || /glass/i.test(product.category) ? t.shop.lensFilter : t.shop.selectSize}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {product.sizes.map((size) => (
@@ -402,7 +420,7 @@ export default function ShopScreen({
                   }}
                   className="flex min-w-48 flex-1 items-center justify-center bg-brand-lime px-4 py-4 text-xs font-bold uppercase tracking-widest text-brand-navy transition-colors hover:bg-white"
                 >
-                  Add to cart
+                  {t.shop.addToCart}
                 </button>
               </div>
             </div>
@@ -416,13 +434,13 @@ export default function ShopScreen({
     return (
       <main className="min-h-screen bg-brand-navy text-white">
         <section className="mx-auto max-w-3xl px-4 py-24 text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-brand-lime">Order request sent</p>
-          <h1 className="mt-3 font-display text-4xl font-bold uppercase">Thank you</h1>
+          <p className="text-xs font-bold uppercase tracking-widest text-brand-lime">{t.shop.sent}</p>
+          <h1 className="mt-3 font-display text-4xl font-bold uppercase">{t.shop.thankYou}</h1>
           <p className="mt-4 text-sm text-gray-400">
-            The club will confirm availability, delivery and the payable total. There is no online payment.
+            {t.shop.sentBody}
           </p>
           <button type="button" onClick={() => setView("shop")} className="mt-8 bg-brand-lime px-6 py-3 text-xs font-bold uppercase text-brand-navy">
-            Back to shop
+            {t.shop.backToShop}
           </button>
         </section>
       </main>
@@ -434,44 +452,47 @@ export default function ShopScreen({
       <main className="min-h-screen bg-brand-navy text-white">
         <section className="border-b border-white/10 bg-linear-to-br from-[#151b28] via-brand-navy to-[#17241f] px-4 py-8 md:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="flex justify-between text-[9px] uppercase tracking-wide text-gray-400"><span>Official pro shop / checkout</span><button type="button" onClick={() => setView("cart")} className="font-bold text-brand-lime">Cart ({cartCount})</button></div>
-            <h1 className="mt-3 font-display text-4xl font-bold uppercase text-slate-200 sm:text-5xl">{view === "cart" ? "Your shopping cart" : "Contact & delivery"}</h1>
-            <p className="mt-2 text-xs text-gray-400">{view === "cart" ? "Your team kit, ready for the next step. Check your selection before continuing." : "Tell us who’s riding and where your kit should go."}</p>
+            <div className="flex justify-between text-[9px] uppercase tracking-wide text-gray-400"><span>{t.shop.checkout}</span><button type="button" onClick={() => setView("cart")} className="font-bold text-brand-lime">{t.shop.cart} ({cartCount})</button></div>
+            <h1 className="mt-3 font-display text-4xl font-bold uppercase text-slate-200 sm:text-5xl">{view === "cart" ? t.shop.yourCart : t.shop.contactDelivery}</h1>
+            <p className="mt-2 text-xs text-gray-400">{view === "cart" ? t.shop.cartHint : t.shop.deliveryHint}</p>
           </div>
         </section>
         <section className="mx-auto max-w-7xl px-4 py-5 md:px-8">
-          <div className="mb-7 flex gap-8 border-b border-white/10 pb-4 text-[10px] font-bold uppercase text-gray-400"><span className={view === "cart" ? "text-brand-lime" : ""}>① Shopping cart</span><span className={view === "checkout" ? "text-brand-lime" : ""}>② Order details</span><span>③ Confirmation</span></div>
+          <div className="mb-7 flex gap-8 border-b border-white/10 pb-4 text-[10px] font-bold uppercase text-gray-400"><span className={view === "cart" ? "text-brand-lime" : ""}>{t.shop.stepCart}</span><span className={view === "checkout" ? "text-brand-lime" : ""}>{t.shop.stepDetails}</span><span>{t.shop.stepDone}</span></div>
           {view === "cart" ? (
             <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
               <div>
-                <div className="mb-4 flex justify-between border-b border-white/10 pb-3"><h2 className="font-display font-bold uppercase">Your items</h2><span className="text-[10px] text-gray-400">{cartCount} {cartCount === 1 ? "item" : "items"}</span></div>
+                <div className="mb-4 flex justify-between border-b border-white/10 pb-3"><h2 className="font-display font-bold uppercase">{t.shop.yourItems}</h2><span className="text-[10px] text-gray-400">{cartCount} {cartCount === 1 ? t.shop.item : t.shop.items}</span></div>
                 {cart.length ? <div className="divide-y divide-white/10">{cart.map((item) => {
-                  const product = products.find((entry) => entry.name === item.productName)!;
+                  const product = products.find((entry) =>
+                    item.productId != null ? entry.id === item.productId : entry.name === item.productName,
+                  );
+                  if (!product) return null;
                   return <article key={`${item.productName}-${item.size}`} className="grid gap-4 py-4 sm:grid-cols-[180px_minmax(0,1fr)]">
                     <ProductArtwork product={product} className="shop-art-bag" />
-                    <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">Benediction / pro team kit</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3><p className="mt-3 text-xs text-gray-400">Size: {item.size}</p></div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">Remove</button></div></div>
+                    <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">{t.shop.kitLine}</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3><p className="mt-3 text-xs text-gray-400">{t.shop.size}: {item.size}</p></div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">{t.shop.remove}</button></div></div>
                   </article>;
-                })}</div> : <p className="py-10 text-sm text-gray-400">Your cart is empty. Continue shopping to add team kit.</p>}
+                })}</div> : <p className="py-10 text-sm text-gray-400">{t.shop.emptyCart}</p>}
               </div>
               {orderSummary()}
             </div>
           ) : (
             <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(260px,1fr)]">
               <form onSubmit={handleCheckout} className="space-y-4">
-                <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">Contact details</legend><h2 className="font-display text-lg font-bold uppercase">Contact details</h2>
-                  <label className="block text-[10px] text-gray-300">Full name *<input required name="name" autoComplete="name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Your name" /></label>
-                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Email address *<input required type="email" name="email" autoComplete="email" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="you@example.com" /></label><label className="block text-[10px] text-gray-300">Phone number (optional)<input type="tel" name="phone" autoComplete="tel" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Include country code" /></label></div>
+                <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">{t.shop.contactDetails}</legend><h2 className="font-display text-lg font-bold uppercase">{t.shop.contactDetails}</h2>
+                  <label className="block text-[10px] text-gray-300">{t.shop.fullName} *<input required name="name" autoComplete="name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder={t.shop.yourName} /></label>
+                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">{t.shop.email} *<input required type="email" name="email" autoComplete="email" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="you@example.com" /></label><label className="block text-[10px] text-gray-300">{t.shop.phoneOptional}<input type="tel" name="phone" autoComplete="tel" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder={t.shop.countryCode} /></label></div>
                 </fieldset>
-                <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">Delivery address</legend><h2 className="font-display text-lg font-bold uppercase">Delivery address</h2>
-                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Country / territory *<input required name="country" autoComplete="country-name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">Postal code *<input required name="postal" autoComplete="postal-code" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label></div>
-                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">Street address *<input required name="street" autoComplete="address-line1" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">Address line 2<input name="address2" autoComplete="address-line2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Apartment, suite or building" /></label></div>
-                  <label className="block text-[10px] text-gray-300">City *<input required name="city" autoComplete="address-level2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label>
-                  <label className="flex items-center gap-2 border-t border-white/10 pt-4 text-[10px] text-gray-300"><input type="checkbox" name="sameBilling" defaultChecked className="accent-brand-lime" /> Billing address is the same as delivery address</label>
-                  <label className="block text-[10px] text-gray-300">Color (optional)<input name="color" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="If a color matters for this order" /></label>
-                  <label className="block text-[10px] text-gray-300">Order notes (optional)<textarea name="notes" rows={3} className="mt-2 w-full resize-y border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder="Anything we should know?" /></label>
+                <fieldset className="space-y-4 rounded-sm border border-white/10 bg-[#171d29] p-4"><legend className="sr-only">{t.shop.deliveryAddress}</legend><h2 className="font-display text-lg font-bold uppercase">{t.shop.deliveryAddress}</h2>
+                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">{t.shop.country} *<input required name="country" autoComplete="country-name" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">{t.shop.postal} *<input required name="postal" autoComplete="postal-code" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label></div>
+                  <div className="grid gap-3 sm:grid-cols-2"><label className="block text-[10px] text-gray-300">{t.shop.street} *<input required name="street" autoComplete="address-line1" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label><label className="block text-[10px] text-gray-300">{t.shop.address2}<input name="address2" autoComplete="address-line2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder={t.shop.apartment} /></label></div>
+                  <label className="block text-[10px] text-gray-300">{t.shop.city} *<input required name="city" autoComplete="address-level2" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" /></label>
+                  <label className="flex items-center gap-2 border-t border-white/10 pt-4 text-[10px] text-gray-300"><input type="checkbox" name="sameBilling" defaultChecked className="accent-brand-lime" /> {t.shop.billingSame}</label>
+                  <label className="block text-[10px] text-gray-300">{t.shop.colorOptional}<input name="color" className="mt-2 w-full border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder={t.shop.colorHint} /></label>
+                  <label className="block text-[10px] text-gray-300">{t.shop.notesOptional}<textarea name="notes" rows={3} className="mt-2 w-full resize-y border border-white/10 bg-[#10151f] px-3 py-2.5 text-xs text-white outline-none focus:border-brand-lime" placeholder={t.shop.notesHint} /></label>
                 </fieldset>
                 {checkoutError ? <p role="alert" className="text-sm text-red-400">{checkoutError}</p> : null}
-                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("cart")} className="text-xs text-gray-400">← Back to cart</button><button type="submit" disabled={!cart.length || checkoutPending} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">{checkoutPending ? "Sending…" : "Submit order"}</button></div>
+                <div className="flex flex-wrap items-center justify-between gap-3"><button type="button" onClick={() => setView("cart")} className="text-xs text-gray-400">{t.shop.backToCart}</button><button type="submit" disabled={!cart.length || checkoutPending} className="bg-brand-lime px-8 py-3 text-xs font-bold uppercase text-brand-navy hover:bg-white disabled:opacity-50">{checkoutPending ? t.common.sending : t.shop.submitOrder}</button></div>
               </form>
               {orderSummary()}
             </div>
@@ -486,33 +507,33 @@ export default function ShopScreen({
       <section className="border-b border-white/10 bg-linear-to-br from-[#151b28] via-brand-navy to-[#17241f] px-4 py-12 md:px-8 md:py-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-brand-lime">
-            Banafrica team store
+            {t.shop.store}
           </p>
           <div className="flex flex-wrap items-end justify-between gap-5">
             <h1 className="font-display text-5xl font-bold uppercase leading-none tracking-tight text-slate-200 sm:text-7xl">
-              Featured products
+              {t.shop.featured}
             </h1>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-6 md:px-8">
-        <div className="flex gap-1 overflow-x-auto border-b border-white/10 pb-4" role="tablist" aria-label="Product categories">
+        <div className="flex gap-1 overflow-x-auto border-b border-white/10 pb-4" role="tablist" aria-label={t.shop.categories}>
           {categories.map((category) => (
             <button
-              key={category}
+              key={category.slug}
               type="button"
               role="tab"
-              aria-selected={activeCategory === category}
-              onClick={() => setActiveCategory(category)}
+              aria-selected={activeCategory === category.slug}
+              onClick={() => setActiveCategory(category.slug)}
               className={`whitespace-nowrap px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${
-                activeCategory === category
+                activeCategory === category.slug
                   ? "bg-brand-lime text-brand-navy"
                   : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
               }`}
             >
-              {category}
-                  {category === "All items" ? ` (${products.length})` : ""}
+              {category.name}
+              {category.slug === ALL_ITEMS ? ` (${products.length})` : ""}
             </button>
           ))}
         </div>
@@ -520,7 +541,7 @@ export default function ShopScreen({
         <div className="grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-3">
           {visibleProducts.map((product) => {
             return (
-              <article key={product.name} className="overflow-hidden rounded-sm bg-[#171d29] shadow-lg shadow-black/10">
+              <article key={product.id ?? product.slug} className="overflow-hidden rounded-sm bg-[#171d29] shadow-lg shadow-black/10">
                 <button
                   type="button"
                   onClick={() => openProduct(product)}

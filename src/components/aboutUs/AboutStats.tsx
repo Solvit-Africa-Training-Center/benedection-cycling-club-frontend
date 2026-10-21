@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 const iconProps = {
   width: 14,
@@ -13,19 +16,15 @@ const iconProps = {
 };
 
 const stats: {
-  label: string;
+  key: "years" | "trophies" | "callups" | "altitude";
   value: string;
-  title: string;
-  text: string;
   titleClass: string;
   iconClass: string;
   icon: ReactNode;
 }[] = [
   {
-    label: "Legacy duration",
+    key: "years",
     value: "6",
-    title: "Years of racing",
-    text: "Sustained competitive peloton legacy since inception.",
     titleClass: "text-brand-lime",
     iconClass: "text-indigo-200",
     icon: (
@@ -37,10 +36,8 @@ const stats: {
     ),
   },
   {
-    label: "Podiums & palmarès",
+    key: "trophies",
     value: "17",
-    title: "Major trophies",
-    text: "Tour du Rwanda stages, African Continental crowns & GC titles.",
     titleClass: "text-indigo-200",
     iconClass: "text-brand-lime",
     icon: (
@@ -52,10 +49,8 @@ const stats: {
     ),
   },
   {
-    label: "National selection",
+    key: "callups",
     value: "10",
-    title: "National callups",
-    text: "Rwandan National Team representatives forged in our ranks.",
     titleClass: "text-teal-300",
     iconClass: "text-teal-300",
     icon: (
@@ -66,10 +61,8 @@ const stats: {
     ),
   },
   {
-    label: "Altitude gradient",
+    key: "altitude",
     value: "2.8K",
-    title: "Meters peak climbs",
-    text: "Training summits across the Virunga volcanic spine.",
     titleClass: "text-white",
     iconClass: "text-brand-lime",
     icon: (
@@ -87,11 +80,18 @@ export default function AboutStats({
   yearsRacing?: number;
   majorTrophies?: number;
 }) {
+  const { t } = useI18n();
+  const copy = {
+    years: { label: t.about.yearsLabel, title: t.about.yearsTitle, text: t.about.yearsText },
+    trophies: { label: t.about.trophiesLabel, title: t.about.trophiesTitle, text: t.about.trophiesText },
+    callups: { label: t.about.callupsLabel, title: t.about.callupsTitle, text: t.about.callupsText },
+    altitude: { label: t.about.altitudeLabel, title: t.about.altitudeTitle, text: t.about.altitudeText },
+  };
   const display = stats.map((stat) => {
-    if (stat.title === "Years of racing" && yearsRacing) {
+    if (stat.key === "years" && yearsRacing) {
       return { ...stat, value: String(yearsRacing) };
     }
-    if (stat.title === "Major trophies" && majorTrophies) {
+    if (stat.key === "trophies" && majorTrophies) {
       return { ...stat, value: String(majorTrophies) };
     }
     return stat;
@@ -101,12 +101,12 @@ export default function AboutStats({
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-4 py-10 sm:grid-cols-2 md:px-6 lg:grid-cols-4">
         {display.map((stat) => (
           <article
-            key={stat.label}
+            key={stat.key}
             className="rounded-sm bg-[#1a2030] p-5 text-white"
           >
             <div className="flex items-center justify-between">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                {stat.label}
+                {copy[stat.key].label}
               </p>
               <span className={stat.iconClass}>{stat.icon}</span>
             </div>
@@ -118,10 +118,10 @@ export default function AboutStats({
             <h3
               className={`mt-3 font-display text-base font-bold uppercase tracking-wide ${stat.titleClass}`}
             >
-              {stat.title}
+              {copy[stat.key].title}
             </h3>
             <p className="mt-1 text-xs leading-relaxed text-gray-400">
-              {stat.text}
+              {copy[stat.key].text}
             </p>
           </article>
         ))}

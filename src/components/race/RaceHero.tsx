@@ -1,10 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export default function RaceHero() {
+  const { t } = useI18n();
   return (
     <section
       className="relative overflow-hidden min-h-[260px] md:min-h-[360px] lg:min-h-[440px]"
-      aria-label="Race hero"
+      aria-label={t.race.title}
     >
       <div className="absolute inset-0">
         <Image
@@ -20,7 +24,7 @@ export default function RaceHero() {
       </div>
       <div className="relative z-10 flex min-h-[260px] items-center justify-center px-4 md:min-h-[360px] lg:min-h-[440px]">
         <h1 className="font-display text-center text-6xl font-extrabold uppercase tracking-tight text-white md:text-8xl">
-          RACES
+          {t.race.title}
         </h1>
       </div>
     </section>

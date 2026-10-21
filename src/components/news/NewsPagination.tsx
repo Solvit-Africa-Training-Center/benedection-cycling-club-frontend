@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 type NewsPaginationProps = {
   current: number;
@@ -15,6 +18,7 @@ export default function NewsPagination({
   shown,
   totalArticles,
 }: NewsPaginationProps) {
+  const { t } = useI18n();
   const pages = Array.from({ length: total }, (_, i) => i + 1);
   const href = (p: number) => (p === 1 ? "/news" : `/news?page=${p}`);
 
@@ -28,18 +32,18 @@ export default function NewsPagination({
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-10 md:px-6">
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-sm bg-[#141a26] px-4 py-3">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-            Showing {shown} of {totalArticles} squad dispatches{" "}
-            <span className="text-brand-lime">&bull;</span> Page {pad(current)}{" "}
+            {t.news.showing} {shown} {t.news.of} {totalArticles} {t.news.dispatches}{" "}
+            <span className="text-brand-lime">&bull;</span> {t.news.page} {pad(current)}{" "}
             / {pad(total)}
           </p>
 
-          <nav aria-label="News pages" className="flex items-center gap-2">
+          <nav aria-label={t.news.pages} className="flex items-center gap-2">
             {current > 1 ? (
               <Link href={href(current - 1)} className={`${edge} ${on}`}>
-                Previous
+                {t.news.previous}
               </Link>
             ) : (
-              <span className={`${edge} ${off}`}>Previous</span>
+              <span className={`${edge} ${off}`}>{t.news.previous}</span>
             )}
 
             {pages.map((p) => (
@@ -59,10 +63,10 @@ export default function NewsPagination({
 
             {current < total ? (
               <Link href={href(current + 1)} className={`${edge} ${on}`}>
-                Next
+                {t.news.next}
               </Link>
             ) : (
-              <span className={`${edge} ${off}`}>Next</span>
+              <span className={`${edge} ${off}`}>{t.news.next}</span>
             )}
           </nav>
         </div>

@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import type { NewsArticle } from "@/data/news";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 const fallbackPosts: NewsArticle[] = [
   {
@@ -54,6 +57,7 @@ function Arrow() {
 }
 
 export default function News({ articles = fallbackPosts }: { articles?: NewsArticle[] }) {
+  const { t } = useI18n();
   const posts = articles.slice(0, 3);
 
   return (
@@ -61,13 +65,13 @@ export default function News({ articles = fallbackPosts }: { articles?: NewsArti
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 className="font-display text-3xl font-bold uppercase tracking-tight md:text-4xl">
-            Latest news &amp; race reports
+            {t.home.latestNews}
           </h2>
           <Link
             href="/news"
             className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400 transition-colors hover:text-brand-lime"
           >
-            Read all field dispatches
+            {t.home.readAll}
             <Arrow />
           </Link>
         </div>
@@ -91,13 +95,13 @@ export default function News({ articles = fallbackPosts }: { articles?: NewsArti
                     />
                   </div>
                   <span className="absolute bottom-2 left-2 rounded-sm bg-black/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-lime">
-                    {post.category}
+                    {post.category || t.news.category}
                   </span>
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                    {post.date} &bull; {post.category}
+                    {post.date}{post.date ? " • " : ""}{post.category || t.news.category}
                   </p>
                   <h3 className="mt-2 font-display text-lg font-bold uppercase leading-tight tracking-wide">
                     {post.title}
@@ -106,7 +110,7 @@ export default function News({ articles = fallbackPosts }: { articles?: NewsArti
                     {post.excerpt}
                   </p>
                   <div className="mt-auto flex items-center justify-between pt-6 text-xs text-gray-500">
-                    <span>Read more</span>
+                    <span>{t.common.readMore}</span>
                     <Arrow />
                   </div>
                 </div>
