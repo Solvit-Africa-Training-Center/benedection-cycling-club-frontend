@@ -54,6 +54,7 @@ export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) 
         Gallery
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {tiles.map((src, index) => (
             <div
               key={`${name}-gallery-${index}`}
               className="relative overflow-hidden rounded-sm bg-[#d9dce1]"
