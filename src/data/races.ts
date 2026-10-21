@@ -1,4 +1,4 @@
-// SAMPLE DATA taken from the design: replace with the club's official calendar, results and statistics before the site goes public.
+// Official race calendar (dates, locations, squad). Used when the API row has no date or location.
 
 export type Team = "men" | "women" | "junior" | "all";
 
@@ -54,6 +54,25 @@ export function todayInKigali(): string {
   }).format(new Date());
 }
 
+function raceNameKey(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function raceYear(race: Pick<Race, "startDate" | "seasonYear">): string {
+  if (race.startDate && race.startDate.length >= 4) return race.startDate.slice(0, 4);
+  return race.seasonYear ? String(race.seasonYear) : "";
+}
+
+function calendarKey(race: Pick<Race, "name" | "startDate" | "seasonYear">): string {
+  return `${raceNameKey(race.name)}|${raceYear(race)}`;
+}
+
+/** Official club calendar used when the API has no date or location yet. */
 export const races: Race[] = [
   { id: "1", name: "Rwanda Cycling Cup Final", startDate: "2025-12-06", endDate: "2025-12-07", location: "Rwanda", team: "all" },
   { id: "2", name: "Heroes Cycling Cup", startDate: "2026-01-24", location: "Rwanda", team: "all" },
@@ -70,6 +89,35 @@ export const races: Race[] = [
   { id: "13", name: "Tour de l'Avenir", startDate: "2027-09-21", endDate: "2027-09-28", location: "France", team: "junior" },
   { id: "14", name: "Tour de France", startDate: "2027-11-08", endDate: "2027-11-10", location: "France", team: "men" },
 ];
+
+export function mergeRaceCalendar(apiRaces: Race[], calendar: Race[] = races): Race[] {
+  const unused = new Map(calendar.map((race) => [calendarKey(race), race] as const));
+  const merged: Race[] = [];
+
+  for (const race of apiRaces) {
+    const exact = unused.get(calendarKey(race));
+    const sameName = [...unused.values()].filter((item) => raceNameKey(item.name) === raceNameKey(race.name));
+    const byYear = sameName.find((item) => raceYear(item) === raceYear(race));
+    const cal = exact || byYear || (!raceYear(race) && !race.startDate && !race.location ? sameName[0] : undefined);
+
+    if (cal) unused.delete(calendarKey(cal));
+
+    const next: Race = {
+      ...race,
+      name: cal?.name || race.name,
+      startDate: cal?.startDate || race.startDate,
+      endDate: cal?.endDate || race.endDate,
+      location: cal?.location || race.location || "",
+      team: cal?.team && cal.team !== "all" ? cal.team : race.team !== "all" ? race.team : cal?.team ?? race.team,
+      seasonYear: race.seasonYear ?? (cal?.startDate ? Number(cal.startDate.slice(0, 4)) : cal?.seasonYear),
+    };
+
+    if (next.startDate || next.location || cal) merged.push(next);
+  }
+
+  merged.push(...unused.values());
+  return merged;
+}
 
 export const raceResults: RaceResult[] = [
   { place: 1, riderSlug: "mugisha-moise", race: "Tour du Rwanda", time: "4:23:10" },

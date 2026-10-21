@@ -2,7 +2,7 @@ import { cache } from "react";
 import { cyclists as staticCyclists } from "@/data/cyclists";
 import { news as staticNews } from "@/data/news";
 import { partners as staticPartners } from "@/data/partners";
-import { raceResults as staticResults, races as staticRaces } from "@/data/races";
+import { mergeRaceCalendar, raceResults as staticResults, races as staticRaces } from "@/data/races";
 import { staff as staticStaff } from "@/data/staff";
 import { getRequestLang } from "@/lib/i18n/server";
 import { apiGet, apiGetAllPages } from "./client";
@@ -181,7 +181,7 @@ export async function getRaces() {
     "races",
     async () => {
       const rows = await apiGetAllPages<ClubRace>("/api/races/", { page_size: 100 });
-      return rows.map(mapRace);
+      return mergeRaceCalendar(rows.map(mapRace));
     },
     staticRaces,
     (rows) => rows.length === 0,

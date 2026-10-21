@@ -286,6 +286,29 @@ function resultsFromDetail(detail?: CyclistDetailApi): string[] | undefined {
   });
 }
 
+function isThinBio(text?: string): boolean {
+  const value = text?.trim();
+  if (!value) return true;
+  if (/^born in\b/i.test(value) && value.length < 80) return true;
+  if (/^listed in\b/i.test(value)) return true;
+  return looksLikeResultLine(value) && value.length < 120;
+}
+
+function localParagraph(local?: Cyclist): string | undefined {
+  const bio = filled(local?.bio);
+  if (bio && !isThinBio(bio)) return bio;
+  const description = filled(local?.description);
+  if (description && /cyclist from/i.test(description)) return description;
+  if (description && description.length > 80 && /[.!?]/.test(description)) return description;
+  return undefined;
+}
+
+function usableLocalTitle(title?: string): string | undefined {
+  if (!title) return undefined;
+  if (/[•]|first team|academy|development|junior\s*•/i.test(title)) return undefined;
+  return title;
+}
+
 export function mapCyclist(
   cyclist: CyclistApi,
   detail?: CyclistDetailApi,
@@ -302,7 +325,7 @@ export function mapCyclist(
   const role = position || categoryLabel;
   const detailResults = resultsFromDetail(detail);
   const topResults = highlights.length ? highlights : detailResults;
-  const bio = narrative;
+  const bio = !isThinBio(narrative) ? narrative : localParagraph(local);
   return {
     id: String(source.id),
     slug: cyclistHref(source),
@@ -316,7 +339,7 @@ export function mapCyclist(
     weight: formatMeasure(source.weight_kg, "kg") || local?.weight,
     discipline: filled(source.bps),
     team: "Benediction Cycling Club",
-    title: position,
+    title: position || usableLocalTitle(local?.title),
     bio,
     description: bio,
     topResults,
