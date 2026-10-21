@@ -3,12 +3,22 @@
 import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { useI18n } from "@/lib/i18n/LanguageProvider";
+import type { Dictionary } from "@/lib/i18n/dictionary";
+
+function localizeTitle(title: string, t: Dictionary, category?: Cyclist["category"]): string {
+  const key = title.trim().toLowerCase();
+  if (key === "women's road cyclist" || (key === "road cyclist" && category === "women")) {
+    return t.team.womensRoadCyclist;
+  }
+  if (key === "road cyclist") return t.team.roadCyclist;
+  return title;
+}
 
 export default function ProfileHero({ rider }: { rider: Cyclist }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const displayName = rider.name;
   const image = rider.image;
-  const bio = rider.bio ?? rider.description;
+  const bio = lang === "nl-BE" ? rider.bioNl ?? rider.bio ?? rider.description : rider.bio ?? rider.description;
 
   return (
     <section aria-label={`${displayName} overview`}>
@@ -28,7 +38,7 @@ export default function ProfileHero({ rider }: { rider: Cyclist }) {
           </h1>
           {rider.title ? (
             <p className="mt-4 inline-block bg-blue-600 px-3 py-1 font-sans text-xs font-bold uppercase tracking-wide text-white">
-              {rider.title}
+              {localizeTitle(rider.title, t, rider.category)}
             </p>
           ) : null}
           {bio ? (

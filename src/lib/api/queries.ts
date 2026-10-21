@@ -222,6 +222,7 @@ export async function getTrophies() {
 }
 
 export async function getCyclists() {
+  const lang = await getRequestLang();
   return withFallback(
     "cyclists",
     async () => {
@@ -229,7 +230,7 @@ export async function getCyclists() {
       const languages = await getLanguages();
       return rows.map((row) =>
         withRiderPhotos(
-          mapCyclist(row, undefined, byName(staticCyclists, row.name), languages.labels),
+          mapCyclist(row, undefined, byName(staticCyclists, row.name), languages.labels, lang),
           row.photo,
         ),
       );
@@ -249,7 +250,7 @@ export async function getCyclist(param: string) {
         getLanguages(),
       ]);
       return withRiderPhotos(
-        mapCyclist(detail, detail, byName(staticCyclists, detail.name), languages.labels),
+        mapCyclist(detail, detail, byName(staticCyclists, detail.name), languages.labels, await getRequestLang()),
         detail.photo,
       );
     } catch (error) {

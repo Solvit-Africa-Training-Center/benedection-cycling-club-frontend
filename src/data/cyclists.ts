@@ -3,6 +3,7 @@ export type RiderCategory = "men" | "women" | "junior" | "ALL PERSONNEL";
 export type RiderQA = {
   question: string;
   answer: string;
+  answerNl?: string;
 };
 
 export type Cyclist = {
@@ -21,12 +22,14 @@ export type Cyclist = {
   team?: string;
   title?: string;
   bio?: string;
+  bioNl?: string;
   description?: string;
   topResults?: string[];
   image?: string;
   gallery?: string[];
   qa?: RiderQA[];
   quote?: string;
+  quoteNl?: string;
   usesSampleData?: boolean;
 };
 
@@ -39,10 +42,14 @@ export function ageFromDateOfBirth(iso: string, today: Date = new Date()): numbe
   return age;
 }
 
-function buildQa(answers: [string, string, string, string, string]): RiderQA[] {
+function buildQa(
+  answers: [string, string, string, string, string],
+  answersNl?: [string, string, string, string, string],
+): RiderQA[] {
   return QA_QUESTIONS.map((question, index) => ({
     question,
     answer: answers[index],
+    answerNl: answersNl?.[index],
   }));
 }
 
@@ -69,6 +76,7 @@ const baseCyclists: Cyclist[] = [
     weight: "58kg",
     title: "Rwanda National Champion (ITT)",
     bio: "Moise Mugisha is a Rwandan cyclist from Busogo. He is a two-time Rwanda national time trial champion (2023, 2024) and won the Tour du Cameroun general classification in 2022.",
+    bioNl: "Moise Mugisha is een Rwandese wielrenner uit Busogo. Hij is tweevoudig Rwandees kampioen tijdrijden (2023, 2024) en won het algemeen klassement van de Tour du Cameroun in 2022.",
     description: "Moise Mugisha is a Rwandan cyclist from Busogo.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -85,7 +93,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/mugisha-moise.jpg",
     gallery: ["/images/team/gallery/mugisha-moise-1.jpg", "/images/team/gallery/mugisha-moise-2.jpg", "/images/team/gallery/mugisha-moise-3.jpg", "/images/team/gallery/mugisha-moise-4.jpg"],
     quote: "Ride with purpose, push through every climb and never stop moving forward.",
-    qa: buildQa(["Cookies", "Finding food", "Spending time with my family", "Definitely the bike, I'm terrible at dancing", "Watching movie"]),
+    quoteNl: "Rijd met een doel, duw door elke klim en blijf vooruitgaan.",
+    qa: buildQa(
+      ["Cookies", "Finding food", "Spending time with my family", "Definitely the bike, I'm terrible at dancing", "Watching movie"],
+      ["Koekjes", "Eten zoeken", "Tijd doorbrengen met mijn familie", "Zeker de fiets, ik dans verschrikkelijk", "Film kijken"],
+    ),
   },
   {
     slug: "manizabayo-eric",
@@ -100,6 +112,7 @@ const baseCyclists: Cyclist[] = [
     weight: "62kg",
     title: "Rwanda National Champion (Road Race)",
     bio: "Eric Manizabayo is a Rwandan cyclist from Jenda. He won the Rwanda national road race title in 2022 and has finished on stage podiums at the Tour du Rwanda, Tour du Cameroun, Tour of Limpopo and Tour of Sharjah.",
+    bioNl: "Eric Manizabayo is een Rwandese wielrenner uit Jenda. Hij werd Rwandees kampioen op de weg in 2022 en stond al op het etappepodium in de Tour du Rwanda, de Tour du Cameroun, de Tour of Limpopo en de Tour of Sharjah.",
     description: "Eric Manizabayo is a Rwandan cyclist from Jenda.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -117,7 +130,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/manizabayo-eric.jpg",
     gallery: ["/images/team/gallery/manizabayo-eric-1.jpg", "/images/team/gallery/manizabayo-eric-2.jpg", "/images/team/gallery/manizabayo-eric-3.jpg", "/images/team/gallery/manizabayo-eric-4.jpg"],
     quote: "A strong team wins races, and I am happy to do the work that makes it possible.",
-    qa: buildQa(["Fresh mango", "Checking on my teammates", "Visiting friends and drinking tea", "The bike, my dance moves stay at home", "Cooking for friends"]),
+    quoteNl: "Een sterk team wint koersen, en ik doe graag het werk dat dat mogelijk maakt.",
+    qa: buildQa(
+      ["Fresh mango", "Checking on my teammates", "Visiting friends and drinking tea", "The bike, my dance moves stay at home", "Cooking for friends"],
+      ["Verse mango", "Mijn ploegmaats checken", "Vrienden bezoeken en thee drinken", "De fiets, mijn dansmoves blijven thuis", "Koken voor vrienden"],
+    ),
   },
   {
     slug: "masengesho-vainqueur",
@@ -132,6 +149,7 @@ const baseCyclists: Cyclist[] = [
     weight: "75kg",
     title: "Rwanda National Champion (Road Race)",
     bio: "Vainqueur Masengesho is a Rwandan cyclist from Nyiranterengwa. He won the Rwanda national road race title in 2024 and finished second overall at the Tour d'Algérie Cycliste in 2026.",
+    bioNl: "Vainqueur Masengesho is een Rwandese wielrenner uit Nyiranterengwa. Hij werd Rwandees kampioen op de weg in 2024 en werd tweede in het algemeen klassement van de Tour d'Algérie Cycliste in 2026.",
     description: "Vainqueur Masengesho is a Rwandan cyclist from Nyiranterengwa.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -148,7 +166,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/masengesho-vainqueur.jpg",
     gallery: ["/images/team/gallery/masengesho-vainqueur-1.jpg", "/images/team/gallery/masengesho-vainqueur-2.jpg", "/images/team/gallery/masengesho-vainqueur-3.jpg", "/images/team/gallery/masengesho-vainqueur-4.jpg"],
     quote: "Pace yourself, then ride the last kilometer like it is the first.",
-    qa: buildQa(["Peanuts", "Checking my power numbers", "Watching cycling videos and resting", "The bike, I am built for aerodynamics, not dancing", "Watching cycling documentaries"]),
+    quoteNl: "Doseer je krachten, en rijd de laatste kilometer alsof het de eerste is.",
+    qa: buildQa(
+      ["Peanuts", "Checking my power numbers", "Watching cycling videos and resting", "The bike, I am built for aerodynamics, not dancing", "Watching cycling documentaries"],
+      ["Pinda's", "Mijn wattages checken", "Wielervideo's kijken en rusten", "De fiets, ik ben gebouwd voor aerodynamica, niet om te dansen", "Wielerdocumentaires kijken"],
+    ),
   },
   {
     slug: "nzafashwanayo-jean-claude",
@@ -163,6 +185,7 @@ const baseCyclists: Cyclist[] = [
     weight: "78kg",
     title: "Road Cyclist",
     bio: "Jean Claude Nzafashwanayo is a Rwandan cyclist from Kacyiru. He won a stage of the Tour du Cameroun in 2019 and finished fifth overall there in 2023.",
+    bioNl: "Jean Claude Nzafashwanayo is een Rwandese wielrenner uit Kacyiru. Hij won een etappe in de Tour du Cameroun in 2019 en werd daar vijfde in het algemeen klassement in 2023.",
     description: "Jean Claude Nzafashwanayo is a Rwandan cyclist from Kacyiru.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -178,7 +201,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/nzafashwanayo-jean-claude.jpg",
     gallery: ["/images/team/gallery/nzafashwanayo-jean-claude-1.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-2.jpg", "/images/team/gallery/nzafashwanayo-jean-claude-3.jpg"],
     quote: "Attack when it hurts, because that is when the race is decided.",
-    qa: buildQa(["Sweet potatoes", "Drinking a lot of water", "Washing and checking my bike", "The bike, I am only fast on two wheels", "Football with friends"]),
+    quoteNl: "Val aan wanneer het pijn doet, want dan wordt de koers beslist.",
+    qa: buildQa(
+      ["Sweet potatoes", "Drinking a lot of water", "Washing and checking my bike", "The bike, I am only fast on two wheels", "Football with friends"],
+      ["Zoete aardappelen", "Veel water drinken", "Mijn fiets wassen en nakijken", "De fiets, ik ben alleen snel op twee wielen", "Voetbal met vrienden"],
+    ),
   },
   {
     slug: "uwiduhaye-mike",
@@ -193,6 +220,7 @@ const baseCyclists: Cyclist[] = [
     weight: "77kg",
     title: "Road Cyclist",
     bio: "Mike Uwiduhaye is a Rwandan cyclist from Cyamabuye. He finished second in the Tour du Rwanda mountains classification in 2025 and fifth overall at the 2026 Race to Remember.",
+    bioNl: "Mike Uwiduhaye is een Rwandese wielrenner uit Cyamabuye. Hij werd tweede in het bergklassement van de Tour du Rwanda in 2025 en vijfde in het algemeen klassement van de Race to Remember in 2026.",
     description: "Mike Uwiduhaye is a Rwandan cyclist from Cyamabuye.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -206,7 +234,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/uwiduhaye-mike.jpg",
     gallery: ["/images/team/gallery/uwiduhaye-mike-1.jpg", "/images/team/gallery/uwiduhaye-mike-2.jpg", "/images/team/gallery/uwiduhaye-mike-3.jpg"],
     quote: "The sprint is won in the last 200 meters, but earned in the first 100 kilometers.",
-    qa: buildQa(["Chocolate biscuits", "Watching the finish replay", "Sleeping in, then a short spin", "The dance floor, I love music too much", "Playing video games"]),
+    quoteNl: "De sprint win je in de laatste 200 meter, maar je verdient hem in de eerste 100 kilometer.",
+    qa: buildQa(
+      ["Chocolate biscuits", "Watching the finish replay", "Sleeping in, then a short spin", "The dance floor, I love music too much", "Playing video games"],
+      ["Chocoladekoekjes", "De finishreplay bekijken", "Uitslapen en dan een korte rit", "De dansvloer, ik hou te veel van muziek", "Videogames spelen"],
+    ),
   },
   {
     slug: "phocas-nshimiyimana",
@@ -221,6 +253,7 @@ const baseCyclists: Cyclist[] = [
     weight: "57kg",
     title: "Road Cyclist",
     bio: "Phocas Nshimiyimana is a Rwandan cyclist from Sashwara. In 2026 he finished fifth in the Tour du Cameroun youth classification and seventh overall at the Race to Remember.",
+    bioNl: "Phocas Nshimiyimana is een Rwandese wielrenner uit Sashwara. In 2026 werd hij vijfde in het jongerenklassement van de Tour du Cameroun en zevende in het algemeen klassement van de Race to Remember.",
     description: "Phocas Nshimiyimana is a Rwandan cyclist from Sashwara.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -231,7 +264,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/phocas-nshimiyimana.jpg",
     gallery: ["/images/team/gallery/phocas-nshimiyimana-1.jpg"],
     quote: "Every climb is a second chance to put the group under pressure.",
-    qa: buildQa(["Bananas", "Checking my cadence", "Stretching and drinking", "The bike, I am only fast on two wheels", "Reading cycling news"]),
+    quoteNl: "Elke klim is een tweede kans om het peloton onder druk te zetten.",
+    qa: buildQa(
+      ["Bananas", "Checking my cadence", "Stretching and drinking", "The bike, I am only fast on two wheels", "Reading cycling news"],
+      ["Bananen", "Mijn cadans checken", "Rekken en drinken", "De fiets, ik ben alleen snel op twee wielen", "Wielernieuws lezen"],
+    ),
   },
   {
     slug: "espoir-uhiriwe",
@@ -246,6 +283,7 @@ const baseCyclists: Cyclist[] = [
     weight: "65kg",
     title: "Road Cyclist",
     bio: "Espoir Uhiriwe is a Rwandan cyclist from Mukamira. He finished eighth in the Tour du Cameroun youth classification in 2026.",
+    bioNl: "Espoir Uhiriwe is een Rwandese wielrenner uit Mukamira. Hij werd achtste in het jongerenklassement van de Tour du Cameroun in 2026.",
     description: "Espoir Uhiriwe is a Rwandan cyclist from Mukamira.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -254,7 +292,11 @@ const baseCyclists: Cyclist[] = [
     ],
     image: "/images/team/riders/espoir-uhiriwe.jpg",
     quote: "Steady riders finish the race.",
-    qa: buildQa(["Banana", "Checking my distance", "Stretching", "The bike, I love the feeling of the road", "Watching cycling clips"]),
+    quoteNl: "Rustige renners maken de koers af.",
+    qa: buildQa(
+      ["Banana", "Checking my distance", "Stretching", "The bike, I love the feeling of the road", "Watching cycling clips"],
+      ["Banaan", "Mijn afstand checken", "Rekken", "De fiets, ik hou van het gevoel van de weg", "Wielerclips kijken"],
+    ),
   },
   {
     slug: "jean-claude-niyomugabo",
@@ -269,6 +311,7 @@ const baseCyclists: Cyclist[] = [
     weight: "75kg",
     title: "Road Cyclist",
     bio: "Jean Claude Niyomugabo is a Rwandan cyclist from Busogo. In 2026 he finished fourth in the Heroes Cycling Cup and fourth overall at the Race to Remember.",
+    bioNl: "Jean Claude Niyomugabo is een Rwandese wielrenner uit Busogo. In 2026 werd hij vierde in de Heroes Cycling Cup en vierde in het algemeen klassement van de Race to Remember.",
     description: "Jean Claude Niyomugabo is a Rwandan cyclist from Busogo.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
@@ -280,7 +323,11 @@ const baseCyclists: Cyclist[] = [
     image: "/images/team/riders/jean-claude-niyomugabo.jpg",
     gallery: ["/images/team/gallery/jean-claude-niyomugabo-1.jpg"],
     quote: "Never chase the sprint; make the sprint come to you.",
-    qa: buildQa(["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"]),
+    quoteNl: "Achtervolg de sprint nooit; laat de sprint naar jou komen.",
+    qa: buildQa(
+      ["Peanuts", "Drinking a lot of water", "Sleeping", "The bike, I am strongest on two wheels", "Reading the race"],
+      ["Pinda's", "Veel water drinken", "Slapen", "De fiets, ik ben het sterkst op twee wielen", "De koers lezen"],
+    ),
   },
   {
     slug: 'sybren-nicolaides',
@@ -293,6 +340,13 @@ const baseCyclists: Cyclist[] = [
     description: 'Strong all-rounder. Classics prospect. Reliable teammate.',
     birthplace: 'Leuven',
     bio: 'Sybren Nicolaides is a Belgian cyclist from Leuven. He is a strong all-rounder and a reliable teammate on the first squad.',
+    bioNl: 'Sybren Nicolaides is een Belgische wielrenner uit Leuven. Hij is een sterke allrounder en een betrouwbare ploegmaat in de eerste ploeg.',
+    qa: buildQa(
+      ["Peanut butter sandwiches", "A recovery drink", "Playing video games", "The bike", "Board games"],
+      ["Pindakaasboterhammen", "Een hersteldrank", "Videogames spelen", "De fiets", "Bordspellen"],
+    ),
+    quote: "Never stop learning from every race.",
+    quoteNl: "Blijf bij elke koers bijleren.",
   },
   {
     slug: "valentine-nzayisengwa",
@@ -303,12 +357,19 @@ const baseCyclists: Cyclist[] = [
     title: "Road Cyclist",
     description: "Young talent. Mountain climber. National junior circuit leader.",
     bio: "Valentine Nzayisenga is a Rwandan cyclist from Butaka. She is a mountain climber and a leading rider on the national junior circuit.",
+    bioNl: "Valentine Nzayisenga is een Rwandese wielrenster uit Butaka. Zij is een klimmer en een van de toprijdsters op het nationale juniorencircuit.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
     dateOfBirth: "2000-03-15",
     birthplace: "Butaka",
     age: 26,
     image: "/images/team/riders/valentine.jpg",
+    qa: buildQa(
+      ["Fresh fruit", "Stretching with my teammates", "Watching movies", "The dance floor, I enjoy dancing", "Dancing"],
+      ["Vers fruit", "Rekken met mijn ploegmaats", "Films kijken", "De dansvloer, ik dans graag", "Dansen"],
+    ),
+    quote: "Believe in the work you put in.",
+    quoteNl: "Geloof in het werk dat je erin steekt.",
   },
   {
     slug: "jelle-roelandt",
@@ -319,9 +380,16 @@ const baseCyclists: Cyclist[] = [
     title: "Road Cyclist",
     description: "Time-trial specialist. Individual pursuit expert. Precision handler.",
     bio: "Jelle Roelandt is a cyclist from Mechelen. He is a time-trial specialist and an individual pursuit rider for Benediction Cycling Club.",
+    bioNl: "Jelle Roelandt is een wielrenner uit Mechelen. Hij is een tijdritspecialist en rijdt de individuele achtervolging voor Benediction Cycling Club.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
     birthplace: "Mechelen",
+    qa: buildQa(
+      ["Fruit cake", "Talking with the team about the race", "Resting and reading", "The dance floor, if the music is good", "Reading"],
+      ["Fruitcake", "Met de ploeg over de koers praten", "Rust en lezen", "De dansvloer, als de muziek goed is", "Lezen"],
+    ),
+    quote: "Teamwork wins races.",
+    quoteNl: "Teamwork wint koersen.",
   },
   {
     id: '14',
@@ -333,6 +401,7 @@ const baseCyclists: Cyclist[] = [
     title: 'Road Cyclist',
     description: 'Junior squad member. High-altitude training specialist. Development pathway.',
     bio: 'Jackson Nkurikiyinka is a Rwandan cyclist from Mukamira. He is a junior rider on the development pathway, with a focus on high-altitude racing.',
+    bioNl: 'Jackson Nkurikiyinka is een Rwandese wielrenner uit Mukamira. Hij is een junior op het ontwikkelingsparcours, met focus op koersen op hoogte.',
     team: 'Benediction Cycling Club',
     discipline: 'Road Cycling',
     height: '181cm',
@@ -340,6 +409,12 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: '2008-07-05',
     birthplace: 'Mukamira',
     age: 18,
+    qa: buildQa(
+      ["Bananas", "Calling my family", "Playing with friends", "The bike", "Football"],
+      ["Bananen", "Mijn familie bellen", "Spelen met vrienden", "De fiets", "Voetbal"],
+    ),
+    quote: "Dream big and keep pedalling.",
+    quoteNl: "Droom groot en blijf trappen.",
   },
   {
     slug: "noah-brits",
@@ -350,11 +425,18 @@ const baseCyclists: Cyclist[] = [
     title: "Road Cyclist",
     description: "All-rounder. Team player. Tactical support specialist.",
     bio: "Noah Brits is a Belgian cyclist from Ghent. He is an all-rounder and a tactical support rider for Benediction Cycling Club.",
+    bioNl: "Noah Brits is een Belgische wielrenner uit Gent. Hij is een allrounder en een tactische steun voor Benediction Cycling Club.",
     discipline: "Road Cycling",
     team: "Benediction Cycling Club",
     height: "181cm",
     weight: "63kg",
     birthplace: "Ghent",
+    qa: buildQa(
+      ["Waffles", "A cold drink and a shower", "Coffee with friends", "The bike, no doubt", "Photography"],
+      ["Wafels", "Een koud drankje en een douche", "Koffie met vrienden", "De fiets, zonder twijfel", "Fotografie"],
+    ),
+    quote: "Race smart, finish strong.",
+    quoteNl: "Koers slim, finish sterk.",
   },
   {
     slug: "foeke-dubois",
@@ -365,6 +447,7 @@ const baseCyclists: Cyclist[] = [
     title: "Women's Road Cyclist",
     description: "Youngest squad member. High potential. Development focus.",
     bio: "Foeke Dubois is a Belgian cyclist from Jette. Her results include 19th place on a stage of the Tour of Albania (2023) and 20th at the Grand Prix Alanya (2020).",
+    bioNl: "Foeke Dubois is een Belgische wielrenner uit Jette. Haar resultaten omvatten een 19e plaats in een etappe van de Tour of Albania (2023) en een 20e plaats in de Grand Prix Alanya (2020).",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
     height: "172cm",
@@ -372,6 +455,12 @@ const baseCyclists: Cyclist[] = [
     dateOfBirth: "1992-11-09",
     birthplace: "Jette",
     age: 33,
+    qa: buildQa(
+      ["Dark chocolate", "Checking the results", "A long walk outside", "The bike, my dancing is terrible", "Gardening"],
+      ["Pure chocolade", "De uitslag checken", "Een lange wandeling buiten", "De fiets, ik dans verschrikkelijk", "Tuinieren"],
+    ),
+    quote: "Experience is the best teammate.",
+    quoteNl: "Ervaring is de beste ploegmaat.",
   },
   {
     slug: "diane-ingabire",
@@ -382,9 +471,16 @@ const baseCyclists: Cyclist[] = [
     role: "Road Cyclist",
     birthplace: "Mukamira",
     bio: "Diane Ingabire is a Rwandan cyclist from Mukamira. She races for Benediction Cycling Club on the women's first squad.",
+    bioNl: "Diane Ingabire is een Rwandese wielrenster uit Mukamira. Zij rijdt voor Benediction Cycling Club in de eerste vrouwenploeg.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
     image: "/images/team/riders/diane-ingabire.jpg",
+    qa: buildQa(
+      ["Sweet potatoes", "Drinking water and resting", "Spending time with family", "The bike, I love racing more", "Singing"],
+      ["Zoete aardappelen", "Water drinken en rusten", "Tijd met familie", "De fiets, ik hou meer van koersen", "Zingen"],
+    ),
+    quote: "Strong legs, stronger mind.",
+    quoteNl: "Sterke benen, sterkere geest.",
   },
   {
     slug: "glen-van-nuffelen",
@@ -395,9 +491,16 @@ const baseCyclists: Cyclist[] = [
     role: "Road Cyclist",
     birthplace: "Antwerp",
     bio: "Glen Van Nuffelen is a Belgian cyclist from Antwerp. He races for Benediction Cycling Club on the first squad.",
+    bioNl: "Glen Van Nuffelen is een Belgische wielrenner uit Antwerpen. Hij rijdt voor Benediction Cycling Club in de eerste ploeg.",
     team: "Benediction Cycling Club",
     discipline: "Road Cycling",
     image: "/images/team/riders/glen-van-nuffelen.jpg",
+    qa: buildQa(
+      ["Cheese sandwiches", "Stretching", "Cooking for friends", "The bike", "Fishing"],
+      ["Kaasboterhammen", "Rekken", "Koken voor vrienden", "De fiets", "Vissen"],
+    ),
+    quote: "Keep your head up and your cadence high.",
+    quoteNl: "Houd je hoofd omhoog en je cadans hoog.",
   },
 ];
 

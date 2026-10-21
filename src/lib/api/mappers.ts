@@ -3,6 +3,7 @@ import type { Cyclist, RiderCategory, RiderQA } from "@/data/cyclists";
 import type { Partner } from "@/data/partners";
 import type { Race, RaceResult, Team } from "@/data/races";
 import type { StaffMember } from "@/data/staff";
+import type { AppLang } from "@/lib/i18n/config";
 import { resolveMediaUrl } from "./config";
 import type {
   ClubStaffApi,
@@ -289,18 +290,29 @@ function resultsFromDetail(detail?: CyclistDetailApi): string[] | undefined {
 function isThinBio(text?: string): boolean {
   const value = text?.trim();
   if (!value) return true;
-  if (/^born in\b/i.test(value) && value.length < 80) return true;
-  if (/^listed in\b/i.test(value)) return true;
+  if (/^(born|geboren) in\b/i.test(value) && value.length < 80) return true;
+  if (/^(listed|vermeld) in\b/i.test(value)) return true;
   return looksLikeResultLine(value) && value.length < 120;
 }
 
-function localParagraph(local?: Cyclist): string | undefined {
-  const bio = filled(local?.bio);
+function looksEnglishBio(text?: string): boolean {
+  if (!text) return false;
+  return /\bis an?\b.+\bcyclist from\b/i.test(text) || /^(born|listed) in\b/i.test(text);
+}
+
+function localParagraph(local?: Cyclist, lang: AppLang = "en"): string | undefined {
+  const bio = lang === "nl-BE" ? filled(local?.bioNl) || filled(local?.bio) : filled(local?.bio);
   if (bio && !isThinBio(bio)) return bio;
   const description = filled(local?.description);
   if (description && /cyclist from/i.test(description)) return description;
   if (description && description.length > 80 && /[.!?]/.test(description)) return description;
   return undefined;
+}
+
+function pickBio(narrative?: string, local?: Cyclist, lang: AppLang = "en"): string | undefined {
+  const preferLocalNl = lang === "nl-BE" && Boolean(filled(local?.bioNl)) && looksEnglishBio(narrative);
+  if (!isThinBio(narrative) && !preferLocalNl) return narrative;
+  return localParagraph(local, lang);
 }
 
 function usableLocalTitle(title?: string): string | undefined {
@@ -314,6 +326,7 @@ export function mapCyclist(
   detail?: CyclistDetailApi,
   local?: Cyclist,
   labels?: LanguageLabels,
+  lang: AppLang = "en",
 ): Cyclist {
   const source = detail ?? cyclist;
   const photo = resolveMediaUrl(source.photo) || local?.image;
@@ -325,7 +338,9 @@ export function mapCyclist(
   const role = position || categoryLabel;
   const detailResults = resultsFromDetail(detail);
   const topResults = highlights.length ? highlights : detailResults;
-  const bio = !isThinBio(narrative) ? narrative : localParagraph(local);
+  const bioEn = pickBio(narrative, local, "en");
+  const bioNl = pickBio(narrative, local, "nl-BE");
+  const bio = lang === "nl-BE" ? bioNl : bioEn;
   return {
     id: String(source.id),
     slug: cyclistHref(source),
@@ -337,15 +352,18 @@ export function mapCyclist(
     birthplace: filled(source.birth_place) || local?.birthplace,
     height: formatMeasure(source.height_cm, "cm") || local?.height,
     weight: formatMeasure(source.weight_kg, "kg") || local?.weight,
-    discipline: filled(source.bps),
+    discipline: filled(source.bps) || local?.discipline,
     team: "Benediction Cycling Club",
     title: position || usableLocalTitle(local?.title),
-    bio,
+    bio: bioEn,
+    bioNl,
     description: bio,
     topResults,
     image: photo,
     gallery: local?.gallery?.length ? local.gallery : photo ? [photo] : undefined,
-    qa: qaFromCyclist(source),
+    qa: local?.qa?.length ? local.qa : qaFromCyclist(source),
+    quote: local?.quote,
+    quoteNl: local?.quoteNl,
   };
 }
 

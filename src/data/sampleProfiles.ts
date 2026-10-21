@@ -54,7 +54,7 @@ export const sampleProfiles: Record<string, Partial<Cyclist>> = {
     qa: qa(["Fruit cake", "Talking with the team about the race", "Resting and reading", "The dance floor, if the music is good", "Reading"]),
     quote: "Teamwork wins races.",
   },
-  "glen-van-nuuffelen": {
+  "glen-van-nuffelen": {
     birthplace: "Antwerp",
     age: 30,
     height: "180cm",
