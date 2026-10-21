@@ -1,4 +1,7 @@
+"use client";
+
 import type { Cyclist } from "@/data/cyclists";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
 import { TrophyIcon } from "./icons";
 
@@ -18,12 +21,13 @@ function buildGalleryTiles(rider: Cyclist): string[] {
 }
 
 export default function CareerHighlights({ rider }: { rider: Cyclist }) {
+  const { t } = useI18n();
   const results = rider.topResults ?? [];
 
   return (
-    <section aria-label="Career highlights" className="mt-14">
+    <section aria-label={t.team.highlights} className="mt-14">
       <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white">
-        Career Highlights
+        {t.team.highlights}
       </h2>
       {results.length > 0 ? (
         <div className="rounded-sm border border-blue-900/50 bg-[#0c1626] px-4 py-3">
@@ -40,20 +44,22 @@ export default function CareerHighlights({ rider }: { rider: Cyclist }) {
           </div>
         </div>
       ) : (
-        <p className="mt-4 font-sans text-sm text-gray-500">Coming soon</p>
+        <p className="mt-4 font-sans text-sm text-gray-500">{t.common.comingSoon}</p>
       )}
     </section>
   );
 }
 
 export function RiderGallery({ name, rider }: { name: string; rider: Cyclist }) {
+  const { t } = useI18n();
   const tiles = buildGalleryTiles(rider);
   return (
     <section aria-label={`${name} gallery`} className="mt-14">
       <h2 className="font-display text-xl font-bold uppercase tracking-wide text-white">
-        Gallery
+        {t.team.gallery}
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {tiles.map((src, index) => (
             <div
               key={`${name}-gallery-${index}`}
               className="relative overflow-hidden rounded-sm bg-[#d9dce1]"

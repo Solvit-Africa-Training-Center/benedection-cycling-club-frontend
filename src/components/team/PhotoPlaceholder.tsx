@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 type PhotoPlaceholderProps = {
   name: string;
@@ -11,6 +12,7 @@ type PhotoPlaceholderProps = {
 };
 
 export default function PhotoPlaceholder({ name, className = "", src, sizes }: PhotoPlaceholderProps) {
+  const { t } = useI18n();
   const [failed, setFailed] = useState(false);
 
   if (src && !failed) {
@@ -30,7 +32,7 @@ export default function PhotoPlaceholder({ name, className = "", src, sizes }: P
   return (
     <div
       role="img"
-      aria-label={`Photo coming soon for ${name}`}
+      aria-label={`${t.common.photoSoonFor} ${name}`}
       className={`flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-700 to-slate-900 ${className}`}
     >
       <svg
@@ -48,7 +50,7 @@ export default function PhotoPlaceholder({ name, className = "", src, sizes }: P
         />
       </svg>
       <span className="font-sans text-xs font-semibold uppercase tracking-widest text-white/50">
-        Photo coming soon
+        {t.common.photoSoon}
       </span>
     </div>
   );

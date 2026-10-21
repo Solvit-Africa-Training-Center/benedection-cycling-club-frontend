@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { Cyclist } from "@/data/cyclists";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 import PhotoPlaceholder from "./PhotoPlaceholder";
 
 type CyclistCardProps = {
@@ -7,13 +10,14 @@ type CyclistCardProps = {
 };
 
 export default function CyclistCard({ cyclist }: CyclistCardProps) {
+  const { t } = useI18n();
   const hasImage = Boolean(cyclist.image);
   const textColor = hasImage ? "text-slate-900" : "text-white";
 
   return (
     <Link
       href={`/team/${cyclist.slug ?? cyclist.id ?? encodeURIComponent(cyclist.name)}`}
-      aria-label={`View profile: ${cyclist.name}`}
+      aria-label={`${t.team.viewProfile}: ${cyclist.name}`}
       className="group relative block rounded-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-brand-lime focus-visible:outline-offset-4"
     >
       <div
@@ -21,7 +25,7 @@ export default function CyclistCard({ cyclist }: CyclistCardProps) {
         className="absolute inset-0 z-0 translate-x-3 -translate-y-6 rounded-2xl bg-brand-teal opacity-100 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100"
       >
         <span className="absolute top-1 right-3 flex items-center gap-1 font-display text-xs uppercase tracking-wide text-slate-900">
-          Read more
+          {t.common.readMore}
           <svg
             aria-hidden="true"
             viewBox="0 0 24 24"

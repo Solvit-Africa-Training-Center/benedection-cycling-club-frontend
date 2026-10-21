@@ -3,6 +3,10 @@ import { Geist, Geist_Mono, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { getLanguages } from "@/lib/api";
+import { htmlLang } from "@/lib/i18n/config";
+import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import { getRequestLang } from "@/lib/i18n/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,16 +29,21 @@ export const metadata: Metadata = {
   description: "Rising above the crags & volcanoes of Rubavu",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const lang = await getRequestLang();
+  const languages = await getLanguages();
+
   return (
     <html
-      lang="en"
+      lang={htmlLang(lang)}
       className={`${geistSans.variable} ${geistMono.variable} ${barlow.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
-        <Footer />
+        <LanguageProvider lang={lang} languages={languages}>
+          <Navbar />
+          {children}
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

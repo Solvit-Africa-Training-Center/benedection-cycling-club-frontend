@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PartnerScreen from "@/screens/PartnerScreen";
-import { getPartners } from "@/lib/api";
+import { findClubSection, getClubOverview, getPartners } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Partners | Benediction Cycling Club",
@@ -9,6 +9,13 @@ export const metadata: Metadata = {
 };
 
 export default async function PartnersPage() {
-  const partners = await getPartners();
-  return <PartnerScreen partners={partners} />;
+  const [partners, club] = await Promise.all([getPartners(), getClubOverview()]);
+  const partnership = findClubSection(club?.sections, ["partnership", "partner"]);
+  return (
+    <PartnerScreen
+      partners={partners}
+      intro={partnership?.body}
+      introTitle={partnership?.title}
+    />
+  );
 }

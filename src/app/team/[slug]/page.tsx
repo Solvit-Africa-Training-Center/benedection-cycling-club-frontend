@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getCyclist } from '@/lib/api';
+import { getDictionary } from '@/lib/i18n/dictionary';
+import { getRequestLang } from '@/lib/i18n/server';
 import ProfileHero from '@/components/team/profile/ProfileHero';
 import {
   PersonalProfilePanel,
@@ -17,6 +19,7 @@ type RiderPageProps = {
 
 export default async function RiderPage({ params }: RiderPageProps) {
   const { slug } = await params;
+  const t = getDictionary(await getRequestLang());
   const rider = await getCyclist(slug);
 
   if (!rider) {
@@ -32,7 +35,7 @@ export default async function RiderPage({ params }: RiderPageProps) {
           href="/team"
           className="inline-block font-sans text-sm font-semibold text-brand-lime transition-colors hover:text-white"
         >
-          ← Back to team
+          ← {t.common.backToTeam}
         </Link>
 
         <div className="mt-6">

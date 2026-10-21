@@ -1,7 +1,11 @@
+"use client";
+
 import type { Cyclist } from "@/data/cyclists";
 import PhotoPlaceholder from "@/components/team/PhotoPlaceholder";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export default function ProfileHero({ rider }: { rider: Cyclist }) {
+  const { t } = useI18n();
   const displayName = rider.name;
   const image = rider.image;
   const bio = rider.bio ?? rider.description;
@@ -33,7 +37,7 @@ export default function ProfileHero({ rider }: { rider: Cyclist }) {
             </p>
           ) : (
             <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-gray-500">
-              Profile coming soon
+              {t.common.profileSoon}
             </p>
           )}
         </div>

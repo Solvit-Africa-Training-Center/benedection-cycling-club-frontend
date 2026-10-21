@@ -1,0 +1,282 @@
+Benediction Cycling Club — frontend language brief
+===================================================
+
+Give this file to the frontend team.
+
+Public site languages: English (en) and Belgian Dutch (nl-BE).
+The backend returns Dutch for database text when you send lang=nl-BE.
+Do not hardcode club copy, news, products, race results, or partner blurbs.
+Render the strings the API sends.
+People names stay as stored. If a field has no Dutch, English is returned.
+
+Do not change /editor/ or /admin/. Those stay English.
+
+
+1. Hosts
+--------
+
+Live API:     https://benediction-api.onrender.com
+API docs:     https://benediction-api.onrender.com/api/docs/
+OpenAPI file: https://benediction-api.onrender.com/api/schema/
+Local API:    http://127.0.0.1:8000
+
+All paths below are on that host. Field names are snake_case.
+Lists return: count, next, previous, results.
+Default page size is 20. Optional: ?page=  and  ?page_size=  (max 100).
+Image fields are absolute URLs, or null when there is no file.
+
+Live deploys from main. Until this work is on main, live may still return
+English database text even with lang=nl-BE. The switcher, lang query, and
+labels already work. Wire the switch now; database Dutch follows the deploy.
+
+
+2. Language API (use this for the EN / NL switch)
+-------------------------------------------------
+
+GET /api/club/languages/
+
+Optional query:   ?lang=en     or     ?lang=nl-BE
+Optional header:  Accept-Language: nl-BE
+
+If both are sent, lang wins.
+Also accepted and mapped to nl-BE:  nl , nl-be , nl-NL
+Also accepted and mapped to en:     en-US , en-GB
+If nothing is sent, language is en.
+
+Response header:  Content-Language: en   or   Content-Language: nl-BE
+
+Example — English:
+
+  GET https://benediction-api.onrender.com/api/club/languages/
+
+  {
+    "default": "en",
+    "active": "en",
+    "available": [
+      { "code": "en", "name": "English", "native_name": "English" },
+      { "code": "nl-BE", "name": "Belgian Dutch", "native_name": "Nederlands" }
+    ],
+    "labels": {
+      "cyclist_category": { "men": "Men", "women": "Women", "kids": "Kids" },
+      "staff_role": {
+        "mechanic": "Mechanic",
+        "logistic": "Logistic",
+        "coach": "Coach",
+        "representative": "Representative",
+        "team_manager": "Team manager",
+        "sports_director": "Sports director",
+        "assistant_sports_director": "Assistant sports director",
+        "soigneur": "Soigneur"
+      },
+      "contact_kind": { "phone": "Phone", "email": "Email" }
+    }
+  }
+
+Example — Belgian Dutch:
+
+  GET https://benediction-api.onrender.com/api/club/languages/?lang=nl-BE
+  or header Accept-Language: nl-BE
+
+  {
+    "default": "en",
+    "active": "nl-BE",
+    "available": [ ...same two languages... ],
+    "labels": {
+      "cyclist_category": { "men": "Mannen", "women": "Vrouwen", "kids": "Jeugd" },
+      "staff_role": {
+        "mechanic": "Mecanicien",
+        "logistic": "Logistiek",
+        "coach": "Coach",
+        "representative": "Vertegenwoordiger",
+        "team_manager": "Ploegleider",
+        "sports_director": "Sportief directeur",
+        "assistant_sports_director": "Assistent-sportief directeur",
+        "soigneur": "Verzorger"
+      },
+      "contact_kind": { "phone": "Telefoon", "email": "E-mail" }
+    }
+  }
+
+GET /api/club/ also includes a "languages" object:
+  default, active, available
+It does NOT include labels. Use /api/club/languages/ for labels.
+
+
+3. What frontend must build
+---------------------------
+
+1. EN / NL switch on the public site only. Store the choice as "en" or "nl-BE".
+2. On EVERY API request, send that value as ?lang= or Accept-Language.
+   If you omit lang, the API returns English. That looks like "the database
+   is not translated."
+3. Call GET /api/club/languages/ once to fill the switcher.
+4. Map API codes with labels. Do not invent other spellings.
+     cyclist.category     -> labels.cyclist_category
+     staff.staff_role     -> labels.staff_role
+     contact.kind         -> labels.contact_kind
+   Filters still use the English codes
+   (example: GET /api/team/cyclists/?category=women).
+5. Translate website chrome yourselves (nav, buttons, forms, placeholders,
+   empty states, errors you generate). Suggested locales: en and nl-BE
+   (next-intl or similar).
+6. Show club copy, news, products, races, and descriptions as the API
+   returns them. Do not keep a second copy of that text in next-intl.
+   With lang=nl-BE those fields are Dutch.
+7. After POST /api/contact/, show the "detail" string from the JSON.
+8. If the visitor has not chosen a language, use en.
+
+
+4. What the API translates vs what stays
+----------------------------------------
+
+With lang=nl-BE the API already translates. Render these as-is:
+
+  Club profile     tagline, location, contact_note
+                   name stays "Benediction Banafrica Team"
+  Sections         title, body
+                   slugs stay home, about, mission, vision, men, women, ...
+  News             title, body
+  Shop             category name, product name, description
+  Partners         short_description
+                   partner brand name stays
+  Races            name when it is English (Rwanda National Championships),
+                   race_type, description, team_note
+  Results/trophies classification, award
+  Milestones       event_name and summary when they are English
+  Riders           about, nationality (Belgium -> België)
+  Staff            about
+
+Leave unchanged (do not translate on the frontend):
+
+  People names     cyclist.name, staff.name
+  Brand names      partner name, race names that are already proper nouns
+                   (Tour du Rwanda, Tour du Cameroun, ...)
+  Slugs, prices, currency, photos, emails, phones, URLs
+  Filter codes     men, women, kids, mechanic, phone, email, ...
+
+
+5. All public APIs to use
+-------------------------
+
+Send lang on these the same way.
+
+CLUB
+  GET /api/club/
+      Full club payload: profile, sections, contacts, references, languages.
+
+  GET /api/club/profile/
+      name, tagline, founded_year, location, reference_url, contact_note
+
+  GET /api/club/sections/
+      slug, title, body, sort_order
+      slugs such as home, about, mission, vision
+
+  GET /api/club/contacts/
+      kind (phone | email), value, sort_order
+      Show kind with labels.contact_kind
+
+  GET /api/club/references/
+      Source links for results (title, url, note, cyclist, race, ...)
+
+  GET /api/club/languages/
+      Language switcher + labels (see section 2)
+
+TEAM
+  GET /api/team/cyclists/
+  GET /api/team/cyclists/{id}/
+      Filter: ?category=men  or  women  or  kids
+      category is a code. Display it with labels.cyclist_category
+      Includes age and birth_place. Never includes date of birth.
+      Inactive riders are omitted.
+      Show name as returned. Show about as returned.
+
+  GET /api/team/staff/
+  GET /api/team/staff/{id}/
+      Filter: ?staff_role=mechanic | logistic | coach | representative |
+              team_manager | sports_director | assistant_sports_director |
+              soigneur
+      staff_role is a code. Display it with labels.staff_role
+      Inactive crew are omitted.
+      Show name as returned. Show about as returned.
+
+RACES
+  GET /api/races/
+  GET /api/races/{id}/
+      If start_date is null, use season_year.
+      Show name, race_type, description, classification, award as returned.
+
+  GET /api/races/trophies/
+      A trophy is a result whose award is filled.
+
+  GET /api/races/milestones/
+      Older club notes. is_confirmed is false until verified.
+
+NEWS
+  GET /api/news/
+  GET /api/news/{slug}/
+      Published articles only. Title and body follow lang.
+
+PARTNERS
+  GET /api/partners/
+      Inactive partners are omitted. Logo is an absolute URL or null.
+      Show short_description as returned.
+
+SHOP
+  GET /api/shop/categories/
+  GET /api/shop/products/
+      Filter: ?category=  (group slug, for example jerseys)
+      Inactive products are omitted. Photos may be empty.
+      Show category name, product name, and description as returned.
+
+  GET /api/shop/products/{slug}/
+
+CART  (no payment, stock does not change)
+  POST /api/shop/cart/
+  JSON body:
+    {
+      "customer_name": "Aline",
+      "customer_email": "aline@example.com",
+      "customer_phone": "0780000000",
+      "note": "Size M, color black, address ...",
+      "items": [ { "product_id": 1, "quantity": 2 } ]
+    }
+  Phone goes in customer_phone, not only in note.
+  Size, color, address go in note.
+  Empty items error in Dutch when lang=nl-BE:
+    "Voeg minstens één product toe."
+  Empty items error in English:
+    "Add at least one product."
+
+CONTACT  (5 posts per hour per address)
+  POST /api/contact/
+  JSON body:
+    {
+      "name": "Aline",
+      "email": "aline@example.com",
+      "subject": "Kit",
+      "message": "Where is the next ride?"
+    }
+  Success en:     { "detail": "Message received." }
+  Success nl-BE:  { "detail": "Bericht ontvangen." }
+  Show "detail" on the site. Do not expect the message body to be echoed.
+
+
+6. Out of scope
+---------------
+
+- /editor/ and /admin/
+- Changing API field names or code values (men, women, kids, ...)
+- Translating prices, photos, slugs, emails, phone numbers, or people names
+- Re-translating database text the API already returned in Dutch
+
+
+7. Suggested request helper
+---------------------------
+
+  const lang = savedLanguage || "en";  // "en" or "nl-BE"
+  const join = url.includes("?") ? "&" : "?";
+  fetch(url + join + "lang=" + lang, {
+    headers: { "Accept-Language": lang }
+  });
+
+Do this on every API call, not only on the languages endpoint.

@@ -5,15 +5,18 @@ import Partners from "@/components/home/Partners";
 import RacingKit from "@/components/home/RacingKit";
 import SupportBanner from "@/components/home/SupportBanner";
 import Team from "@/components/home/Team";
-import { getCyclists, getNewsArticles, getPartners, getShopCatalog } from "@/lib/api";
+import { findClubSection, getClubOverview, getCyclists, getNewsArticles, getPartners, getShopCatalog } from "@/lib/api";
 
 export default async function Home() {
-  const [news, cyclists, partners, shop] = await Promise.all([
+  const [news, cyclists, partners, shop, club] = await Promise.all([
     getNewsArticles(),
     getCyclists(),
     getPartners(),
     getShopCatalog(),
+    getClubOverview(),
   ]);
+  const homeCopy = findClubSection(club?.sections, ["home"]);
+  const supportCopy = findClubSection(club?.sections, ["support"]);
   const kit = shop.products.slice(0, 4).map((product) => ({
     name: product.name,
     tagline: product.category,
@@ -23,12 +26,12 @@ export default async function Home() {
 
   return (
     <>
-      <Hero />
+      <Hero body={homeCopy?.body} />
       <Nurturing />
       <News articles={news} />
       <Team riders={cyclists.slice(0, 5)} />
       <RacingKit items={kit} />
-      <SupportBanner />
+      <SupportBanner title={supportCopy?.title} body={supportCopy?.body} />
       <Partners />
     </>
   );

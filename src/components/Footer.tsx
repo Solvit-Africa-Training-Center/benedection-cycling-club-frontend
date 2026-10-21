@@ -1,22 +1,8 @@
+"use client";
+
 import Link from "next/link";
-
-const navigation = [
-  { label: "Home", href: "/" },
-  { label: "About us", href: "/about" },
-  { label: "News", href: "/news" },
-  { label: "Team", href: "/team" },
-  { label: "Race", href: "/race" },
-  { label: "Partners", href: "/partners" },
-  { label: "Shop", href: "/shop" },
-  { label: "Contact", href: "/contact" },
-];
-
-const clubHub = [
-  { label: "Pro Team Kit", href: "/shop" },
-  { label: "Sponsors", href: "/partners" },
-  { label: "Join The Academy", href: "/contact" },
-  { label: "HQ & Press", href: "/contact" },
-];
+import { navLinks } from "@/data/navLinks";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 const iconProps = {
   width: 16,
@@ -98,6 +84,18 @@ function LinkColumn({
 }
 
 export default function Footer() {
+  const { t } = useI18n();
+  const navigation = navLinks.map(({ labelKey, href }) => ({
+    label: t.nav[labelKey],
+    href,
+  }));
+  const clubHub = [
+    { label: t.footer.kit, href: "/shop" },
+    { label: t.footer.sponsors, href: "/partners" },
+    { label: t.footer.academy, href: "/contact" },
+    { label: t.footer.press, href: "/contact" },
+  ];
+
   return (
     <footer className="bg-brand-navy text-white">
       {/* Decorative strip */}
@@ -135,19 +133,17 @@ export default function Footer() {
             </span>
           </div>
           <p className="mt-3 max-w-xs text-xs leading-relaxed text-gray-400">
-            Forging elite African cyclists from the high-altitude shores of
-            Lake Kivu in Rubavu. Racing with Rwandan grit, aerodynamic
-            precision, and uncompromising discipline on the global stage.
+            {t.footer.blurb}
           </p>
         </div>
 
-        <LinkColumn title="Navigation" items={navigation} />
-        <LinkColumn title="Club Hub" items={clubHub} />
+        <LinkColumn title={t.footer.navigation} items={navigation} />
+        <LinkColumn title={t.footer.clubHub} items={clubHub} />
 
         {/* Contact */}
         <div>
           <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
-            Get in touch
+            {t.footer.getInTouch}
           </h3>
 
           <ul className="mt-3 space-y-3">
@@ -169,8 +165,7 @@ export default function Footer() {
       {/* Bottom line */}
       <div className="mx-auto max-w-7xl border-t border-white/10 px-4 py-5 md:px-6">
         <p className="text-[11px] text-gray-400">
-          © 2026 Benediction Cycling Club Rubavu (Banafrica). All rights
-          reserved. Registered Rwandan Sporting Entity.
+          {t.footer.rights}
         </p>
       </div>
     </footer>

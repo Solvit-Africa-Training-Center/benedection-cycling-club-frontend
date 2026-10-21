@@ -4,27 +4,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-
-const links = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "News", href: "/news" },
-  { label: "Team", href: "/team" },
-  { label: "Race", href: "/race" },
-  { label: "Partners", href: "/partners" },
-  { label: "Shop", href: "/shop" },
-  { label: "Contact", href: "/contact" },
-];
+import { navLinks } from "@/data/navLinks";
+import { parseLang, switcherLabel } from "@/lib/i18n/config";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<"EN" | "NL">("EN");
+  const { t, lang, setLang, languages } = useI18n();
+  const available = languages.available?.length
+    ? languages.available
+    : [
+        { code: "en", name: "English", native_name: "English" },
+        { code: "nl-BE", name: "Belgian Dutch", native_name: "Nederlands" },
+      ];
+
+  const links = navLinks.map(({ labelKey, href }) => ({
+    label: t.nav[labelKey],
+    href,
+  }));
 
   return (
     <header className="sticky top-0 z-50 bg-brand-navy font-display text-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
-        {/* Logo + name */}
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
@@ -44,7 +46,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop links */}
         <nav className="hidden items-center gap-6 lg:flex">
           {links.map(({ label, href }) => {
             const active = pathname === href;
@@ -64,35 +65,39 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right side: language toggle + mobile button */}
         <div className="flex items-center gap-3">
           <div
             role="group"
-            aria-label="Language"
+            aria-label={t.nav.language}
             className="flex rounded-full border border-white/15 bg-white/5 p-1"
           >
-            {(["EN", "NL"] as const).map((code) => (
-              <button
-                key={code}
-                type="button"
-                onClick={() => setLang(code)}
-                aria-pressed={lang === code}
-                className={`rounded-full px-4 py-1 text-sm font-semibold transition-colors ${
-                  lang === code
-                    ? "bg-linear-to-r from-brand-teal to-emerald-500 text-white"
-                    : "text-gray-300 hover:text-white"
-                }`}
-              >
-                {code}
-              </button>
-            ))}
+            {available.map((option) => {
+              const code = parseLang(option.code);
+              const selected = lang === code;
+              return (
+                <button
+                  key={option.code}
+                  type="button"
+                  onClick={() => setLang(code)}
+                  aria-pressed={selected}
+                  title={option.native_name || option.name}
+                  className={`rounded-full px-4 py-1 text-sm font-semibold transition-colors ${
+                    selected
+                      ? "bg-linear-to-r from-brand-teal to-emerald-500 text-white"
+                      : "text-gray-300 hover:text-white"
+                  }`}
+                >
+                  {switcherLabel(option.code)}
+                </button>
+              );
+            })}
           </div>
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            aria-label="Toggle menu"
+            aria-label={t.nav.menu}
             className="rounded-md p-2 text-gray-300 hover:text-white lg:hidden"
           >
             <svg
@@ -114,7 +119,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <nav className="flex flex-col gap-1 border-t border-white/10 px-4 py-3 lg:hidden">
           {links.map(({ label, href }) => (
@@ -132,7 +136,6 @@ export default function Navbar() {
         </nav>
       )}
 
-      {/* Gradient bottom line */}
       <div className="h-3px w-full bg-linear-to-r from-blue-600 via-emerald-400 to-brand-lime" />
     </header>
   );

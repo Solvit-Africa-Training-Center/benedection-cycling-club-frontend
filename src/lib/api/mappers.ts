@@ -12,6 +12,7 @@ import type {
   ClubRace,
   ClubSponsor,
   NewsArticleApi,
+  LanguageLabels,
   ShopCategory,
   ShopProductApi,
   StaffRoleApi,
@@ -58,11 +59,11 @@ function excerptFromBody(body: string, max = 180): string {
   return `${text.slice(0, max).trim()}…`;
 }
 
-function formatDate(iso?: string | null): string {
+function formatDate(iso?: string | null, locale = "en-GB"): string {
   if (!iso) return "";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString("en-GB", {
+  return date.toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -89,7 +90,12 @@ function filled(value?: string | null): string | undefined {
   return text ? text : undefined;
 }
 
-export function mapNews(article: NewsArticleApi, local?: NewsArticle, index = 0): NewsArticle {
+export function mapNews(
+  article: NewsArticleApi,
+  local?: NewsArticle,
+  index = 0,
+  locale = "en-GB",
+): NewsArticle {
   const slug = article.slug || slugify(article.title) || String(article.id);
   const body = filled(article.body);
   const paragraphs = body
@@ -100,13 +106,13 @@ export function mapNews(article: NewsArticleApi, local?: NewsArticle, index = 0)
     : [];
   return {
     slug,
-    category: local?.category || "News",
+    category: "",
     title: article.title,
-    excerpt: body ? excerptFromBody(body) : local?.excerpt || "",
-    date: article.published_at ? formatDate(article.published_at) : local?.date || "",
-    image: resolveMediaUrl(article.cover_image) || local?.image || NEWS_PLACEHOLDERS[index % NEWS_PLACEHOLDERS.length],
+    excerpt: body ? excerptFromBody(body) : "",
+    date: article.published_at ? formatDate(article.published_at, locale) : "",
+    image: resolveMediaUrl(article.cover_image) || local?.image || NEWS_PLACEHOLDERS[(article.id || index) % NEWS_PLACEHOLDERS.length],
     position: local?.position,
-    content: paragraphs.length ? paragraphs : local?.content,
+    content: paragraphs,
   };
 }
 
@@ -119,13 +125,13 @@ export function mapPartner(sponsor: ClubSponsor, local?: Partner): Partner {
     .toUpperCase();
   const summary = filled(sponsor.short_description);
   const lead = summary?.split(". ")[0];
-  const website = filled(sponsor.website_url) || local?.website;
+  const website = filled(sponsor.website_url);
   return {
     name: sponsor.name,
-    specialization: lead || local?.specialization || "Club partner",
-    description: summary || local?.description || "",
+    specialization: lead || "",
+    description: summary || "",
     website,
-    websiteLabel: website ? local?.websiteLabel || `Visit ${sponsor.name}` : undefined,
+    websiteLabel: undefined,
     mark: local?.mark || initials || "P",
     logo: resolveMediaUrl(sponsor.logo) || local?.logo,
     featured: local?.featured,
@@ -134,11 +140,9 @@ export function mapPartner(sponsor: ClubSponsor, local?: Partner): Partner {
 
 function raceTeam(raceType?: string): Team {
   const value = (raceType ?? "").toLowerCase();
-  if (value.includes("women")) return "women";
-  if (value.includes("junior") || value.includes("kid") || value.includes("u-19") || value.includes("u19")) {
-    return "junior";
-  }
-  if (value.includes("men")) return "men";
+  if (/(women|vrouwen|dames)/.test(value)) return "women";
+  if (/(junior|jeugd|kids|u-19|u19)/.test(value)) return "junior";
+  if (/(mannen|heren|\bmen\b)/.test(value)) return "men";
   return "all";
 }
 
@@ -149,7 +153,7 @@ export function mapRace(race: ClubRace): Race {
     startDate: filled(race.start_date),
     endDate: filled(race.end_date),
     seasonYear: race.season_year ?? undefined,
-    location: filled(race.location) || "TBC",
+    location: filled(race.location) || "",
     team: raceTeam(race.race_type),
   };
 }
@@ -167,11 +171,11 @@ export function mapTrophy(trophy: Trophy): RaceResult {
 
 export function mapMilestone(milestone: TeamMilestone) {
   return {
-    tag: milestone.is_confirmed ? "Confirmed" : "Milestone",
+    tag: milestone.is_confirmed ? "confirmed" : "milestone",
     year: String(milestone.year),
     title: milestone.event_name,
     text: milestone.summary,
-    achievement: milestone.is_confirmed ? "Confirmed result" : "Pending confirmation",
+    achievement: milestone.is_confirmed ? "confirmed" : "pending",
     yearClass: "text-brand-lime",
     achievementClass: "text-gray-400",
     current: milestone.year >= new Date().getFullYear() - 1,
@@ -189,16 +193,28 @@ const STAFF_LABELS: Record<StaffRoleApi, string> = {
   soigneur: "Soigneur",
 };
 
-export function mapStaff(member: ClubStaffApi, local?: StaffMember): StaffMember {
-  const role = STAFF_LABELS[member.staff_role] ?? member.staff_role;
+export function mapStaff(
+  member: ClubStaffApi,
+  local?: StaffMember,
+  roleLabels?: Record<string, string>,
+): StaffMember {
+  const role = roleLabels?.[member.staff_role] || STAFF_LABELS[member.staff_role] || member.staff_role;
   const about = filled(member.about);
-  const aboutRestatesRole = about ? personKey(about.replace(/\.+$/, "")) === personKey(role) : false;
+  const aboutKey = about ? personKey(about.replace(/\.+$/, "")) : "";
+  const aboutRestatesRole = Boolean(
+    aboutKey &&
+      [
+        role,
+        STAFF_LABELS[member.staff_role],
+        member.staff_role.replaceAll("_", " "),
+      ].some((value) => value && personKey(value) === aboutKey),
+  );
   return {
     name: member.name,
     role,
     country: filled(member.nationality) || local?.country || "",
     image: resolveMediaUrl(member.photo) || local?.image,
-    description: about && !aboutRestatesRole ? about : local?.description,
+    description: about && !aboutRestatesRole ? about : undefined,
   };
 }
 
@@ -213,14 +229,6 @@ const CATEGORY_LABEL: Record<RiderCategory, string> = {
   "ALL PERSONNEL": "Cyclist",
 };
 
-function usableLocalRole(role: string | undefined, cyclist: CyclistApi): string | undefined {
-  if (!role) return undefined;
-  const embeddedAge = role.match(/age\s*(\d+)/i);
-  if (embeddedAge && cyclist.age != null && Number(embeddedAge[1]) !== cyclist.age) return undefined;
-  if (/junior/i.test(role) && cyclist.category !== "kids") return undefined;
-  return role;
-}
-
 function formatMeasure(value?: string | null, unit?: string): string | undefined {
   if (!value) return undefined;
   const number = Number(value);
@@ -228,14 +236,9 @@ function formatMeasure(value?: string | null, unit?: string): string | undefined
   return unit ? `${number}${unit}` : String(number);
 }
 
-function qaFromCyclist(cyclist: CyclistApi, local?: RiderQA[]): RiderQA[] | undefined {
+function qaFromCyclist(cyclist: CyclistApi): RiderQA[] | undefined {
   const favoriteFood = filled(cyclist.favorite_food);
-  const extras = (local ?? []).filter((item) => !/favorite food/i.test(item.question));
-  const food = favoriteFood
-    ? [{ question: "What is your favorite food?", answer: favoriteFood }]
-    : [];
-  const qa = [...food, ...extras];
-  return qa.length ? qa : undefined;
+  return favoriteFood ? [{ question: "favorite_food", answer: favoriteFood }] : undefined;
 }
 
 function looksLikeResultLine(line: string): boolean {
@@ -250,10 +253,10 @@ function splitAbout(about?: string): { narrative?: string; highlights: string[] 
   let inHighlights = false;
 
   for (const line of about.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)) {
-    const heading = line.match(/^top results:\s*(.*)$/i);
+    const heading = line.match(/^(top results|topresultaten|beste resultaten):\s*(.*)$/i);
     if (heading) {
       inHighlights = true;
-      if (heading[1]) highlights.push(heading[1].replace(/\.$/, ""));
+      if (heading[2]) highlights.push(heading[2].replace(/\.$/, ""));
       continue;
     }
     if (inHighlights || looksLikeResultLine(line)) {
@@ -283,18 +286,46 @@ function resultsFromDetail(detail?: CyclistDetailApi): string[] | undefined {
   });
 }
 
-export function mapCyclist(cyclist: CyclistApi, detail?: CyclistDetailApi, local?: Cyclist): Cyclist {
+function isThinBio(text?: string): boolean {
+  const value = text?.trim();
+  if (!value) return true;
+  if (/^born in\b/i.test(value) && value.length < 80) return true;
+  if (/^listed in\b/i.test(value)) return true;
+  return looksLikeResultLine(value) && value.length < 120;
+}
+
+function localParagraph(local?: Cyclist): string | undefined {
+  const bio = filled(local?.bio);
+  if (bio && !isThinBio(bio)) return bio;
+  const description = filled(local?.description);
+  if (description && /cyclist from/i.test(description)) return description;
+  if (description && description.length > 80 && /[.!?]/.test(description)) return description;
+  return undefined;
+}
+
+function usableLocalTitle(title?: string): string | undefined {
+  if (!title) return undefined;
+  if (/[•]|first team|academy|development|junior\s*•/i.test(title)) return undefined;
+  return title;
+}
+
+export function mapCyclist(
+  cyclist: CyclistApi,
+  detail?: CyclistDetailApi,
+  local?: Cyclist,
+  labels?: LanguageLabels,
+): Cyclist {
   const source = detail ?? cyclist;
   const photo = resolveMediaUrl(source.photo) || local?.image;
   const about = filled(source.about);
   const { narrative, highlights } = splitAbout(about);
   const position = filled(source.position);
-  const role = position || usableLocalRole(local?.role, source) || CATEGORY_LABEL[mapCategory(source.category)];
+  const categoryLabel =
+    labels?.cyclist_category[source.category] || CATEGORY_LABEL[mapCategory(source.category)];
+  const role = position || categoryLabel;
   const detailResults = resultsFromDetail(detail);
-  const topResults = highlights.length
-    ? highlights
-    : detailResults ?? (about ? undefined : local?.topResults);
-  const bio = narrative ?? (about ? undefined : local?.bio);
+  const topResults = highlights.length ? highlights : detailResults;
+  const bio = !isThinBio(narrative) ? narrative : localParagraph(local);
   return {
     id: String(source.id),
     slug: cyclistHref(source),
@@ -306,16 +337,15 @@ export function mapCyclist(cyclist: CyclistApi, detail?: CyclistDetailApi, local
     birthplace: filled(source.birth_place) || local?.birthplace,
     height: formatMeasure(source.height_cm, "cm") || local?.height,
     weight: formatMeasure(source.weight_kg, "kg") || local?.weight,
-    discipline: filled(source.bps) || local?.discipline || "Road Cycling",
-    team: local?.team || "Benediction Cycling Club",
-    title: position || usableLocalRole(local?.title, source),
+    discipline: filled(source.bps),
+    team: "Benediction Cycling Club",
+    title: position || usableLocalTitle(local?.title),
     bio,
-    description: bio ?? (about ? undefined : local?.description),
+    description: bio,
     topResults,
     image: photo,
     gallery: local?.gallery?.length ? local.gallery : photo ? [photo] : undefined,
-    qa: qaFromCyclist(source, local?.qa),
-    quote: local?.quote,
+    qa: qaFromCyclist(source),
   };
 }
 
@@ -323,31 +353,44 @@ const DEFAULT_SIZES = ["XS", "S", "M", "L", "XL"];
 
 const SHOP_IMAGES: { match: string; image: string }[] = [
   { match: "jersey", image: "/jersey.png" },
+  { match: "trui", image: "/jersey.png" },
+  { match: "bib-short", image: "/short.png" },
   { match: "short", image: "/short.png" },
+  { match: "broek", image: "/short.png" },
+  { match: "sunglass", image: "/glasses.jpg" },
+  { match: "cycling-glass", image: "/glasses.jpg" },
   { match: "glass", image: "/glasses.jpg" },
+  { match: "bril", image: "/glasses.jpg" },
   { match: "glove", image: "/gloves.jpg" },
+  { match: "handschoen", image: "/gloves.jpg" },
   { match: "sock", image: "/socks.jpg" },
+  { match: "sok", image: "/socks.jpg" },
   { match: "helmet", image: "/helmet.jpg" },
+  { match: "helm", image: "/helmet.jpg" },
 ];
 
-function localShopImage(name: string, category: string): string {
-  const haystack = `${name} ${category}`.toLowerCase();
+function localShopImage(product: ShopProductApi): string {
+  const haystack = [product.slug, product.category?.slug]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
   return SHOP_IMAGES.find((item) => haystack.includes(item.match))?.image || "/jersey.png";
 }
 
 export function mapShopProduct(product: ShopProductApi): ShopProductView {
   const photos = Array.isArray(product.photos) ? product.photos : [];
   const photo = [...photos].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0];
-  const categoryName = product.category?.name || "Kit";
+  const categoryName = product.category?.name || "";
+  const categorySlug = product.category?.slug || slugify(categoryName);
   return {
     id: product.id,
-    slug: product.slug || slugify(product.name) || String(product.id),
+    slug: product.slug || `product-${product.id}`,
     name: product.name,
     price: Number(product.price),
     currency: product.currency || "USD",
     category: categoryName,
-    categorySlug: product.category?.slug || slugify(categoryName),
-    image: resolveMediaUrl(photo?.image) || localShopImage(product.name, categoryName),
+    categorySlug,
+    image: resolveMediaUrl(photo?.image) || localShopImage(product),
     sizes: DEFAULT_SIZES,
     description: filled(product.description) || "",
     stock: product.stock,

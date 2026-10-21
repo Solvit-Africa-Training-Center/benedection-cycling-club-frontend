@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 type Product = {
   name: string;
@@ -60,12 +63,11 @@ function CartIcon() {
   );
 }
 
-function ProductPhoto({ product }: { product: Product }) {
-  // No photo yet: show a placeholder
+function ProductPhoto({ product, photoSoon }: { product: Product; photoSoon: string }) {
   if (!product.image) {
     return (
       <div className="flex aspect-square items-center justify-center rounded-xl bg-gray-600 text-center text-[10px] font-semibold uppercase tracking-wider text-gray-300">
-        Photo coming soon
+        {photoSoon}
       </div>
     );
   }
@@ -109,6 +111,7 @@ function ProductPhoto({ product }: { product: Product }) {
 }
 
 export default function RacingKit({ items }: { items?: Product[] }) {
+  const { t } = useI18n();
   const catalog = items?.length ? items : products;
   return (
     <section className="bg-brand-navy text-white">
@@ -116,13 +119,13 @@ export default function RacingKit({ items }: { items?: Product[] }) {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h2 className="font-display text-3xl font-bold uppercase tracking-tight md:text-4xl">
-            Official racing kit &amp; apparel
+            {t.home.kitTitle}
           </h2>
           <Link
             href="/shop"
             className="inline-flex items-center gap-2 rounded-lg bg-brand-lime px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-brand-navy transition-opacity hover:opacity-90"
           >
-            Enter pro kit store
+            {t.home.enterStore}
             <CartIcon />
           </Link>
         </div>
@@ -134,7 +137,7 @@ export default function RacingKit({ items }: { items?: Product[] }) {
               key={product.name}
               className="rounded-2xl bg-[#1a2030] p-3 md:p-4"
             >
-              <ProductPhoto product={product} />
+              <ProductPhoto product={product} photoSoon={t.common.photoSoon} />
 
               <h3 className="mt-4 font-display text-lg font-bold uppercase tracking-wide">
                 {product.name}
@@ -149,7 +152,7 @@ export default function RacingKit({ items }: { items?: Product[] }) {
                   href="/shop"
                   className="rounded-full bg-blue-600 px-4 py-1 text-[10px] font-bold uppercase tracking-wide transition-colors hover:bg-blue-500"
                 >
-                  Buy now
+                  {t.home.buyNow}
                 </Link>
               </div>
             </article>

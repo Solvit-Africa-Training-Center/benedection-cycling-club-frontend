@@ -50,13 +50,15 @@ body {
 }
 
 .shop-art-jerseys,
-.shop-art-shorts {
+.shop-art-shorts,
+.shop-art-bib-shorts {
   background: #ffffff;
   padding: 0.75rem;
 }
 
 .shop-art-jerseys img,
-.shop-art-shorts img {
+.shop-art-shorts img,
+.shop-art-bib-shorts img {
   border: 1px solid rgb(255 255 255 / 0.12);
 }
 

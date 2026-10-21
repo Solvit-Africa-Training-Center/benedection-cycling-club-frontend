@@ -1,8 +1,10 @@
+import { cache } from "react";
 import { cyclists as staticCyclists } from "@/data/cyclists";
 import { news as staticNews } from "@/data/news";
 import { partners as staticPartners } from "@/data/partners";
-import { raceResults as staticResults, races as staticRaces } from "@/data/races";
+import { mergeRaceCalendar, raceResults as staticResults, races as staticRaces } from "@/data/races";
 import { staff as staticStaff } from "@/data/staff";
+import { getRequestLang } from "@/lib/i18n/server";
 import { apiGet, apiGetAllPages } from "./client";
 import { getApiBaseUrl, resolveMediaUrl } from "./config";
 import { existingPublicImage, localPhotoFor } from "./localImages";
@@ -31,9 +33,43 @@ import type {
   NewsArticleApi,
   ShopCategory,
   ShopProductApi,
+  LanguageCatalog,
   TeamMilestone,
   Trophy,
 } from "./types";
+
+export const FALLBACK_LANGUAGE_CATALOG: LanguageCatalog = {
+  default: "en",
+  active: "en",
+  available: [
+    { code: "en", name: "English", native_name: "English" },
+    { code: "nl-BE", name: "Belgian Dutch", native_name: "Nederlands" },
+  ],
+  labels: {
+    cyclist_category: { men: "Men", women: "Women", kids: "Kids" },
+    staff_role: {
+      mechanic: "Mechanic",
+      logistic: "Logistic",
+      coach: "Coach",
+      representative: "Representative",
+      team_manager: "Team manager",
+      sports_director: "Sports director",
+      assistant_sports_director: "Assistant sports director",
+      soigneur: "Soigneur",
+    },
+    contact_kind: { phone: "Phone", email: "Email" },
+  },
+};
+
+export const getLanguages = cache(async function getLanguages(): Promise<LanguageCatalog> {
+  const catalog = await withFallback(
+    "languages",
+    () => apiGet<LanguageCatalog>("/api/club/languages/"),
+    FALLBACK_LANGUAGE_CATALOG,
+  );
+  if (!catalog.available?.length || !catalog.labels) return FALLBACK_LANGUAGE_CATALOG;
+  return catalog;
+});
 
 async function withFallback<T>(
   label: string,
@@ -80,16 +116,32 @@ function localNewsFor(article: NewsArticleApi) {
   return staticNews.find((item) => (slug && item.slug === slug) || personKey(item.title) === title);
 }
 
-export async function getClubOverview(): Promise<ClubOverview | null> {
+export const getClubOverview = cache(async function getClubOverview(): Promise<ClubOverview | null> {
   return withFallback("club", () => apiGet<ClubOverview>("/api/club/"), null);
+});
+
+export function findClubSection(
+  sections: { slug: string; title: string; body: string }[] | undefined,
+  keys: string[],
+) {
+  return sections?.find((section) =>
+    keys.some((key) => {
+      const needle = key.toLowerCase();
+      return section.slug.toLowerCase().includes(needle) || section.title.toLowerCase().includes(needle);
+    }),
+  );
 }
 
 export async function getNewsArticles() {
   return withFallback(
     "news",
     async () => {
-      const rows = await apiGetAllPages<NewsArticleApi>("/api/news/");
-      return rows.map((row, index) => mapNews(row, localNewsFor(row), index));
+      const [rows, lang] = await Promise.all([
+        apiGetAllPages<NewsArticleApi>("/api/news/"),
+        getRequestLang(),
+      ]);
+      const locale = lang === "nl-BE" ? "nl-BE" : "en-GB";
+      return rows.map((row, index) => mapNews(row, localNewsFor(row), index, locale));
     },
     staticNews,
     (rows) => rows.length === 0,
@@ -100,8 +152,12 @@ export async function getNewsArticle(slug: string) {
   const local = staticNews.find((article) => article.slug === slug) ?? null;
   if (!getApiBaseUrl()) return local;
   try {
-    const article = await apiGet<NewsArticleApi>(`/api/news/${slug}/`);
-    return mapNews(article, localNewsFor(article) ?? local ?? undefined);
+    const [article, lang] = await Promise.all([
+      apiGet<NewsArticleApi>(`/api/news/${slug}/`),
+      getRequestLang(),
+    ]);
+    const locale = lang === "nl-BE" ? "nl-BE" : "en-GB";
+    return mapNews(article, localNewsFor(article) ?? local ?? undefined, 0, locale);
   } catch (error) {
     console.error("[api] news detail failed", error);
     return local;
@@ -125,7 +181,7 @@ export async function getRaces() {
     "races",
     async () => {
       const rows = await apiGetAllPages<ClubRace>("/api/races/", { page_size: 100 });
-      return rows.map(mapRace);
+      return mergeRaceCalendar(rows.map(mapRace));
     },
     staticRaces,
     (rows) => rows.length === 0,
@@ -170,8 +226,12 @@ export async function getCyclists() {
     "cyclists",
     async () => {
       const rows = await apiGetAllPages<CyclistApi>("/api/team/cyclists/");
+      const languages = await getLanguages();
       return rows.map((row) =>
-        withRiderPhotos(mapCyclist(row, undefined, byName(staticCyclists, row.name)), row.photo),
+        withRiderPhotos(
+          mapCyclist(row, undefined, byName(staticCyclists, row.name), languages.labels),
+          row.photo,
+        ),
       );
     },
     staticCyclists,
@@ -184,8 +244,14 @@ export async function getCyclist(param: string) {
   const wanted = personKey(param.replace(/^\d+-/, "").replace(/-/g, " "));
   if (getApiBaseUrl() && id !== undefined) {
     try {
-      const detail = await apiGet<CyclistDetailApi>(`/api/team/cyclists/${id}/`);
-      return withRiderPhotos(mapCyclist(detail, detail, byName(staticCyclists, detail.name)), detail.photo);
+      const [detail, languages] = await Promise.all([
+        apiGet<CyclistDetailApi>(`/api/team/cyclists/${id}/`),
+        getLanguages(),
+      ]);
+      return withRiderPhotos(
+        mapCyclist(detail, detail, byName(staticCyclists, detail.name), languages.labels),
+        detail.photo,
+      );
     } catch (error) {
       console.error("[api] cyclist detail failed", error);
     }
@@ -205,9 +271,12 @@ export async function getStaff() {
   return withFallback(
     "staff",
     async () => {
-      const rows = await apiGetAllPages<ClubStaffApi>("/api/team/staff/");
+      const [rows, languages] = await Promise.all([
+        apiGetAllPages<ClubStaffApi>("/api/team/staff/"),
+        getLanguages(),
+      ]);
       return rows.map((row) => {
-        const member = mapStaff(row, byName(staticStaff, row.name));
+        const member = mapStaff(row, byName(staticStaff, row.name), languages.labels.staff_role);
         return {
           ...member,
           image: resolveMediaUrl(row.photo) || localPhotoFor(member.name, "staff", member.image),
@@ -237,9 +306,9 @@ export function winsByRoster(
     }
   }
   return [
-    { value: wins.men, label: "Wins by Benediction Club Men team" },
-    { value: wins.women, label: "Wins by Benediction Club Women team" },
-    { value: wins.junior, label: "Wins by Benediction Club Junior team" },
+    { value: wins.men, label: "Wins by Benediction Club Men team", roster: "men" as const },
+    { value: wins.women, label: "Wins by Benediction Club Women team", roster: "women" as const },
+    { value: wins.junior, label: "Wins by Benediction Club Junior team", roster: "junior" as const },
   ];
 }
 

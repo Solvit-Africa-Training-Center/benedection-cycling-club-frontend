@@ -37,11 +37,31 @@ export type ClubReference = {
   season_year?: number | null;
 };
 
+export type LanguageOption = {
+  code: string;
+  name: string;
+  native_name: string;
+};
+
+export type LanguageLabels = {
+  cyclist_category: Record<string, string>;
+  staff_role: Record<string, string>;
+  contact_kind: Record<string, string>;
+};
+
+export type LanguageCatalog = {
+  default: string;
+  active: string;
+  available: LanguageOption[];
+  labels: LanguageLabels;
+};
+
 export type ClubOverview = {
   profile: ClubProfile;
   sections: ClubSection[];
   contacts: ClubContact[];
   references: ClubReference[];
+  languages?: Omit<LanguageCatalog, "labels">;
 };
 
 export type VisitorMessage = {

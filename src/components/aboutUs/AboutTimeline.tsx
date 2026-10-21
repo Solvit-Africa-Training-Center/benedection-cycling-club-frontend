@@ -1,4 +1,7 @@
+"use client";
+
 import TimelineSlider from "@/components/aboutUs/TimelineSlider";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 export type TimelineMilestone = {
   tag: string;
@@ -59,21 +62,31 @@ export default function AboutTimeline({
 }: {
   milestones?: TimelineMilestone[];
 }) {
+  const { t } = useI18n();
   const items = milestones.length ? milestones : fallbackMilestones;
+  function tagLabel(tag: string) {
+    if (tag === "confirmed") return t.about.confirmedTag;
+    if (tag === "milestone") return t.about.milestoneTag;
+    return tag;
+  }
+  function achievementLabel(value: string) {
+    if (value === "confirmed") return t.about.confirmed;
+    if (value === "pending") return t.about.pending;
+    return value;
+  }
   return (
     <section className="bg-[#1b212d] text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
         {/* Header */}
         <div className="text-center">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-indigo-200">
-            Chronological milestones
+            {t.about.timelineKicker}
           </p>
           <h2 className="mt-3 font-display text-4xl font-bold uppercase tracking-tight text-gray-100 md:text-5xl">
-            The Ascension timeline
+            {t.about.timelineTitle}
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-xs text-gray-400 md:text-sm">
-            Key tactical checkpoints in our journey from local Rubavu club to
-            international racing power.
+            {t.about.timelineIntro}
           </p>
         </div>
 
@@ -93,7 +106,7 @@ export default function AboutTimeline({
                         : "bg-white/10 text-gray-400"
                     }`}
                   >
-                    {m.tag}
+                    {tagLabel(m.tag)}
                   </span>
                   <span
                     className={`font-display text-2xl font-bold leading-none ${m.yearClass}`}
@@ -112,7 +125,7 @@ export default function AboutTimeline({
                 <p
                   className={`mt-auto pt-5 text-[10px] font-bold uppercase tracking-wider ${m.achievementClass}`}
                 >
-                  Achievement: {m.achievement}
+                  {t.about.achievement}: {achievementLabel(m.achievement)}
                 </p>
               </article>
             ))}
