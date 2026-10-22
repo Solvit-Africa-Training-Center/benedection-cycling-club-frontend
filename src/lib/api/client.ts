@@ -1,5 +1,5 @@
 import { DEFAULT_LANG, type AppLang } from "@/lib/i18n/config";
-import { API_FETCH_TIMEOUT_MS, API_REVALIDATE_SECONDS, getApiBaseUrl } from "./config";
+import { API_FETCH_TIMEOUT_MS, getApiBaseUrl } from "./config";
 import type { Paginated } from "./types";
 
 async function requestLang(): Promise<AppLang> {
@@ -90,11 +90,11 @@ export async function apiGet<T>(
   const lang = await requestLang();
   const url = withQuery(joinUrl(base, path), { ...query, lang });
   const response = await request(url, {
+    cache: "no-store",
     headers: {
       Accept: "application/json",
       "Accept-Language": lang,
     },
-    next: { revalidate: API_REVALIDATE_SECONDS },
   });
 
   if (!response.ok) {

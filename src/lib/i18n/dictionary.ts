@@ -47,10 +47,8 @@ const en = {
       "Whether you are an aspiring junior cyclist, an international supporter, or a performance sponsor, join our movement forging champions from Rubavu to the world.",
     joinAcademy: "Join the academy",
     partnerWithUs: "Partner with us",
-    heroLine1: "Rising above the",
-    heroCrags: "Crags &",
-    heroVolcanoes: "Volcanoes",
-    heroOf: "of Rubavu",
+    heroLead: "From Rubavu to the",
+    heroAccent: "world stage",
     heroBody:
       "Founded in 2005, Benediction Banafrica Team is a cycling development programme based in Rubavu, Rwanda, on the shores of Lake Kivu. Our mission is to develop young cycling talent, create opportunities for men and women in sport, and connect Rwandan and African riders with national and international competition. Through cycling, we promote discipline, education, teamwork and personal development. We aim to help young athletes build strong futures both on and off the bike while contributing to the growth of cycling in Rwanda and across Africa. Partner with us. Support our riders. Help build the future of African cycling.",
     nurturingTitle: "Nurturing world class African cycling talent",
@@ -193,9 +191,21 @@ const en = {
     colorHint: "If a color matters for this order",
     notesHint: "Anything we should know?",
     kitLine: "Benediction / pro team kit",
+    categoryNames: {
+      jerseys: "Jerseys",
+      shorts: "Shorts",
+      "bib-shorts": "Bib shorts",
+      glasses: "Glasses",
+      "cycling-glass": "Glasses",
+      gloves: "Gloves",
+      socks: "Socks",
+      helmet: "Helmet",
+      caps: "Caps",
+    },
   },
   news: {
     back: "Back to news",
+    all: "All news",
     hero: "Latest cycling news",
     heroAccent: "Stay in the know",
     latest: "Latest news",
@@ -212,8 +222,16 @@ const en = {
     hero: "The legacy of our club",
     heroAccent: "African cycling excellence",
     story: "Our story",
+    storyText:
+      "To empower talented cyclists through professional training, mentorship, and opportunities, build discipline, teamwork, resilience, and excellence both on and off the bike and contribute to the growth of cycling in Rwanda and create pathways for athletes to reach their full potential.",
     mission: "Mission",
+    missionText:
+      "Inspire young Rwandans by showing them that a future as professional athletes is possible.\nContribute to the development of Rwanda's cycling culture by providing international exposure and competitive opportunities.\nTrain and educate young talents to become ambassadors and role models for future generations.\nUse cycling to encourage discipline, personal growth and opportunity.\nSupport development pathways for both male and female cyclists.",
     vision: "Vision",
+    visionText:
+      "Drive the growth of cycling through a distinctive training and development platform.\nHelp establish Rwanda as a leading cycling hub in Africa.\nContribute to Rwandan cycling history through talent development and international competition.\nBuild a sustainable programme that creates opportunities for future generations.",
+    beliefQuote:
+      "We didn't just build a team in Rubavu. We built a belief that African endurance athletes can dictate the pace on any alpine ascent in the world.",
     timelineKicker: "Chronological milestones",
     timelineTitle: "The Ascension timeline",
     timelineIntro:
@@ -335,10 +353,8 @@ const nlBE: typeof en = {
       "Of je nu een jonge renner, een internationale supporter of een sponsor bent: sluit je aan bij onze beweging die kampioenen smeedt van Rubavu tot de wereld.",
     joinAcademy: "Word lid van de academie",
     partnerWithUs: "Word partner",
-    heroLine1: "Boven de",
-    heroCrags: "kliffen &",
-    heroVolcanoes: "vulkanen",
-    heroOf: "van Rubavu",
+    heroLead: "Van Rubavu naar het",
+    heroAccent: "wereldtoneel",
     heroBody:
       "Opgericht in 2005 is Benediction Banafrica Team een wielerontwikkelingsprogramma in Rubavu, Rwanda, aan de oevers van het Kivumeer. Onze missie is jong wielertalent ontwikkelen, kansen creëren voor mannen en vrouwen in de sport, en Rwandese en Afrikaanse renners verbinden met nationale en internationale koersen. Via het wielrennen bevorderen we discipline, onderwijs, teamwork en persoonlijke groei. We helpen jonge atleten een sterke toekomst op en naast de fiets, en dragen bij aan de groei van het wielrennen in Rwanda en Afrika. Word partner. Steun onze renners. Bouw mee aan de toekomst van het Afrikaanse wielrennen.",
     nurturingTitle: "Afrikaans wereldtalent kweken",
@@ -481,9 +497,21 @@ const nlBE: typeof en = {
     colorHint: "Als een kleur belangrijk is voor deze bestelling",
     notesHint: "Iets dat we moeten weten?",
     kitLine: "Benediction / pro team kit",
+    categoryNames: {
+      jerseys: "Truien",
+      shorts: "Broeken",
+      "bib-shorts": "Koersbroeken",
+      glasses: "Brillen",
+      "cycling-glass": "Brillen",
+      gloves: "Handschoenen",
+      socks: "Sokken",
+      helmet: "Helmen",
+      caps: "Petten",
+    },
   },
   news: {
     back: "Terug naar nieuws",
+    all: "Al het nieuws",
     hero: "Laatste wielernieuws",
     heroAccent: "Blijf op de hoogte",
     latest: "Laatste nieuws",
@@ -500,8 +528,16 @@ const nlBE: typeof en = {
     hero: "De erfenis van onze club",
     heroAccent: "Afrikaanse wielerexcellentie",
     story: "Ons verhaal",
+    storyText:
+      "Getalenteerde wielrenners versterken via professionele training, begeleiding en kansen, discipline, teamwork, veerkracht en excellentie op en naast de fiets opbouwen, bijdragen aan de groei van het wielrennen in Rwanda en trajecten creëren zodat atleten hun volle potentieel halen.",
     mission: "Missie",
+    missionText:
+      "Jonge Rwandezen inspireren door te tonen dat een toekomst als professioneel atleet mogelijk is.\nBijdragen aan de Rwandese wielercultuur via internationale zichtbaarheid en wedstrijdkansen.\nJonge talenten opleiden tot ambassadeurs en rolmodellen voor volgende generaties.\nWielrennen gebruiken om discipline, persoonlijke groei en kansen te stimuleren.\nOntwikkelingstrajecten steunen voor mannelijke en vrouwelijke renners.",
     vision: "Visie",
+    visionText:
+      "De groei van het wielrennen aandrijven via een eigen trainings- en ontwikkelingsplatform.\nRwanda helpen uitgroeien tot een toonaangevende wielerhub in Afrika.\nBijdragen aan de Rwandese wielergeschiedenis via talentontwikkeling en internationale koersen.\nEen duurzaam programma bouwen dat kansen creëert voor toekomstige generaties.",
+    beliefQuote:
+      "We bouwden in Rubavu niet alleen een ploeg. We bouwden het geloof dat Afrikaanse duursporters het tempo kunnen bepalen op elke alpine klim ter wereld.",
     timelineKicker: "Chronologische mijlpalen",
     timelineTitle: "De Ascension-tijdlijn",
     timelineIntro:

@@ -63,7 +63,7 @@ export default async function NewsArticlePage({
           href="/news"
           className="mt-12 inline-block rounded-sm bg-brand-lime px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-brand-navy transition-opacity hover:opacity-90"
         >
-          All news
+          {t.news.all}
         </Link>
       </div>
     </article>

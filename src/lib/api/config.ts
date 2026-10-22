@@ -1,6 +1,9 @@
-/** Django API origin on Render. No trailing slash. Example: https://benediction-api.onrender.com */
+/** Django API origin on Render. No trailing slash. */
+const DEFAULT_API_BASE_URL = "https://benediction-api.onrender.com";
+
 export function getApiBaseUrl(): string {
-  const raw = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+  const raw =
+    process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
   return raw.trim().replace(/\/+$/, "");
 }
 

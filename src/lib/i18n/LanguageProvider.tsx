@@ -35,6 +35,9 @@ export function LanguageProvider({
   function setLang(next: AppLang) {
     setLangState(next);
     persistLangCookie(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", next);
+    router.push(`${url.pathname}${url.search}`);
     router.refresh();
   }
 

@@ -7,7 +7,7 @@ import { staff as staticStaff } from "@/data/staff";
 import { getRequestLang } from "@/lib/i18n/server";
 import { apiGet, apiGetAllPages } from "./client";
 import { getApiBaseUrl, resolveMediaUrl } from "./config";
-import { existingPublicImage, localPhotoFor } from "./localImages";
+import { existingPublicImage, FALLBACK_RIDER_PHOTO, localPhotoFor } from "./localImages";
 import {
   mapCyclist,
   mapMilestone,
@@ -96,12 +96,13 @@ function withRiderPhotos<T extends { name: string; image?: string; gallery?: str
   const gallery = (rider.gallery ?? [])
     .map((src) => resolveMediaUrl(src) ?? existingPublicImage(src))
     .filter((src): src is string => Boolean(src));
-  const image = apiImage || localPhotoFor(rider.name, "riders", rider.image);
-  const tiles = apiImage ? [apiImage, ...gallery.filter((src) => src !== apiImage)] : gallery;
+  const localPortrait = localPhotoFor(rider.name, "riders", rider.image);
+  const image = apiImage || localPortrait || gallery[0] || FALLBACK_RIDER_PHOTO;
+  const tiles = [image, ...gallery.filter((src) => src !== image)];
   return {
     ...rider,
     image,
-    gallery: tiles.length ? tiles : image ? [image] : undefined,
+    gallery: tiles,
   };
 }
 
@@ -235,7 +236,7 @@ export async function getCyclists() {
         ),
       );
     },
-    staticCyclists,
+    staticCyclists.map((row) => withRiderPhotos(row, null)),
     (rows) => rows.length === 0,
   );
 }

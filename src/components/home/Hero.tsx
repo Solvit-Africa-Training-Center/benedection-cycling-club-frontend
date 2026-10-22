@@ -40,15 +40,10 @@ export default function Hero({ body }: { body?: string }) {
         </svg>
 
         <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight md:text-6xl lg:text-7xl">
-          {t.home.heroLine1}{" "}
-          <span className="bg-linear-to-r from-sky-200 to-indigo-300 bg-clip-text text-transparent">
-            {t.home.heroCrags}
-          </span>
-          <br />
+          {t.home.heroLead}{" "}
           <span className="bg-linear-to-r from-brand-lime to-emerald-400 bg-clip-text text-transparent">
-            {t.home.heroVolcanoes}
-          </span>{" "}
-          {t.home.heroOf}
+            {t.home.heroAccent}
+          </span>
         </h1>
 
         <p className="mt-6 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-gray-300 md:text-base">

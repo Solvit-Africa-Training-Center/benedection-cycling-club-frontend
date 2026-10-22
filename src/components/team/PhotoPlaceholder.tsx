@@ -1,30 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { FALLBACK_RIDER_PHOTO } from "@/lib/api/localImages";
 import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 type PhotoPlaceholderProps = {
   name: string;
   className?: string;
   src?: string;
+  fallbackSrc?: string;
   sizes?: string;
 };
 
-export default function PhotoPlaceholder({ name, className = "", src, sizes }: PhotoPlaceholderProps) {
+export default function PhotoPlaceholder({
+  name,
+  className = "",
+  src,
+  fallbackSrc = FALLBACK_RIDER_PHOTO,
+  sizes,
+}: PhotoPlaceholderProps) {
   const { t } = useI18n();
-  const [failed, setFailed] = useState(false);
+  const candidates = [src, fallbackSrc].filter((value, index, all): value is string =>
+    Boolean(value) && all.indexOf(value) === index,
+  );
+  const [attempt, setAttempt] = useState(0);
 
-  if (src && !failed) {
+  useEffect(() => {
+    setAttempt(0);
+  }, [src, fallbackSrc]);
+
+  const activeSrc = candidates[attempt];
+
+  if (activeSrc) {
     return (
       <Image
-        src={src}
+        src={activeSrc}
         alt={name}
         fill
         sizes={sizes}
-        unoptimized={src.startsWith("http")}
+        unoptimized={activeSrc.startsWith("http")}
         className="object-cover object-top"
-        onError={() => setFailed(true)}
+        onError={() => setAttempt((current) => current + 1)}
       />
     );
   }

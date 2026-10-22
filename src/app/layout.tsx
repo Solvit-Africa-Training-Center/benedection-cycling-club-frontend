@@ -29,6 +29,8 @@ export const metadata: Metadata = {
   description: "Rising above the crags & volcanoes of Rubavu",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const lang = await getRequestLang();
   const languages = await getLanguages();

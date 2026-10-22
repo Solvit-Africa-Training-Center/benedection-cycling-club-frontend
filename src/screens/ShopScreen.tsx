@@ -7,6 +7,12 @@ import { useI18n } from "@/lib/i18n/LanguageProvider";
 
 const ALL_ITEMS = "__all__";
 
+function productHasSizes(product: Product): boolean {
+  if (!product.sizes.length) return false;
+  const haystack = `${product.categorySlug} ${product.category} ${product.slug} ${product.name}`;
+  return !/(sunglass|cycling-glass|\bglass|\bbril)/i.test(haystack);
+}
+
 type Product = ShopProductView & { filter?: string; sample?: boolean };
 
 type CartLine = { productId?: number; productName: string; size: string; color?: string; quantity: number };
@@ -47,7 +53,7 @@ const fallbackProducts: Product[] = [
     price: 32,
     category: "Glasses",
     image: "/glasses.jpg",
-    sizes: ["One size"],
+    sizes: [],
     description: "Lightweight polarized glasses with a mirrored blue CAT 3 lens for bright cycling conditions.",
     filter: "CAT 3 Mirrored Blue",
     sample: true,
@@ -197,7 +203,10 @@ export default function ShopScreen({
       ? catalogCategories.map((category) => ({ slug: category.slug, name: category.name }))
       : Array.from(new Set(products.map((product) => product.categorySlug))).map((slug) => ({
           slug,
-          name: products.find((product) => product.categorySlug === slug)?.category || slug,
+          name:
+            t.shop.categoryNames[slug as keyof typeof t.shop.categoryNames] ||
+            products.find((product) => product.categorySlug === slug)?.category ||
+            slug,
         }))),
   ];
   const [activeCategory, setActiveCategory] = useState(ALL_ITEMS);
@@ -280,8 +289,10 @@ export default function ShopScreen({
     const extra = String(data.get("notes") ?? "").trim();
     const sizeLines = cart
       .map((item) => {
-        const details = [`size ${item.size}`, item.color && `color ${item.color}`].filter(Boolean).join(", ");
-        return `${item.productName} × ${item.quantity} (${details})`;
+        const details = [item.size && `size ${item.size}`, item.color && `color ${item.color}`].filter(Boolean).join(", ");
+        return details
+          ? `${item.productName} × ${item.quantity} (${details})`
+          : `${item.productName} × ${item.quantity}`;
       })
       .join("\n");
     const note = [sizeLines, color && `Color: ${color}`, address && `Delivery: ${address}`, extra && `Notes: ${extra}`]
@@ -362,8 +373,10 @@ export default function ShopScreen({
     const product = products.find((entry) => entry.id === selectedProductId);
 
     if (product) {
-      const selectedSize =
-        selectedSizes[product.name] ?? product.sizes[Math.min(2, product.sizes.length - 1)];
+      const hasSizes = productHasSizes(product);
+      const selectedSize = hasSizes
+        ? selectedSizes[product.name] ?? product.sizes[Math.min(2, product.sizes.length - 1)]
+        : "";
 
       return (
         <main className="min-h-screen bg-brand-navy text-white">
@@ -388,9 +401,10 @@ export default function ShopScreen({
               <p className="font-display text-3xl font-bold text-brand-lime">${product.price}</p>
               <p className="mt-5 text-sm leading-relaxed text-gray-300">{product.description}</p>
 
+              {hasSizes ? (
               <div className="mt-8">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
-                  {product.categorySlug === "glasses" || /glass/i.test(product.category) ? t.shop.lensFilter : t.shop.selectSize}
+                  {t.shop.selectSize}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {product.sizes.map((size) => (
@@ -410,6 +424,7 @@ export default function ShopScreen({
                   ))}
                 </div>
               </div>
+              ) : null}
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <button
@@ -470,7 +485,7 @@ export default function ShopScreen({
                   if (!product) return null;
                   return <article key={`${item.productName}-${item.size}`} className="grid gap-4 py-4 sm:grid-cols-[180px_minmax(0,1fr)]">
                     <ProductArtwork product={product} className="shop-art-bag" />
-                    <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">{t.shop.kitLine}</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3><p className="mt-3 text-xs text-gray-400">{t.shop.size}: {item.size}</p></div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">{t.shop.remove}</button></div></div>
+                    <div className="flex flex-col justify-between py-1"><div><p className="text-[9px] uppercase text-gray-500">{t.shop.kitLine}</p><h3 className="mt-2 font-display text-2xl font-bold uppercase leading-tight text-slate-200">{product.name}</h3>{item.size ? <p className="mt-3 text-xs text-gray-400">{t.shop.size}: {item.size}</p> : null}</div><div className="mt-4 flex flex-wrap items-center justify-between gap-3"><div className="flex items-center border border-white/10 text-sm"><button aria-label={`Decrease ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, -1)} className="px-3 py-1">−</button><span className="px-2">{item.quantity}</span><button aria-label={`Increase ${product.name} quantity`} type="button" onClick={() => updateQuantity(item.productName, item.size, 1)} className="px-3 py-1">+</button></div><strong className="font-display text-xl text-brand-lime">${product.price * item.quantity}</strong><button type="button" onClick={() => updateQuantity(item.productName, item.size, -item.quantity)} className="text-xs text-gray-400 underline">{t.shop.remove}</button></div></div>
                   </article>;
                 })}</div> : <p className="py-10 text-sm text-gray-400">{t.shop.emptyCart}</p>}
               </div>
@@ -545,7 +560,7 @@ export default function ShopScreen({
                 <button
                   type="button"
                   onClick={() => openProduct(product)}
-                  aria-label={`View details for ${product.name}`}
+                  aria-label={`${t.shop.viewDetails} ${product.name}`}
                   className="block w-full text-left transition-opacity hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-lime"
                 >
                   <ProductArtwork product={product} />

@@ -18,7 +18,6 @@ export default async function AboutPage() {
   const story = findClubSection(club?.sections, ["story", "about"]);
   const mission = findClubSection(club?.sections, ["mission"]);
   const vision = findClubSection(club?.sections, ["vision"]);
-  const quote = club?.profile.tagline;
 
   return (
     <>
@@ -28,19 +27,22 @@ export default async function AboutPage() {
         majorTrophies={trophies.length || undefined}
       />
       <AboutSection
-        title={story?.title || t.about.story}
-        text={story?.body || ""}
+        kind="story"
+        title={story?.title}
+        text={story?.body}
       />
       <AboutSection
-        title={mission?.title || t.about.mission}
+        kind="mission"
         reverse
         light
-        text={mission?.body || ""}
+        title={mission?.title}
+        text={mission?.body}
       />
       <AboutSection
-        title={vision?.title || t.about.vision}
-        text={vision?.body || ""}
-        quote={quote}
+        kind="vision"
+        title={vision?.title}
+        text={vision?.body}
+        quote={club?.profile.tagline?.trim() || t.about.beliefQuote}
       />
       <AboutTimeline milestones={milestones} />
     </>

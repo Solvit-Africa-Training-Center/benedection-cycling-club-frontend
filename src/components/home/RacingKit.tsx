@@ -77,25 +77,25 @@ function ProductPhoto({ product, photoSoon }: { product: Product; photoSoon: str
   return (
     <div className="group [perspective:900px]">
       <div
-        className={`relative aspect-square rounded-xl bg-gray-600 transition-transform duration-700 [transform-style:preserve-3d] ${
+        className={`relative aspect-square rounded-xl bg-white transition-transform duration-700 [transform-style:preserve-3d] ${
           hasBack ? "group-hover:[transform:rotateY(180deg)]" : ""
         }`}
       >
         {/* Front */}
-        <div className="absolute inset-0 overflow-hidden rounded-xl [backface-visibility:hidden]">
+        <div className="absolute inset-0 overflow-hidden rounded-xl bg-white [backface-visibility:hidden]">
           <Image
             src={product.image}
             alt={`${product.name}, front`}
             fill
             sizes="(min-width: 1024px) 25vw, 50vw"
             unoptimized={product.image.startsWith("http")}
-            className={hasBack ? "object-contain p-4" : "object-cover"}
+            className="object-contain p-4"
           />
         </div>
 
         {/* Back */}
         {product.imageBack && (
-          <div className="absolute inset-0 overflow-hidden rounded-xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <div className="absolute inset-0 overflow-hidden rounded-xl bg-white [backface-visibility:hidden] [transform:rotateY(180deg)]">
             <Image
               src={product.imageBack}
               alt={`${product.name}, back`}

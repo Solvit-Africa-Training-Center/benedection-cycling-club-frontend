@@ -387,12 +387,22 @@ const SHOP_IMAGES: { match: string; image: string }[] = [
   { match: "helm", image: "/helmet.jpg" },
 ];
 
-function localShopImage(product: ShopProductApi): string {
-  const haystack = [product.slug, product.category?.slug]
+function shopHaystack(product: ShopProductApi): string {
+  return [product.slug, product.category?.slug, product.category?.name, product.name]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
+}
+
+function localShopImage(product: ShopProductApi): string {
+  const haystack = shopHaystack(product);
   return SHOP_IMAGES.find((item) => haystack.includes(item.match))?.image || "/jersey.png";
+}
+
+function shopSizes(product: ShopProductApi): string[] {
+  const haystack = shopHaystack(product);
+  if (/(sunglass|cycling-glass|\bglass|\bbril)/i.test(haystack)) return [];
+  return DEFAULT_SIZES;
 }
 
 export function mapShopProduct(product: ShopProductApi): ShopProductView {
@@ -409,7 +419,7 @@ export function mapShopProduct(product: ShopProductApi): ShopProductView {
     category: categoryName,
     categorySlug,
     image: resolveMediaUrl(photo?.image) || localShopImage(product),
-    sizes: DEFAULT_SIZES,
+    sizes: shopSizes(product),
     description: filled(product.description) || "",
     stock: product.stock,
   };

@@ -1,8 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/LanguageProvider";
+
+type AboutSectionKind = "story" | "mission" | "vision";
 
 type AboutSectionProps = {
-  title: string;
-  text: string;
+  kind: AboutSectionKind;
+  title?: string;
+  text?: string;
   quote?: string;
   /** Path in /public, for example "/about-story.jpg". When set, it replaces the title panel. */
   image?: string;
@@ -13,19 +19,31 @@ type AboutSectionProps = {
 };
 
 export default function AboutSection({
-  title,
-  text,
-  quote,
+  kind,
+  title: apiTitle,
+  text: apiText,
+  quote: apiQuote,
   image,
   reverse = false,
   light = false,
 }: AboutSectionProps) {
+  const { t } = useI18n();
+  const fallbackTitle =
+    kind === "story" ? t.about.story : kind === "mission" ? t.about.mission : t.about.vision;
+  const fallbackText =
+    kind === "story"
+      ? t.about.storyText
+      : kind === "mission"
+        ? t.about.missionText
+        : t.about.visionText;
+  const title = apiTitle?.trim() || fallbackTitle;
+  const text = apiText?.trim() || fallbackText;
+  const quote = apiQuote?.trim() || (kind === "vision" ? t.about.beliefQuote : undefined);
   const band = light ? "bg-[#1b212d]" : "bg-[#090d15]";
 
   return (
     <section className={`${band} text-white`}>
       <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-2 lg:gap-16">
-        {/* Panel: image if given, otherwise the title on soft color blobs */}
         <div
           className={`relative aspect-4/3 w-full max-w-md overflow-hidden rounded-sm bg-[#1c2230] ${
             reverse ? "lg:order-2 lg:ml-auto" : ""
@@ -56,7 +74,6 @@ export default function AboutSection({
           )}
         </div>
 
-        {/* Text + quote */}
         <div className={reverse ? "lg:order-1" : ""}>
           <p className="max-w-xl whitespace-pre-line text-xs leading-relaxed text-gray-400 md:text-sm">
             {text}
